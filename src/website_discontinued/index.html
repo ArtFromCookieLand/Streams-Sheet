@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; display: flex; justify-content: center; }
+      .main-wrapper { width: 100%; max-width: 1000px; }
+      
+      .container { background: white; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+      
+      /* BANNER STYLES */
+      .banner-container { width: 100%; height: 150px; overflow: hidden; border-radius: 12px; margin-bottom: 20px; background-color: #ddd; }
+      .banner-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+
+      h2 { color: #222; margin: 0 0 15px 0; font-size: 20px; border-bottom: 2px solid #1DB954; padding-bottom: 10px; display: inline-block; }
+      
+      .loader { border: 4px solid #f3f3f3; border-top: 4px solid #1DB954; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      
+      table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+      th { position: sticky; top: 0; background-color: #f8f9fa; text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #888; font-weight: 600; text-transform: uppercase; font-size: 11px; cursor: pointer; user-select: none; z-index: 10; }
+      th:hover { background-color: #eee; color: #333; }
+      td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+      
+      .cover-img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: block; background-color: #eee; }
+      .rank-val { font-weight: bold; font-size: 13px; text-align: center; }
+      .song-name { font-weight: 600; color: #222; font-size: 14px; }
+      .numbers { font-family: 'Inter', monospace; letter-spacing: -0.3px; font-size: 13px; text-align: right; }
+      
+      .positive { color: #1ed760; font-weight: 600; }
+      .negative { color: #e91429; font-weight: 600; }
+      .neutral { color: #ccc; font-size: 10px; }
+      .rank-up { color: #1ed760; font-size: 10px; display: block; text-align: center; }
+      .rank-down { color: #e91429; font-size: 10px; display: block; text-align: center; }
+      
+      /* Special Rows */
+      .total-row td { background-color: #e8f5e9; font-weight: bold; border-top: 2px solid #1DB954; border-bottom: 2px solid #1DB954; }
+      .droplet-row td { background-color: #fafafa; color: #555; }
+      .droplet-row .song-name { font-weight: 400; }
+
+      @media (max-width: 600px) {
+        .hide-mobile { display: none; }
+        .container { padding: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      
+      <!-- LOADING SPINNER -->
+      <div id="loading" class="loader"></div>
+
+      <!-- === SECTION 1: ALBUMS === -->
+      <div id="albumSection" class="container" style="display:none;">
+        <div class="banner-container">
+          <!-- ALBUM BANNER -->
+          <img src="https://www.rollingstone.com/wp-content/uploads/2025/08/taylor-swift-everything-we-know-showgirl.jpg?w=1581&h=1054&crop=1" class="banner-img" referrerpolicy="no-referrer">
+        </div>
+
+        <h2>Album Statistics</h2>
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortAlbums('name')" style="width: 50px;">Cover</th>
+              <th onclick="sortAlbums('name')">Album <span id="asort-name"></span></th>
+              <th onclick="sortAlbums('total')" style="text-align: right;" class="hide-mobile">Total <span id="asort-total"></span></th>
+              <th onclick="sortAlbums('daily')" style="text-align: right;">Daily <span id="asort-daily"></span></th>
+              <th onclick="sortAlbums('dailyPct')" style="text-align: right;">% Day <span id="asort-dailyPct"></span></th>
+              <th onclick="sortAlbums('bestSince')" class="hide-mobile">Best Since <span id="asort-bestSince"></span></th>
+            </tr>
+          </thead>
+          <tbody id="albumBody"></tbody>
+        </table>
+      </div>
+
+      <!-- === SECTION 2: TRACKS === -->
+      <div id="trackSection" class="container" style="display:none;">
+        <div class="banner-container">
+          <!-- TRACK BANNER -->
+          <img src="https://www.rollingstone.com/wp-content/uploads/2025/10/taylor-swift-album-is-here.jpg?w=1581&h=1054&crop=1" class="banner-img" referrerpolicy="no-referrer">
+        </div>
+
+        <h2>Track Statistics</h2>
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTracks('rank')" style="text-align: center;"># <span id="tsort-rank"></span></th>
+              <th style="width: 50px;"></th> 
+              <th onclick="sortTracks('name')">Track <span id="tsort-name"></span></th>
+              <th onclick="sortTracks('totalStream')" style="text-align: right;" class="hide-mobile">Total <span id="tsort-totalStream"></span></th>
+              <th onclick="sortTracks('dailyStream')" style="text-align: right;">Daily <span id="tsort-dailyStream"></span></th>
+              <th onclick="sortTracks('dailyChange')" style="text-align: right;">Change <span id="tsort-dailyChange"></span></th>
+              <th onclick="sortTracks('bestSince')" class="hide-mobile">Best Since <span id="tsort-bestSince"></span></th>
+            </tr>
+          </thead>
+          <tbody id="trackBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <script>
+      // Global Data
+      let trackData = [];
+      let albumData = {}; 
+      
+      // Sort State
+      // UPDATED DEFAULTS HERE:
+      // asc: true (Low to High), asc: false (High to Low)
+      let trackSort = { col: 'dailyStream', asc: false }; // Default: Daily Streams, High to Low
+      let albumSort = { col: 'daily', asc: false };       // Default: Daily Streams, High to Low
+
+      window.onload = function() {
+        if (typeof google === 'undefined') { console.log("Mock Mode"); return; }
+        google.script.run
+          .withSuccessHandler(initData)
+          .withFailureHandler(err => alert(err.message))
+          .getPublicData();
+      };
+
+      function initData(data) {
+        trackData = data.tracks;
+        albumData = data.albums;
+        
+        doSort(albumData.studio, albumSort);
+        renderAlbums();
+        
+        doSort(trackData, trackSort);
+        renderTracks();
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('albumSection').style.display = 'block';
+        document.getElementById('trackSection').style.display = 'block';
+      }
+
+      // --- SORTING ---
+      function sortTracks(col) {
+        updateSortState(trackSort, col);
+        doSort(trackData, trackSort);
+        updateIndicators('tsort', trackSort);
+        renderTracks();
+      }
+
+      function sortAlbums(col) {
+        updateSortState(albumSort, col);
+        doSort(albumData.studio, albumSort);
+        updateIndicators('asort', albumSort);
+        renderAlbums();
+      }
+
+      function updateSortState(state, col) {
+        if (state.col === col) {
+          state.asc = !state.asc;
+        } else {
+          state.col = col;
+          state.asc = !['dailyStream', 'totalStream', 'dailyChange', 'daily', 'total', 'dailyPct'].includes(col);
+        }
+      }
+
+      function doSort(dataArray, state) {
+        dataArray.sort((a, b) => {
+          let valA = a[state.col];
+          let valB = b[state.col];
+          
+          if (state.col.toLowerCase().includes('bestsince')) {
+             valA = valA === '-' ? 0 : new Date(valA).getTime();
+             valB = valB === '-' ? 0 : new Date(valB).getTime();
+          }
+
+          if (valA < valB) return state.asc ? -1 : 1;
+          if (valA > valB) return state.asc ? 1 : -1;
+          return 0;
+        });
+      }
+      
+      function updateIndicators(prefix, state) {
+        document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el => el.innerHTML = '');
+        document.getElementById(`${prefix}-${state.col}`).innerHTML = state.asc ? '▲' : '▼';
+      }
+
+      // --- RENDER ALBUMS ---
+      function renderAlbums() {
+        const tbody = document.getElementById('albumBody');
+        tbody.innerHTML = '';
+        
+        albumData.studio.forEach(row => tbody.appendChild(createAlbumRow(row, false)));
+        if (albumData.total) {
+          const totalTr = createAlbumRow(albumData.total, false);
+          totalTr.className = 'total-row';
+          tbody.appendChild(totalTr);
+        }
+        albumData.droplets.forEach(row => {
+          const dropTr = createAlbumRow(row, false);
+          dropTr.className = 'droplet-row';
+          tbody.appendChild(dropTr);
+        });
+      }
+
+      function createAlbumRow(row, isTotal) {
+        const tr = document.createElement('tr');
+        const dPct = (row.dailyPct * 100).toFixed(1) + '%';
+        const dClass = row.dailyPct >= 0 ? 'positive' : 'negative';
+
+        let imgUrl = row.cover && row.cover.startsWith('http') ? row.cover : '';
+        let imgTag = imgUrl ? 
+             `<img src="${imgUrl}" class="cover-img" referrerpolicy="no-referrer">` : 
+             `<div class="cover-img"></div>`;
+
+        tr.innerHTML = `
+          <td>${imgTag}</td>
+          <td><div class="song-name">${row.name}</div></td>
+          <td class="numbers hide-mobile" style="color:#666;">${formatNumber(row.total)}</td>
+          <td class="numbers">${formatNumber(row.daily)}</td>
+          <td class="numbers ${dClass}">${row.dailyPct > 0 ? '+' : ''}${dPct}</td>
+          <td class="hide-mobile" style="font-size:11px; color:#999;">${row.bestSince}</td>
+        `;
+        return tr;
+      }
+
+      // --- RENDER TRACKS (UPDATED RANK LOGIC) ---
+      function renderTracks() {
+        const tbody = document.getElementById('trackBody');
+        tbody.innerHTML = '';
+
+        // *** NEW: Add Index to loop ***
+        trackData.forEach((row, index) => {
+          const tr = document.createElement('tr');
+          
+          const changeClass = row.dailyChange >= 0 ? 'positive' : 'negative';
+          const changeText = (row.dailyChange > 0 ? '+' : '') + (row.dailyChange * 100).toFixed(1) + '%';
+          
+          let imgUrl = row.albumCover && row.albumCover.startsWith('http') ? row.albumCover : '';
+          let imgTag = imgUrl ? 
+             `<img src="${imgUrl}" class="cover-img" referrerpolicy="no-referrer">` : 
+             `<div class="cover-img"></div>`;
+
+          // *** NEW: Dynamic Rank Logic ***
+          let displayRank = "";
+          let displayChange = "";
+
+          // Only show original rank/arrows if we are sorting by 'dailyStream'
+          // (Assuming users want to see the official rank primarily when looking at daily data)
+          if (trackSort.col === 'dailyStream') {
+             displayRank = row.rank;
+             if (row.rankChange > 0) displayChange = `<span class="rank-up">▲${row.rankChange}</span>`;
+             else if (row.rankChange < 0) displayChange = `<span class="rank-down">▼${Math.abs(row.rankChange)}</span>`;
+             else displayChange = `<span class="neutral">-</span>`;
+          } else {
+             // If sorting by Total, Change, or Name -> Show sequential numbers (1, 2, 3...)
+             displayRank = index + 1;
+             displayChange = `<span class="neutral" style="opacity:0">-</span>`; // Invisible spacer
+          }
+
+          tr.innerHTML = `
+            <td><div class="rank-val">${displayRank}</div>${displayChange}</td>
+            <td>${imgTag}</td>
+            <td><div class="song-name">${row.name}</div></td>
+            <td class="numbers hide-mobile" style="color:#666;">${formatNumber(row.totalStream)}</td>
+            <td class="numbers">${formatNumber(row.dailyStream)}</td>
+            <td class="numbers ${changeClass}">${changeText}</td>
+            <td class="hide-mobile" style="font-size:11px; color:#999;">${row.bestSince}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function formatNumber(num) {
+        return new Intl.NumberFormat('en-US').format(num);
+      }
+    </script>
+  </body>
+</html>
