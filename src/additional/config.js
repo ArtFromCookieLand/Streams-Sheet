@@ -14,8 +14,6 @@ const CONFIG = {
       'Daily Archive 2024',
       'Daily Archive 2023'
     ],
-
-    // this is test 2
     
     // The current active sheet for writing daily stats
     ARCHIVE: 'Daily Archive 2026', 
@@ -63,22 +61,22 @@ const CONFIG = {
     UPCOMING_MILESTONES_CLEAR: 'N45:Q549'  // Range to clear
   },
   STATS: {
-    'Taylor Swift (Debut)':                 { songRow: 2,   count: 15, summaryRow: 2, destCell: 'I23' },
-    'Fearless (2008)':                      { songRow: 17,  count: 19, summaryRow: 3, destCell: 'I79' },
-    'Speak Now (2010)':                     { songRow: 36,  count: 17, summaryRow: 4, destCell: 'N93' },
-    'Red (2012)':                           { songRow: 57,  count: 19, summaryRow: 5, destCell: 'N119'},
-    '1989 (2014)':                          { songRow: 79,  count: 16, summaryRow: 6, destCell: 'T23' },
-    'reputation':                           { songRow: 98,  count: 15, summaryRow: 7, destCell: 'T78' },
-    'Lover':                                { songRow: 113, count: 18, summaryRow: 8, destCell: 'Y23' },
-    'folklore':                             { songRow: 131, count: 34, summaryRow: 9, destCell: 'Y51' },
-    'evermore':                             { songRow: 165, count: 17, summaryRow: 10, destCell: 'Y78' },
-    "Fearless (Taylor's Version)":          { songRow: 182, count: 26, summaryRow: 13, destCell: 'I45' },
-    "Red (Taylor's Version)":               { songRow: 208, count: 30, summaryRow: 14, destCell: 'N54' },
-    'Midnights':                            { songRow: 238, count: 23, summaryRow: 11, destCell: 'Y102'},
-    "Speak Now (Taylor's Version)":         { songRow: 261, count: 22, summaryRow: 15, destCell: 'N23' },
-    "1989 (Taylor's Version)":              { songRow: 283, count: 22, summaryRow: 16, destCell: 'T49' },
-    'The Tortured Poets Department ':       { songRow: 305, count: 31, summaryRow: 12, destCell: 'AD23' },
-    'The Life of a Showgirl':               { songRow: 336, count: 12, summaryRow: 17, destCell: 'AD89'}
+    'Taylor Swift (Debut)':                 { songRow: 2,   count: 15, summaryRow: 2, destCell: 'F23' },
+    'Fearless (2008)':                      { songRow: 17,  count: 19, summaryRow: 3, destCell: 'F79' },
+    'Speak Now (2010)':                     { songRow: 36,  count: 17, summaryRow: 4, destCell: 'L93' },
+    'Red (2012)':                           { songRow: 57,  count: 19, summaryRow: 5, destCell: 'L119'},
+    '1989 (2014)':                          { songRow: 79,  count: 16, summaryRow: 6, destCell: 'R23' },
+    'reputation':                           { songRow: 98,  count: 15, summaryRow: 7, destCell: 'R78' },
+    'Lover':                                { songRow: 113, count: 18, summaryRow: 8, destCell: 'W23' },
+    'folklore':                             { songRow: 131, count: 34, summaryRow: 9, destCell: 'W51' },
+    'evermore':                             { songRow: 165, count: 17, summaryRow: 10, destCell: 'W78' },
+    "Fearless (Taylor's Version)":          { songRow: 182, count: 26, summaryRow: 13, destCell: 'F45' },
+    "Red (Taylor's Version)":               { songRow: 208, count: 30, summaryRow: 14, destCell: 'L54' },
+    'Midnights':                            { songRow: 238, count: 23, summaryRow: 11, destCell: 'W102'},
+    "Speak Now (Taylor's Version)":         { songRow: 261, count: 22, summaryRow: 15, destCell: 'L23' },
+    "1989 (Taylor's Version)":              { songRow: 283, count: 22, summaryRow: 16, destCell: 'R49' },
+    'The Tortured Poets Department ':       { songRow: 305, count: 31, summaryRow: 12, destCell: 'AB23' },
+    'The Life of a Showgirl':               { songRow: 336, count: 12, summaryRow: 17, destCell: 'AB89'}
   },
 
   // --- Apify Definitions ---
