@@ -46,13 +46,12 @@ function generateSummaries() {
   const latestSheet = ss.getSheetByName(CONFIG.SHEETS.LATEST);
   const albumsSheet = ss.getSheetByName(CONFIG.SHEETS.ALBUMS);
 
-  // 1. Fetch Update Date
   const rawDate = latestSheet.getRange(CONFIG.LATEST.DATE_CELL).getValue();
   const formattedDate = formatDateString(rawDate);
   
-  // Calculate the "7 days ago" threshold
   const sevenDaysAgo = new Date(rawDate);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysAgoTime = sevenDaysAgo.getTime();
 
   for (const [albumName, stats] of Object.entries(CONFIG.STATS)) {
     let summaryLines = [];
@@ -68,6 +67,9 @@ function generateSummaries() {
 
     let maxPercent = -Infinity;
     let biggestGainer = null;
+    
+    // The oldest time stamp
+    let oldestTime = Infinity;
     let bestSinceSongs = [];
 
     // --- 3. ANALYZE SONG DATA ---
@@ -79,7 +81,7 @@ function generateSummaries() {
       const displayPercent = songDisplayData[i][3]; 
       const bestSinceDate = songData[i][7];
 
-      // Logic for Biggest Gainer / Most Stable (smallest drop)
+      // Biggest Gainer / Most Stable
       if (typeof rawPercent === 'number' && rawPercent > maxPercent) {
         maxPercent = rawPercent;
         biggestGainer = {
@@ -90,13 +92,28 @@ function generateSummaries() {
         };
       }
 
-      // Logic for Best Since (must be a date and at least 7 days ago)
-      if (bestSinceDate instanceof Date && bestSinceDate <= sevenDaysAgo) {
-        bestSinceSongs.push({
-          title: title,
-          dateStr: formatDateString(bestSinceDate)
-        });
+      // The oldest best since value
+      if (bestSinceDate instanceof Date) {
+        const time = bestSinceDate.getTime();
+        
+        if (time < oldestTime) {
+          oldestTime = time;
+          bestSinceSongs = [{
+            title: title,
+            dateStr: formatDateString(bestSinceDate)
+          }];
+        } else if (time === oldestTime) {
+          bestSinceSongs.push({
+            title: title,
+            dateStr: formatDateString(bestSinceDate)
+          });
+        }
       }
+    }
+
+    // If the oldest best since younger than 7 days, remove
+    if (oldestTime > sevenDaysAgoTime) {
+      bestSinceSongs = [];
     }
 
     // --- 4. BUILD POINTS 2, 3, & 3.1 ---
@@ -110,7 +127,7 @@ function generateSummaries() {
     }
 
     if (!usePoint3_1) {
-      // Point 2: Standard Biggest Gainer / Most Stable
+      // Point 2
       if (biggestGainer) {
         if (biggestGainer.isPositive) {
           const cleanPercent = biggestGainer.displayPercent.replace('+', '');
@@ -121,7 +138,7 @@ function generateSummaries() {
         }
       }
 
-      // Point 3: Best Since lists
+      // Point 3
       if (bestSinceSongs.length === 1) {
         summaryLines.push(`• ${bestSinceSongs[0].title} scored its best day since ${bestSinceSongs[0].dateStr}.`);
       } else if (bestSinceSongs.length > 1) {
@@ -140,7 +157,7 @@ function generateSummaries() {
     summaryLines.push(`${formatStreams(albumDailyRaw)} from yesterday, ${formatStreams(albumWeeklyRaw)} from the last week`);
 
     // --- 7. BUILD POINT 4.1 ---
-    if (albumBestSinceRaw instanceof Date && albumBestSinceRaw <= sevenDaysAgo) {
+    if (albumBestSinceRaw instanceof Date && albumBestSinceRaw <= sevenDaysAgoTime) {
       summaryLines.push(`Best day since ${formatDateString(albumBestSinceRaw)}`);
     }
 
@@ -154,6 +171,142 @@ function generateSummaries() {
     albumsSheet.getRange(startRow, startCol, 10, 1).clearContent(); 
     albumsSheet.getRange(startRow, startCol, outputData.length, 1).setValues(outputData);
   }
+}
+
+/**
+ * GENERATES TWITTER SUMMARY FOR THE OVERALL DISCOGRAPHY
+ */
+function generateDiscographySummary() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const latestSheet = ss.getSheetByName(CONFIG.SHEETS.LATEST);
+  const albumsSheet = ss.getSheetByName(CONFIG.SHEETS.ALBUMS);
+
+  // 1. Fetch Update Date & 7-day threshold
+  const rawDate = latestSheet.getRange(CONFIG.LATEST.DATE_CELL).getValue();
+  const formattedDate = formatDateString(rawDate);
+  
+  const sevenDaysAgo = new Date(rawDate);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysAgoTime = sevenDaysAgo.getTime();
+
+  let summaryLines = [];
+
+  // --- 1. HEADER ---
+  summaryLines.push(`Taylor Swift's albums on Spotify yesterday (${formattedDate})`);
+  summaryLines.push("");
+
+  // --- 2. EXTRACT ALBUMS DATA ---
+  const albumsCount = Object.keys(CONFIG.STATS).length; 
+  const albumsStartRow = CONFIG.LATEST.ALBUMS_START_ROW;
+  
+  const albumsDataRange = latestSheet.getRange(albumsStartRow, 20, albumsCount, 8);
+  const albumsData = albumsDataRange.getValues();
+  const albumsDisplayData = albumsDataRange.getDisplayValues();
+
+  let maxPercent = -Infinity;
+  let biggestGainer = null;
+
+  let oldestTime = Infinity;
+  let bestSinceAlbums = [];
+
+  // --- 3. ANALYZE ALBUMS DATA ---
+  for (let i = 0; i < albumsData.length; i++) {
+    const title = albumsData[i][0];
+    if (!title) continue;
+
+    const rawPercent = albumsData[i][3]; 
+    const displayPercent = albumsDisplayData[i][3]; 
+    const bestSinceDate = albumsData[i][5];
+
+    // Logic for Biggest Gainer / Most Stable
+    if (typeof rawPercent === 'number' && rawPercent > maxPercent) {
+      maxPercent = rawPercent;
+      biggestGainer = {
+        title: title,
+        percentValue: rawPercent,
+        displayPercent: displayPercent,
+        isPositive: rawPercent > 0
+      };
+    }
+
+    // Logic for Best Since
+    if (bestSinceDate instanceof Date) {
+      const time = bestSinceDate.getTime();
+      
+      if (time < oldestTime) {
+        oldestTime = time;
+        bestSinceAlbums = [{
+          title: title,
+          dateStr: formatDateString(bestSinceDate)
+        }];
+      } else if (time === oldestTime) {
+        bestSinceAlbums.push({
+          title: title,
+          dateStr: formatDateString(bestSinceDate)
+        });
+      }
+    }
+  }
+
+  if (oldestTime > sevenDaysAgoTime) {
+    bestSinceAlbums = [];
+  }
+
+  // --- 4. BUILD POINTS 2, 3, & 3.1 ---
+  let usePoint3_1 = false;
+
+  if (bestSinceAlbums.length === 1 && biggestGainer && bestSinceAlbums[0].title === biggestGainer.title && biggestGainer.isPositive) {
+    usePoint3_1 = true;
+    const cleanPercent = biggestGainer.displayPercent.replace('+', '');
+    summaryLines.push(`• ${biggestGainer.title} was the biggest ganer and scored its best day since ${bestSinceAlbums[0].dateStr} (up ${cleanPercent} from yesterday).`);
+  }
+
+  if (!usePoint3_1) {
+    // Point 2
+    if (biggestGainer) {
+      if (biggestGainer.isPositive) {
+        const cleanPercent = biggestGainer.displayPercent.replace('+', '');
+        summaryLines.push(`• ${biggestGainer.title} was the biggest gainer, up ${cleanPercent}.`);
+      } else {
+        const cleanPercent = biggestGainer.displayPercent.replace('-', '');
+        summaryLines.push(`• ${biggestGainer.title} was the most stable album, down ${cleanPercent}.`);
+      }
+    }
+
+    // Point 3
+    if (bestSinceAlbums.length === 1) {
+      summaryLines.push(`• ${bestSinceAlbums[0].title} scored its best day since ${bestSinceAlbums[0].dateStr}.`);
+    } else if (bestSinceAlbums.length > 1) {
+      const titles = bestSinceAlbums.map(a => a.title).join(", ");
+      summaryLines.push(`• ${titles} scored their best update since ${bestSinceAlbums[0].dateStr}.`);
+    }
+  }
+
+  // --- 5. EXTRACT OVERALL DISCOGRAPHY DATA ---
+  const overallRow = CONFIG.LATEST.OVERALL_ROW;
+  
+  const overallBestSinceRaw = latestSheet.getRange(overallRow, 25).getValue();
+  const overallDailyRaw = latestSheet.getRange(overallRow, 26).getValue();
+  const overallWeeklyRaw = latestSheet.getRange(overallRow, 27).getValue();
+
+  // --- 6. BUILD CLOSING LINES ---
+  summaryLines.push("");
+  summaryLines.push(`${formatStreams(overallDailyRaw)} from yesterday, ${formatStreams(overallWeeklyRaw)} from the last week`);
+
+  // Use sevenDaysAgoTime for overall stats
+  if (overallBestSinceRaw instanceof Date && overallBestSinceRaw.getTime() <= sevenDaysAgoTime) {
+    summaryLines.push(`Best update since ${formatDateString(overallBestSinceRaw)}`);
+  }
+
+  // --- 7. WRITE TO ALBUMS SHEET ---
+  const destRange = albumsSheet.getRange(CONFIG.ALBUMS.TOTAL_SUMMARY);
+  const startRow = destRange.getRow();
+  const startCol = destRange.getColumn();
+
+  const outputData = summaryLines.map(line => [line]);
+  
+  albumsSheet.getRange(startRow, startCol, 10, 1).clearContent(); 
+  albumsSheet.getRange(startRow, startCol, outputData.length, 1).setValues(outputData);
 }
 
 // --- HELPER FUNCTIONS ---
@@ -170,11 +323,9 @@ function formatDateString(dateObj) {
   const day = dateObj.getDate();
   const dateYear = dateObj.getFullYear();
   const currentYear = new Date().getFullYear();
-  
-  // Використовуємо вашу існуючу функцію toOrdinal
   let formattedDate = `${month} ${toOrdinal(day)}`;
   
-  // Додаємо рік, якщо він відрізняється від поточного
+  // If different year, specify
   if (dateYear !== currentYear) {
     formattedDate += `, ${dateYear}`;
   }

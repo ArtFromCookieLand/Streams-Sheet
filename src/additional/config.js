@@ -32,7 +32,8 @@ const CONFIG = {
   },
   ALBUMS: {
     START_ROW: 550, // e.g., rows 550 to 574
-    COUNT: 25
+    COUNT: 25,
+    TOTAL_SUMMARY: 'G5',
   },
 
   // --- Range Definitions (A1 Notation) ---
@@ -49,7 +50,9 @@ const CONFIG = {
     WEEK_STREAMS_DEST: 'N2:N549',
     SONG_BEST_SINCE_DEST: 'L2', // Output for "Best Since" (Songs)
     ALBUM_BEST_SINCE_DEST: 'Y2', // Output for "Best Since" (Albums)
-    SONG_NAMES: 'E2:E549'
+    SONG_NAMES: 'E2:E549',
+    ALBUMS_START_ROW: 2, 
+    OVERALL_ROW: 26
   },
   ARCHIVE: {
     DAILY_STREAMS_DEST: 'B2:B549',

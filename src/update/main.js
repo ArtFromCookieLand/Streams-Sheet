@@ -73,6 +73,7 @@ function main() {
   
   ss.toast('Generating summaries...', 'Status');
   generateSummaries();
+  generateDiscographySummary();
 
   // --- 3. COMPLETION ---
   ss.toast('All updates completed successfully!', 'Success', 5);
