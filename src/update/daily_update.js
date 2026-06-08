@@ -193,14 +193,14 @@ function setAlbumFormulas(dailyArchiveSheet) {
     ['=SUM(B261:B282)'], // Row 563: Speak Now (Taylor's Version)
     ['=SUM(B283:B304)'], // Row 564: 1989 (Taylor's Version)
     ['=SUM(B336:B354)'], // Row 565: The Life of a Showgirl
-    ['=SUM(B428:B434)'], // Row 566: Droplets
+    ['=SUM(B429:B435)'], // Row 566: Droplets
     ['=SUM(B363:B368)'], // Row 567: The Taylor Swift Holiday Collection
     ['=SUM(B355:B362)'], // Row 568: Live Clear Channel Stripped 2008
     ['=SUM(B377:B392)'], // Row 569: Speak Now World Tour
     ['=SUM(B369:B376)'], // Row 570: Live From Paris
-    ['=SUM(B405:B415)'], // Row 571: Soundtracks
-    ['=SUM(B435:B518)'], // Row 572: Remixes and etc.
-    ['=SUM(B416:B427)'], // Row 573: Features
+    ['=SUM(B405:B416)'], // Row 571: Soundtracks
+    ['=SUM(B436:B518)'], // Row 572: Remixes and etc.
+    ['=SUM(B417:B428)'], // Row 573: Features
     ['=SUM(B2:B549)']    // Row 574: Total Artist Streams
   ];
 

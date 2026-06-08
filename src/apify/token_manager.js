@@ -1,33 +1,44 @@
 /**
  * 1. ONE-TIME SETUP
- * Insert your two tokens here, run this function once from the script editor.
+ * Insert your three tokens here, run this function once from the script editor.
  * After successful execution, you can remove the tokens from the code for security.
  * If ever any problem with tokens, run this again.
- *
+
 function initializeTokensOneTime() {
   var props = PropertiesService.getScriptProperties();
   
   // INSERT YOUR TOKENS HERE:
-  props.setProperty('APIFY_TOKEN_1', 'first token');
-  props.setProperty('APIFY_TOKEN_2', 'second token');
+  props.setProperty('APIFY_TOKEN_1', 'insert token 1');
+  props.setProperty('APIFY_TOKEN_2', 'insert token 2');
+  props.setProperty('APIFY_TOKEN_3', 'insert token  3');
   
   props.setProperty('ACTIVE_TOKEN_INDEX', '1');
   props.setProperty('RUN_COUNT_1', '0');
   props.setProperty('RUN_COUNT_2', '0');
+  props.setProperty('RUN_COUNT_3', '0');
   
   console.log("Tokens successfully saved. Current active token: 1");
 }
-/
+*/
 
 /**
  * 2. BUTTON FUNCTION FOR THE SHEET
- * It switches the token and resets the run counter of the NEW active token to 0.
+ * It switches the token in a 1 -> 2 -> 3 -> 1 cycle and resets the counter to 0.
  */
 function switchApifyToken() {
   var ui = SpreadsheetApp.getUi();
   var props = PropertiesService.getScriptProperties();
   var currentIndex = props.getProperty('ACTIVE_TOKEN_INDEX') || '1';
-  var newIndex = currentIndex === '1' ? '2' : '1';
+  
+  // Determine the next token in the sequence
+  var newIndex;
+  if (currentIndex === '1') {
+    newIndex = '2';
+  } else if (currentIndex === '2') {
+    newIndex = '3';
+  } else {
+    newIndex = '1';
+  }
   
   // Reset the counter for the token we are switching to
   props.setProperty('RUN_COUNT_' + newIndex, '0');

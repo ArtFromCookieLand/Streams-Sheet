@@ -177,7 +177,8 @@ const CONFIG = {
       "Opalite - BUNT. Remix": "https://open.spotify.com/album/5oO9uwBHZAawqYnmPpVUUi",
       "Opalite - Ely Oaks Remix": "https://open.spotify.com/album/72hPyRss6soJeGQLEek1qr",
       "Opalite - Skream Remix": "https://open.spotify.com/album/6WNAGQ9MfrSyOFbMc66pCz?si=0DYd2aC9Qeu_dSS5knZKDg",
-      "Opalite - Chris Lake Remix": "https://open.spotify.com/album/1OioQUIAwZ6PE2V7UJUHX2"
+      "Opalite - Chris Lake Remix": "https://open.spotify.com/album/1OioQUIAwZ6PE2V7UJUHX2",
+      "I Knew It,I Knew You": "https://open.spotify.com/album/3ZLIShtR6Fjs4nTWFpBUB6"
       //"Red (Big Machine Radio Release Special)": "https://open.spotify.com/album/4jTYApZPMapg56gRycOn0D?si=cq650LrrQS64DnNoFnSZFA"
     }
   }

@@ -22,8 +22,8 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
-* 1.1
-    * To be added: better descriptions.
+* 1.1 (13/5/26)
+    * Added generation of summaries for albums and the discrography.
 * 1.0
     * The first tracked version of the project from May 2026 (initially the project was created in August 2025). Includes such features as:
         * Saving the data in a Google Spreadsheet and managing it
