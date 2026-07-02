@@ -79,7 +79,8 @@ const CONFIG = {
     "Speak Now (Taylor's Version)":         { songRow: 261, count: 22, summaryRow: 15, destCell: 'L23' },
     "1989 (Taylor's Version)":              { songRow: 283, count: 22, summaryRow: 16, destCell: 'R49' },
     'The Tortured Poets Department ':       { songRow: 305, count: 31, summaryRow: 12, destCell: 'AB23' },
-    'The Life of a Showgirl':               { songRow: 336, count: 12, summaryRow: 17, destCell: 'AB89'}
+    'The Life of a Showgirl':               { songRow: 336, count: 12, summaryRow: 17, destCell: 'AB89'},
+    'Soundtracks':                          { songRow: 405, count: 12, summaryRow: 23, destCell: 'R99'}
   },
 
   // --- Apify Definitions ---
@@ -178,7 +179,7 @@ const CONFIG = {
       "Opalite - Ely Oaks Remix": "https://open.spotify.com/album/72hPyRss6soJeGQLEek1qr",
       "Opalite - Skream Remix": "https://open.spotify.com/album/6WNAGQ9MfrSyOFbMc66pCz?si=0DYd2aC9Qeu_dSS5knZKDg",
       "Opalite - Chris Lake Remix": "https://open.spotify.com/album/1OioQUIAwZ6PE2V7UJUHX2",
-      "I Knew It,I Knew You": "https://open.spotify.com/album/3ZLIShtR6Fjs4nTWFpBUB6"
+      "I Knew It,I Knew You": "https://open.spotify.com/album/4Ii9whWXI1O1H01ziECRaG"
       //"Red (Big Machine Radio Release Special)": "https://open.spotify.com/album/4jTYApZPMapg56gRycOn0D?si=cq650LrrQS64DnNoFnSZFA"
     }
   }
