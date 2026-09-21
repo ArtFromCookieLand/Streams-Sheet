@@ -258,7 +258,7 @@ function generateDiscographySummary() {
   if (bestSinceAlbums.length === 1 && biggestGainer && bestSinceAlbums[0].title === biggestGainer.title && biggestGainer.isPositive) {
     usePoint3_1 = true;
     const cleanPercent = biggestGainer.displayPercent.replace('+', '');
-    summaryLines.push(`• ${biggestGainer.title} was the biggest ganer and scored its best day since ${bestSinceAlbums[0].dateStr} (up ${cleanPercent} from yesterday).`);
+    summaryLines.push(`• ${biggestGainer.title} was the biggest gainer and scored its best day since ${bestSinceAlbums[0].dateStr} (up ${cleanPercent} from yesterday).`);
   }
 
   if (!usePoint3_1) {
