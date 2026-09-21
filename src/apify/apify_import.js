@@ -5,10 +5,25 @@ function importSpotifyData() {
   const ui = SpreadsheetApp.getUi();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // --- 0. SAFETY CONFIRMATION ---
+  // --- 0. ENVIRONMENT GUARD ---
+  // Apify credits are shared and limited (~17 runs per token), so the dev copy
+  // does not spend them. The raw data that came across with the spreadsheet copy
+  // in Tools!F2:G1000 is the fixture to develop against instead.
+  if (isDev() && !CONFIG.ENV.ALLOW_APIFY_IN_DEV) {
+    ui.alert(
+      'Blocked in DEV',
+      'This is a DEV copy, and an Apify run would spend credits from the shared token budget.\n\n' +
+      'The raw data already sitting in Tools!F2:G1000 was copied from production — run "Update Daily Stats" against that instead.\n\n' +
+      'To override, set CONFIG.ENV.ALLOW_APIFY_IN_DEV to true.',
+      ui.ButtonSet.OK
+    );
+    return;
+  }
+
+  // --- 0b. SAFETY CONFIRMATION ---
   // This pop-up prevents accidental clicks.
   const response = ui.alert(
-    'Confirm Import',
+    'Confirm Import' + envTag(),
     'Are you sure you want to run the Spotify Scraper?',
     ui.ButtonSet.YES_NO
   );

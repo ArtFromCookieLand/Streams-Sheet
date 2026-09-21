@@ -8,13 +8,38 @@ In order to keep track of Taylor Swift's streams on Spotify, this project was cr
 
 ## Usage
 
+### Environments
+
+There are two Apps Script projects sharing this one codebase: **prod**, bound to the live
+spreadsheet, and **dev**, bound to a copy of it for testing changes safely.
+
+| Environment | clasp config | Target |
+| --- | --- | --- |
+| prod | `.clasp.json` | the live spreadsheet |
+| dev | `.clasp.dev.json` | a copy of the spreadsheet |
+
 ### Pushing and pulling
 
-In order to push and pull the code from the Google Apps Script, you can use the following commands:
+Push and pull always name the environment:
 ```
-clasp push
-clasp pull
+npm run push:dev      npm run push:prod
+npm run pull:dev      npm run pull:prod
+npm run open:dev      npm run open:prod
 ```
+
+The script detects at runtime which spreadsheet it is attached to. In the dev copy the menu is
+titled **Update [DEV]**, and the Apify import is blocked so that testing never spends scraper
+credits — the last raw import copied over in `Tools!F2:G1000` is used as the test data instead.
+
+### Setting up the dev copy
+
+1. In the live spreadsheet: **File → Make a copy**, name it e.g. `TStreams Dashboard (DEV)`.
+   The bound Apps Script project is copied along with it.
+2. In the copy: **Extensions → Apps Script → Project Settings**, copy the **Script ID**.
+3. Paste it into `.clasp.dev.json` as `scriptId`.
+4. `npm run push:dev`, then reload the copy and use the **Update [DEV]** menu.
+
+Refresh the dev copy by repeating step 1 whenever it has drifted too far from production.
 
 ## Authors
 
@@ -22,6 +47,16 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 1.1.4 (21/9/26)
+    * Added a separate dev environment, so changes can be tested on a copy of the spreadsheet before they touch the live one. Apify imports are blocked there to avoid spending scraper credits.
+    * Fixed the discography summary including Droplets among the albums. It scanned one row too many because the number of rows was taken from the length of CONFIG.STATS, which grew when Soundtracks was added in 1.1.
+    * Documented the project and the spreadsheet layout in CLAUDE.md, including the song-row blocks and a few known inconsistencies.
+    * Stopped tracking node_modules and spreadsheet exports in git.
+* 1.1.3 (2/7/26)
+    * I Knew It, I Knew You remixes are now being tracked
+* 1.1.2 (8/6/26)
+    * I Knew It, I Knew You is now being tracked
+    * Added third Apify token
 * 1.1 (13/5/26)
     * Added generation of summaries for albums and the discrography.
 * 1.0

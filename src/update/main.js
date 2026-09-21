@@ -8,7 +8,8 @@ var latestSheet = ss.getSheetByName(CONFIG.SHEETS.LATEST);
  */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('Update')
+  // Labelled so you can never mistake the dev copy for the live sheet.
+  ui.createMenu(isDev() ? 'Update [DEV]' : 'Update')
       .addItem('⬇️ Import Data', 'importSpotifyData')
       .addItem('🔃 Update Daily Stats', 'main')
       .addItem('🔄 Switch Token', 'switchApifyToken')
@@ -42,7 +43,7 @@ function main() {
   // --- 1. SAFETY CONFIRMATION ---
   // This pop-up prevents accidental clicks.
   const response = ui.alert(
-    'Confirm Update',
+    'Confirm Update' + envTag(),
     'Spotify data has been updated (C1 is positive). Are you sure you want to proceed with updating the sheets and generating summaries?',
     ui.ButtonSet.YES_NO
   );

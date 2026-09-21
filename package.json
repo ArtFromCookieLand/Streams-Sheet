@@ -1,4 +1,16 @@
 {
+  "name": "tstreams",
+  "private": true,
+  "scripts": {
+    "push:prod": "clasp -P .clasp.json push",
+    "pull:prod": "clasp -P .clasp.json pull",
+    "open:prod": "clasp -P .clasp.json open-script",
+    "status:prod": "clasp -P .clasp.json status",
+    "push:dev": "clasp -P .clasp.dev.json push",
+    "pull:dev": "clasp -P .clasp.dev.json pull",
+    "open:dev": "clasp -P .clasp.dev.json open-script",
+    "status:dev": "clasp -P .clasp.dev.json status"
+  },
   "devDependencies": {
     "@types/google-apps-script": "^2.0.8"
   }

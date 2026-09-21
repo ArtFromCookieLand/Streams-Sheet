@@ -1,0 +1,10 @@
+node_modules/
+
+# Local spreadsheet exports/backups — 35MB+ each, do not commit
+*.xlsx
+
+# clasp credentials, if they ever land in the project folder
+.clasprc.json
+
+.DS_Store
+Thumbs.db

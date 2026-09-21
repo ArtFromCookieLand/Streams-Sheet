@@ -196,7 +196,9 @@ function generateDiscographySummary() {
   summaryLines.push("");
 
   // --- 2. EXTRACT ALBUMS DATA ---
-  const albumsCount = Object.keys(CONFIG.STATS).length; 
+  // Albums only. Deriving this from CONFIG.STATS used to make the scan 17 rows wide, which
+  // reached row 18 (Droplets) and would grow by a row every time an entry was added to STATS.
+  const albumsCount = CONFIG.LATEST.DISCOGRAPHY_ALBUMS_COUNT;
   const albumsStartRow = CONFIG.LATEST.ALBUMS_START_ROW;
   
   const albumsDataRange = latestSheet.getRange(albumsStartRow, 20, albumsCount, 8);

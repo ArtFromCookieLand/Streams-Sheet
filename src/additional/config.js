@@ -6,6 +6,14 @@
  * ===================================================================
  */
 const CONFIG = {
+  // --- Environment ---
+  // See src/additional/env.js. Any spreadsheet other than the one below is
+  // treated as a DEV copy.
+  ENV: {
+    PROD_SPREADSHEET_ID: '1ANVfUER8MInJ_y-oRp7Nguwk0yDI9LtBt36PWBMmZbU',
+    ALLOW_APIFY_IN_DEV: false // Flip to true only to deliberately spend credits from DEV
+  },
+
   // --- Sheet Names ---
   SHEETS: {
     ARCHIVE_YEARS: [
@@ -52,6 +60,11 @@ const CONFIG = {
     ALBUM_BEST_SINCE_DEST: 'Y2', // Output for "Best Since" (Albums)
     SONG_NAMES: 'E2:E549',
     ALBUMS_START_ROW: 2, 
+    // How many album rows the discography summary scans, starting at ALBUMS_START_ROW.
+    // 16 = the studio albums only (rows 2-17). It must NOT reach Droplets (18), the live and
+    // compilation rows (19-22), Soundtracks (23), Remixes (24) or Features (25) — the
+    // discography summary is about albums, not everything in the catalogue.
+    DISCOGRAPHY_ALBUMS_COUNT: 16,
     OVERALL_ROW: 26
   },
   ARCHIVE: {
