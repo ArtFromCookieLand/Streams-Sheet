@@ -4,9 +4,9 @@
  * -------------------------------------------------------------------
  * Adds every not-yet-added row of the Pending sheet to the spreadsheet:
  * each song gets a row at the end of its category's block, inserted at
- * the same row in Latest, every Daily Archive, the Total Archive and
- * Tools (J:M only - the raw import sits beside it), and an entry in the
- * Tracklist. Songs below it move down one row everywhere; their
+ * the same row in Latest (A:P cells only, so the side table beside the
+ * songs stays put), and as a whole row in Tools, every Daily Archive and
+ * the Total Archive, plus an entry in the Tracklist. Songs below it move down one row everywhere; their
  * Tracklist rows are renumbered to match.
  *
  * The whole batch is validated first. If any row has a problem, nothing
@@ -250,6 +250,13 @@ function planPendingSongs(entries) {
     knownTitles[e.category + '|' + e.title.toLowerCase()] = true;
   });
 
+  // Sheets can't shift a block of columns past a merged cell that crosses its edge.
+  const targets = entries.filter(e => e.targetRow).map(e => e.targetRow);
+  if (targets.length) {
+    const top = Math.min.apply(null, targets);
+    mergesInTheWay(ss.getSheetByName(CONFIG.SHEETS.LATEST), top, 1, 16).forEach(p => blockers.push(p));
+  }
+
   return { blockers: blockers, entries: entries };
 }
 
@@ -267,20 +274,23 @@ function insertSongRow(e) {
 
   // --- 1. Open the row everywhere ---
   [latest].concat(archives).forEach(sheet => insertRowAt(sheet, row));
-  tools.getRange(row, 10, 1, 4).insertCells(SpreadsheetApp.Dimension.ROWS);   // J:M only
+  // A whole row in Tools as well: the raw import below simply shifts down, and the next import
+  // clears and rewrites it anyway. Shifting only J:M would break on any merged cell in the way.
+  insertRowAt(tools, row);
 
   // A neighbouring song row to copy formulas and formatting from.
   const template = row - 1 >= first ? row - 1 : row + 1;
 
   // --- 2. Latest: formulas and formats from the neighbour, values cleared, then the song's own ---
-  copyFormulasOnly(latest, template, row, 1, 16);
+  copyFormulasOnly(latest, template, row, 1, CONFIG.LATEST.COPIED_COLUMNS);
   latest.getRange(row, 1).setValue(e.coverKey);
   latest.getRange(row, CONFIG.LATEST.COLS.TITLE).setValue(e.title);
   latest.getRange(row, CONFIG.LATEST.COLS.TOTAL, 1, 2).setValues([[0, 0]]);
 
-  // --- 3. Tools: the daily formula from the neighbour; the total comes from Match Totals ---
-  copyFormulasOnly(tools, template, row, 10, 4);
-  tools.getRange(row, 10, 1, 2).setValues([[e.album || e.category, e.spotifyTitle || e.title]]);
+  // --- 3. Tools: K:M only (J is a merged separator column). The daily formula comes from the
+  // neighbouring row; the total is filled in by Match Totals.
+  copyFormulasOnly(tools, template, row, CONFIG.TOOLS.SPOTIFY_TITLE_COLUMN, 3);
+  tools.getRange(row, CONFIG.TOOLS.SPOTIFY_TITLE_COLUMN).setValue(e.spotifyTitle || e.title);
 
   // --- 4. Archives: just the title; there is no history yet ---
   archives.forEach(sheet => sheet.getRange(row, 1).setValue(e.title));
@@ -329,7 +339,12 @@ function insertRowAt(sheet, row) {
 function copyFormulasOnly(sheet, fromRow, toRow, col, width) {
   const source = sheet.getRange(fromRow, col, 1, width);
   const target = sheet.getRange(toRow, col, 1, width);
-  source.copyTo(target, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  try {
+    source.copyTo(target, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  } catch (error) {
+    // Only formatting is copied here, so a merge in the way is worth a note, not a failed run.
+    console.warn('Copying formatting from ' + sheet.getName() + ' row ' + fromRow + ' to ' + toRow + ' failed: ' + error.message);
+  }
   const formulas = source.getFormulasR1C1()[0];
   const out = formulas.map(f => f || '');
   target.setFormulasR1C1([out]);
@@ -341,3 +356,32 @@ function writePendingResults(pending, results) {
   pending.entries.forEach((e, i) => pending.sheet.getRange(e.sheetRow, col).setValue(results[i] || ''));
 }
 
+
+
+/**
+ * Sheets refuses to shift part of a row when a merged cell crosses the edge of the block being
+ * shifted ("cannot cut or paste part of a merged cell"). This finds those merges before anything
+ * is changed, so a run stops with an explanation instead of halfway through.
+ * @param {Sheet} sheet
+ * @param {number} fromRow - The topmost row that will be shifted down.
+ * @param {number} col - First column of the block being shifted.
+ * @param {number} width - How many columns it covers.
+ * @return {Array<string>} One message per merge in the way.
+ */
+function mergesInTheWay(sheet, fromRow, col, width) {
+  const lastRow = sheet.getLastRow();
+  if (!sheet || lastRow < fromRow) return [];
+  const lastCol = Math.max(sheet.getLastColumn(), col + width - 1);
+  const problems = [];
+  sheet.getRange(fromRow, 1, lastRow - fromRow + 1, lastCol).getMergedRanges().forEach(m => {
+    const first = m.getColumn(), last = first + m.getNumColumns() - 1;
+    const overlaps = last >= col && first <= col + width - 1;
+    const inside = first >= col && last <= col + width - 1;
+    if (overlaps && !inside) {
+      problems.push(sheet.getName() + ': the merged cells at ' + m.getA1Notation() + ' stick out of columns ' +
+        columnToLetter(col) + ':' + columnToLetter(col + width - 1) + ', the block that has to shift down. ' +
+        'Unmerge them, or keep the merge inside that block, and try again.');
+    }
+  });
+  return problems;
+}

@@ -17,6 +17,7 @@ function onOpen() {
       .addItem('🔍 Find New Tracks', 'findNewTracksMenu')
       .addItem('➕ Add Pending Songs', 'addPendingSongsMenu')
       .addItem('🖼️ Fill Missing Covers', 'fillMissingCoversMenu')
+      .addItem('🗂️ Add New Categories', 'addCategoriesMenu')
       .addSeparator()
       .addItem('Update Auxiliary Stats', 'updateStats')
       .addItem('Update Best-Since-Days', 'transferBestSinceRows')
@@ -31,6 +32,7 @@ function onOpen() {
   if (!ss.getSheetByName(CONFIG.SHEETS.CATEGORIES)) { setup.addItem('Create Categories sheet', 'createCategoriesSheet'); setupNeeded = true; }
   if (!ss.getSheetByName(CONFIG.SHEETS.PENDING)) { setup.addItem('Create Pending sheet', 'createPendingSheet'); setupNeeded = true; }
   if (!ss.getSheetByName(CONFIG.SHEETS.IGNORED)) { setup.addItem('Create Ignored sheet', 'createIgnoredSheet'); setupNeeded = true; }
+  if (!ss.getSheetByName(CONFIG.SHEETS.SOURCES)) { setup.addItem('Create Sources sheet', 'createSourcesSheet'); setupNeeded = true; }
   if (setupNeeded) updateMenu.addSeparator().addSubMenu(setup);
   updateMenu.addToUi();
 

@@ -113,6 +113,34 @@ function createPendingSheet() {
 
 
 /**
+ * [MENU] Creates the Sources sheet from CONFIG.APIFY.ALBUMS, after which the importer reads the
+ * album URLs from there and a new release needs no code change.
+ */
+function createSourcesSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ui = SpreadsheetApp.getUi();
+  const name = CONFIG.SHEETS.SOURCES;
+  if (ss.getSheetByName(name)) {
+    ui.alert('Nothing changed', `The "${name}" sheet already exists.`, ui.ButtonSet.OK);
+    return;
+  }
+
+  const h = CONFIG.SOURCES_SHEET.HEADERS;
+  const rows = Object.keys(CONFIG.APIFY.ALBUMS).map(albumName => [albumName, CONFIG.APIFY.ALBUMS[albumName]]);
+  const sheet = ss.insertSheet(name);
+  sheet.getRange(1, 1, 1, 2).setValues([[h.name, h.url]]).setFontWeight('bold');
+  sheet.getRange(2, 1, rows.length, 2).setValues(rows);
+  sheet.setFrozenRows(1);
+  sheet.setColumnWidth(1, 320);
+  sheet.setColumnWidth(2, 420);
+
+  ui.alert('Sources sheet created' + envTag(),
+    `${rows.length} albums copied in. The next import reads its URLs from here, so a new release just needs a row - no code change.\n\n` +
+    'Only open.spotify.com/album/... links; the same album twice is refused.', ui.ButtonSet.OK);
+}
+
+
+/**
  * [MENU] Creates the Ignored sheet, starting it with every track in the current import that isn't
  * tracked or waiting in Pending - other artists on soundtracks, other editions of an album - so
  * that Find New Tracks only reports what is genuinely new from then on.

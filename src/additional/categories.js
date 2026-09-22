@@ -37,23 +37,26 @@ function getCategories() {
 
 /**
  * Reads and validates the Categories sheet without throwing.
- * @return {{categories: Array, problems: Array<string>}}
+ * A row with a name but no row number is one waiting to be added (Update → Add New Categories);
+ * it is listed in `pending` and is not a problem.
+ * @return {{categories: Array, pending: Array, problems: Array<string>}}
  */
 function readCategories() {
   const name = CONFIG.SHEETS.CATEGORIES;
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
-  if (!sheet) return { categories: [], problems: [`The "${name}" sheet is missing - run Update → Setup → Create Categories sheet.`] };
+  if (!sheet) return { categories: [], pending: [], problems: [`The "${name}" sheet is missing - run Update → Setup → Create Categories sheet.`] };
 
   const values = sheet.getDataRange().getValues();
   let col;
   try {
     col = findHeaderColumns(values[0], CONFIG.CATEGORIES_SHEET.HEADERS, name);
   } catch (error) {
-    return { categories: [], problems: [error.message] };
+    return { categories: [], pending: [], problems: [error.message] };
   }
 
   const layout = CONFIG.LAYOUT;
   const categories = [];
+  const pending = [];
   const problems = [];
   const nameOfRow = {};
   const seenNames = {};
@@ -71,6 +74,12 @@ function readCategories() {
 
     if (seenNames[catName]) { problems.push(`${name}: "${catName}" is listed twice.`); continue; }
     seenNames[catName] = true;
+
+    // No row yet: it is waiting for Add New Categories, which works out where it goes.
+    if (String(r[col.row]).trim() === '') {
+      pending.push({ sheetRow: i + 1, name: catName, type: type, summaryCell: summaryCell, summaryLimit: summaryLimit });
+      continue;
+    }
     if (!Number.isInteger(row) || row <= layout.SOLO_ROW || row > layout.LAST_AGGREGATE_ROW) {
       problems.push(`${name}: "${catName}" has row "${r[col.row]}"; categories go in rows ${layout.SOLO_ROW + 1}-${layout.LAST_AGGREGATE_ROW}.`);
       continue;
@@ -96,7 +105,7 @@ function readCategories() {
   }
 
   categories.sort((a, b) => a.row - b.row);
-  return { categories: categories, problems: problems };
+  return { categories: categories, pending: pending, problems: problems };
 }
 
 /**

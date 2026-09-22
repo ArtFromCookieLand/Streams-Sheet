@@ -125,7 +125,8 @@ needed. The code assumes the new layout. A row means the same thing in Latest, T
 | 2 | Total Artist Streams (`=SUM` over every song row) | `LAYOUT.TOTAL_ROW` |
 | 3 | Total Artist Solo Streams = row 2 − Features | `LAYOUT.SOLO_ROW`, `SOLO_EXCLUDES` |
 | 4–27 | The 24 categories | `row` in the Categories sheet |
-| 28–49 | Spare rows for new categories (hidden in Latest from 36) | `LAYOUT.LAST_AGGREGATE_ROW` |
+| 28–48 | Spare rows for new categories (hidden in Latest from 36) | `LAYOUT.LAST_AGGREGATE_ROW` |
+| 49 | The songs' header row in Latest (merged A:O), blank in the other sheets. Nothing is written to it: updates write the aggregate rows and the song rows as two blocks (`layoutBlocks()`) | |
 | 50 → | Songs, open-ended | `LAYOUT.FIRST_SONG_ROW` |
 
 - **There is no fixed song count.** The last song row is the highest Tracklist `row`
@@ -145,11 +146,17 @@ needed. The code assumes the new layout. A row means the same thing in Latest, T
   and after songs are added. Never hand-edit them; they are overwritten. H–L on those rows are
   still sheet formulas on the same row.
 - **Latest** also keeps 8 special-edition totals (tlpss, folklore standard, … showgirl era) as a
-  small sheet-side table at **T28:AB35**. Only the Albums sheet reads them; the code never does.
+  small sheet-side table in **T:AB**, beside the album rows. Only the Albums sheet reads them; the
+  code never does, and inserts never move them (they shift A:P only).
+- **Merged cells must not cross A:P in Latest.** Only Latest shifts part of a row when a row is
+  inserted (so the side table beside the songs stays put), and Sheets refuses to shift part of a
+  merged cell. A merge inside A:P is fine (the songs' header row 49). `mergesInTheWay()` checks it
+  before anything is changed, and the Merged cells check reports it. Tools, the archives and the
+  Total Archive take whole rows, so merges there don't matter.
 - **New songs go in through the Pending sheet** and **Update → Add Pending Songs**
   (`src/songs/add_songs.js`). Never insert song rows by hand. It inserts whole rows in Latest,
-  every Daily Archive and the Total Archive, and J:M only in Tools (whose raw import in E:H sits
-  beside the song columns). It then adds 1 to every Tracklist `row` at or below the insert.
+  every Daily Archive and the Total Archive, and whole rows in Tools (its raw import simply shifts down; the
+  next import rewrites it anyway). It then adds 1 to every Tracklist `row` at or below the insert.
 
 ### Column conventions on `Latest`
 
@@ -280,6 +287,15 @@ the Tracklist's (`CONFIG.CATEGORIES_SHEET.HEADERS`); the sheet's own order doesn
 | `summaryCell` | Albums-sheet cell for its text summary; blank = no summary |
 | `summaryLimit` | Summary considers only the first N songs; blank = all |
 
+A row with a name but **no `row`** is one waiting to be added: **Update → 🗂️ Add New Categories**
+(`src/songs/add_category.js`) gives it a row after the last category of its own type (studio after
+the last studio album, other after the last compilation, fixed at the end), opens that row in Latest
+(A:P cells only, so the T:AB side table stays put), every Daily Archive and the Total Archive, and
+deletes one spare row just above the songs so the songs never move. It renumbers the Categories
+sheet, rebuilds today's archive column, Latest's album formulas and the Total Archive's, then runs
+the checks. It refuses unless the rows line up and the spare rows really are empty. What it can't
+do: widen the Albums sheet's studio-albums chart, place the summary, or add the album's URL.
+
 Rows must run studio, then other, then fixed; the Categories check enforces it. A new category
 (phase 5, not built yet) is meant to go after the last of its type.
 
@@ -305,6 +321,14 @@ before adding a new album's URL**, or that album's tracks are ignored along with
 Columns: `trackId`, `Spotify Title`, `album`, `reason`, `date`. Rows are only ever appended
 (by Find New Tracks for same-recording duplicates, and by Add Pending Songs for `ignore` rows).
 To start tracking an ignored track, delete its row here and add it through Pending.
+
+### `Sources` — the album URLs to scrape
+
+Created once by **Update → Setup → Create Sources sheet**, seeded from `CONFIG.APIFY.ALBUMS`
+(which stays in the code only as that seed). Columns `name` and `url`; the importer reads it
+through `readSources()` (`src/apify/sources.js`), so **a new release needs a row here, not a code
+change**. Only `open.spotify.com/album/…` links are accepted, and the same album twice is refused.
+Until the sheet exists the config map is used and the Sources check warns.
 
 ### Finding new tracks
 
@@ -389,7 +413,8 @@ Pending sheet (see the row-layout contract), which keeps every block contiguous.
 | --- | --- |
 | `C1` | `SUM_OF_DAILYS` — the freshness guard `main()` aborts on when `<= 0` |
 | `E2:I1000` | **Raw Apify dump**, written by `importSpotifyData()`: E album, F name, G stream count, H track ID, I album cover URL (300px, from the actor's `coverArt`). Cleared and rewritten each import |
-| `J50:M` | **Mapping block**, one row per song row — J = album/era, K = Spotify name, L = total (**written** by `matchTotalsById()`), M = daily (sheet formula) |
+| `J` | A merged separator column between the raw import and the mapping block (it used to hold the album/era, dropped once covers took column I). **Never write to it, and never shift part of it** — both fail on a merged cell |
+| `K50:M` | **Mapping block**, one row per song row — K = Spotify name, L = total (**written** by `matchTotalsById()`), M = daily (sheet formula) |
 
 The raw dump holds **more tracks than are tracked** (roughly 700+, varying per import). Apify
 scrapes whole albums, and several albums in `CONFIG.APIFY.ALBUMS` (compilations, soundtracks,
@@ -419,10 +444,12 @@ indices matter, because the summary and milestone code reads by number, not by h
 | L | 12 | Best-since date — **written** by `findBestSince()` | same |
 | M / N | 13 / 14 | Daily a day ago / a week ago — **written** by `updateStats()` | same |
 | O | 15 | Previous day's rank | — |
-| P | 16 | Cover URL (`VLOOKUP` into Covers) — redundant with D; the owner plans to clear it | same |
+| P | 16 | Unused: it held a second cover lookup, redundant with D, and has been cleared. New rows leave it blank (`LATEST.COPIED_COLUMNS` copies A:O only) | same |
 
-Rows 28–35 hold the special-edition side table in **T:AB** (T title, U total, V daily, W/X %,
-Y best since, Z/AA change, AB URL), which is sheet-side and read only by the Albums sheet.
+The special-edition side table (tlpss, folklore standard, … showgirl era) sits in **T:AB** beside
+the album rows, from row 2 down (T title, U total, V daily, W/X %, Y best since, Z/AA change,
+AB URL). It is sheet-side and read only by the Albums sheet. Inserts only ever shift A:P in Latest,
+so the table stays where it is even when categories move - it does not follow its albums.
 
 `Q1` (`DATE_CELL`) holds the update date and is incremented by `transferStats()`.
 

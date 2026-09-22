@@ -49,6 +49,12 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 2.0.0.6 (22/9/26)
+    * New albums and categories: put the name and type in the **Categories** sheet, leave the row empty, and run **Update → Add New Categories**. It gives the category a row after the last one of its type — a studio album after the last album, a compilation after the last live album — opens that row in Latest and every archive, moves the categories below down one, uses up a spare row so the songs never move, and rebuilds every total, including the Total Archive's history.
+    * The album URLs to scrape moved from the code into a **Sources** sheet, so a new release needs a row in a sheet rather than a code change.
+    * The layout now knows about the header row above the songs (row 49): updates write the album rows and the song rows as two blocks and never touch it.
+    * Inserting a row no longer shifts part of a row in Tools, so merged cells there (the separator column J) can't break it. Tools' raw import just moves down and is rewritten on the next import. In Latest, where part of a row still shifts, merged cells in the way are reported before anything changes, and a new **Merged cells** check warns in advance.
+    * New rows no longer fill in column P, which is no longer used.
 * 2.0.0.5 (22/9/26)
     * New cover keys get their Covers row automatically, with the key, the image formula and the URL. The URL is the cover of the album the track was scraped from, which the import now keeps in Tools!I, or else Spotify's embed lookup for the track. This happens when songs are added, and when an upcoming song turns up on Spotify. **Update → Fill Missing Covers** does the same for the whole Tracklist.
     * Existing covers are never changed; to use a different image, edit the URL in Covers.

@@ -39,8 +39,10 @@ function importSpotifyData() {
   try {
     // --- 1. PREPARE INPUT ---
     
-    // Extract just the URLs (Values) from the Config Dictionary
-    const albumUrlList = Object.values(CONFIG.APIFY.ALBUMS);
+    // The albums to scrape: the Sources sheet, or CONFIG.APIFY.ALBUMS until it exists.
+    const sources = readSources();
+    if (sources.problems.length) throw new Error(`${CONFIG.SHEETS.SOURCES} sheet:\n• ` + sources.problems.join('\n• '));
+    const albumUrlList = sources.urls;
 
     // Convert to Apify Object Format: { "url": "..." }
     const urlObjects = albumUrlList.map(link => {
@@ -121,7 +123,9 @@ function importSpotifyData() {
     // Success Message
     ui.alert(
       'Import finished',
-      `Imported ${flatTrackList.length} tracks.\n\n` + describeMatchResult(matchResult) + '\n\n' + newTracksText,
+      `Imported ${flatTrackList.length} tracks from ${albumUrlList.length} albums` +
+      (sources.from === 'config' ? ' (album list still from the code - run Update → Setup → Create Sources sheet).' : '.') +
+      '\n\n' + describeMatchResult(matchResult) + '\n\n' + newTracksText,
       ui.ButtonSet.OK
     );
 

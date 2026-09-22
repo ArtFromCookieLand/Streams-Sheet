@@ -25,6 +25,8 @@ const HEALTH_CHECKS = [
   { name: 'Aggregate formulas', run: checkAggregateFormulas },
   { name: 'Import',             run: checkImport },
   { name: 'New tracks',         run: checkNewTracks },
+  { name: 'Sources',            run: checkSources },
+  { name: 'Merged cells',       run: checkMerges },
   { name: 'Latest vs Tools',    run: checkLatestVsTools },
   { name: 'Date sequence',      run: checkDateSequence },
   { name: 'Covers',             run: checkCovers },
@@ -540,4 +542,32 @@ function checkNewTracks(data) {
     };
   }
   return { status: CHECK_STATUS.OK, summary: 'Every track in the import is tracked, pending or ignored.' };
+}
+
+
+function checkSources() {
+  const sources = readSources();
+  if (sources.problems.length) {
+    return { status: CHECK_STATUS.FAIL, summary: `${sources.problems.length} problem(s) with the album list.`, details: sources.problems };
+  }
+  if (sources.from === 'config') {
+    return {
+      status: CHECK_STATUS.WARN,
+      summary: `The ${sources.urls.length} album URLs still come from config.js. Run Update → Setup → Create Sources sheet to move them into the sheet.`
+    };
+  }
+  return { status: CHECK_STATUS.OK, summary: `${sources.urls.length} album URLs in the ${CONFIG.SHEETS.SOURCES} sheet.` };
+}
+
+
+/**
+ * Latest's A:P is shifted on its own when a song or category row is inserted, so a merged cell
+ * crossing that edge would stop the insert. Worth knowing about before it happens.
+ */
+function checkMerges(data) {
+  const problems = mergesInTheWay(data.sheet(CONFIG.SHEETS.LATEST), CONFIG.LAYOUT.TOTAL_ROW, 1, 16);
+  if (problems.length) {
+    return { status: CHECK_STATUS.FAIL, summary: `${problems.length} merged cell(s) would block inserting a row.`, details: problems };
+  }
+  return { status: CHECK_STATUS.OK, summary: 'No merged cells in the way of inserting rows.' };
 }

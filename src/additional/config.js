@@ -36,6 +36,7 @@ const CONFIG = {
     CATEGORIES: 'Categories',       // One row per category (src/additional/categories.js)
     PENDING: 'Pending',             // Songs waiting to be added (src/songs/add_songs.js)
     IGNORED: 'Ignored',             // Track IDs in the import that are deliberately not tracked
+    SOURCES: 'Sources',             // The Spotify album URLs to scrape (src/apify/sources.js)
     TOTAL_ARCHIVE: 'Total Archive'  // Hand-kept cumulative backup; the script only reads it (checks)
   },
 
@@ -90,6 +91,15 @@ const CONFIG = {
     IGNORE_STATUS: 'ignore'
   },
 
+  // --- Sources sheet (see src/apify/sources.js) ---
+  // The album URLs the importer scrapes. CONFIG.APIFY.ALBUMS below is only the seed for it.
+  SOURCES_SHEET: {
+    HEADERS: {
+      name: 'name',
+      url: 'url'
+    }
+  },
+
   // --- Ignored sheet (see src/songs/detect_new.js) ---
   IGNORED_SHEET: {
     HEADERS: {
@@ -107,12 +117,14 @@ const CONFIG = {
   //   2       Total Artist Streams
   //   3       Total Artist Solo Streams (the total minus SOLO_EXCLUDES)
   //   4-27    the categories (Categories sheet); up to LAST_AGGREGATE_ROW is spare for new ones
+  //   49      a header row above the songs in Latest (merged A:O). Nothing is written to it, and
+  //           the other sheets just leave it blank.
   //   50 ->   songs, open-ended. The last song row is the highest `row` in the Tracklist.
   LAYOUT: {
     TOTAL_ROW: 2,
     SOLO_ROW: 3,
     SOLO_EXCLUDES: 'Features',
-    LAST_AGGREGATE_ROW: 49,
+    LAST_AGGREGATE_ROW: 48,     // last row a category may use; 49 is the songs' header row
     FIRST_SONG_ROW: 50
   },
 
@@ -128,6 +140,7 @@ const CONFIG = {
   // --- Range Definitions ---
   TOOLS: {
     RAW_DATA: 'E2:I1000',       // Raw import: E album, F Spotify name, G stream count, H track ID, I album cover URL
+    SPOTIFY_TITLE_COLUMN: 11,   // Col K - Spotify's own name for the song, for humans
     TOTALS_COLUMN: 12,          // Col L - each song's total, written by matchTotalsById()
     DAILY_COLUMN: 13,           // Col M - each song's daily (sheet formula)
     // Written into Col L for a song whose track ID is missing from the import. It breaks the
@@ -148,7 +161,10 @@ const CONFIG = {
       BEST_SINCE: 12,           // L - written by findBestSince()
       DAY_AGO: 13,              // M - written by updateStats()
       WEEK_AGO: 14              // N - written by updateStats()
-    }
+    },
+    // Columns copied from the neighbouring row when a row is inserted: A:O. P is left out on
+    // purpose - it held a second cover lookup that is not used any more (the cover comes from D).
+    COPIED_COLUMNS: 15
   },
   ARCHIVE: {
     YESTERDAY_COLUMN: 3,        // Col C - newest first, so C is yesterday

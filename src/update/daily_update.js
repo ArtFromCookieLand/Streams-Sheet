@@ -73,16 +73,15 @@ function updateStats(dailyArchiveSheet, latestSheet) {
     latestSheet = ss.getSheetByName(CONFIG.SHEETS.LATEST);
   }
 
-  var firstRow = CONFIG.LAYOUT.TOTAL_ROW;
-  var numRows = getLastSongRow() - firstRow + 1;
+  // The aggregate rows and the song rows are copied as two blocks, so nothing is written to the
+  // header row between them (merged in Latest).
+  layoutBlocks().forEach(function (block) {
+    var archiveColC = dailyArchiveSheet.getRange(block.first, CONFIG.ARCHIVE.YESTERDAY_COLUMN, block.count, 1).getValues();
+    latestSheet.getRange(block.first, CONFIG.LATEST.COLS.DAY_AGO, block.count, 1).setValues(archiveColC);
 
-  // Copy yesterday's streams (Col C)
-  var archiveColC = dailyArchiveSheet.getRange(firstRow, CONFIG.ARCHIVE.YESTERDAY_COLUMN, numRows, 1).getValues();
-  latestSheet.getRange(firstRow, CONFIG.LATEST.COLS.DAY_AGO, numRows, 1).setValues(archiveColC);
-
-  // Copy streams from a week ago (Col I)
-  var archiveColI = dailyArchiveSheet.getRange(firstRow, CONFIG.ARCHIVE.WEEK_AGO_COLUMN, numRows, 1).getValues();
-  latestSheet.getRange(firstRow, CONFIG.LATEST.COLS.WEEK_AGO, numRows, 1).setValues(archiveColI);
+    var archiveColI = dailyArchiveSheet.getRange(block.first, CONFIG.ARCHIVE.WEEK_AGO_COLUMN, block.count, 1).getValues();
+    latestSheet.getRange(block.first, CONFIG.LATEST.COLS.WEEK_AGO, block.count, 1).setValues(archiveColI);
+  });
 
   // Continue workflow
   transferBestSinceRows(dailyArchiveSheet, latestSheet);
@@ -110,15 +109,29 @@ function transferBestSinceRows(dailyArchiveSheet, latestSheet) {
   // Ensure this list in Config is ordered: ['2026', '2025', '2024']
   var archiveSheetNames = CONFIG.SHEETS.ARCHIVE_YEARS;
 
-  var firstRow = CONFIG.LAYOUT.TOTAL_ROW;
-  findBestSince(
-    dailyArchiveSheet,   // Source of Truth (Today's value)
-    archiveSheetNames,   // List of sheets to search through
-    latestSheet,         // Where to write results
-    firstRow,
-    getLastSongRow() - firstRow + 1,
-    CONFIG.LATEST.COLS.BEST_SINCE
-  );
+  layoutBlocks().forEach(function (block) {
+    findBestSince(
+      dailyArchiveSheet,   // Source of Truth (Today's value)
+      archiveSheetNames,   // List of sheets to search through
+      latestSheet,         // Where to write results
+      block.first,
+      block.count,
+      CONFIG.LATEST.COLS.BEST_SINCE
+    );
+  });
+}
+
+
+/**
+ * The two blocks of rows that hold figures, with the header row between them left out:
+ * the aggregates (row 2 to the last category) and the songs (row 50 to the last one).
+ * @return {Array<{first: number, count: number}>}
+ */
+function layoutBlocks() {
+  return [
+    { first: CONFIG.LAYOUT.TOTAL_ROW, count: getLastCategoryRow() - CONFIG.LAYOUT.TOTAL_ROW + 1 },
+    { first: CONFIG.LAYOUT.FIRST_SONG_ROW, count: getSongRowCount() }
+  ];
 }
 
 
