@@ -68,7 +68,7 @@ function generateSummaries() {
     rowsByCategory[s.category].push(s.row);
   });
 
-  for (const category of CONFIG.CATEGORIES) {
+  for (const category of getCategories()) {
     if (!category.summaryCell) continue;
     const albumName = category.name;
     let summaryLines = [];
@@ -215,15 +215,16 @@ function generateDiscographySummary() {
   summaryLines.push("");
 
   // --- 2. EXTRACT ALBUMS DATA ---
-  // Albums only. Deriving this from the number of summarised albums used to make the scan
-  // 17 rows wide, which reached row 18 (Droplets) and grew with every album added.
-  const albumsCount = CONFIG.LATEST.DISCOGRAPHY_ALBUMS_COUNT;
-  const albumsStartRow = CONFIG.LATEST.DISCOGRAPHY_FIRST_ROW;
-  
+  // Studio albums and re-recordings only (type "studio" in the Categories sheet) - never Droplets,
+  // the live and compilation albums, Soundtracks, Remixes or Features.
+  const studioRows = getCategories().filter(c => c.type === 'studio').map(c => c.row);
+  const firstRow = CONFIG.LAYOUT.TOTAL_ROW;
   // E (title) to L (best since) - the same columns as the song rows.
-  const albumsDataRange = latestSheet.getRange(albumsStartRow, CONFIG.LATEST.COLS.TITLE, albumsCount, 8);
-  const albumsData = albumsDataRange.getValues();
-  const albumsDisplayData = albumsDataRange.getDisplayValues();
+  const albumsDataRange = latestSheet.getRange(firstRow, CONFIG.LATEST.COLS.TITLE, getLastCategoryRow() - firstRow + 1, 8);
+  const allAlbumData = albumsDataRange.getValues();
+  const allAlbumDisplayData = albumsDataRange.getDisplayValues();
+  const albumsData = studioRows.map(row => allAlbumData[row - firstRow]);
+  const albumsDisplayData = studioRows.map(row => allAlbumDisplayData[row - firstRow]);
 
   let maxPercent = -Infinity;
   let biggestGainer = null;

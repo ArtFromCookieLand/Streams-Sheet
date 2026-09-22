@@ -38,6 +38,24 @@ function transferStats() {
   // Tools L:M (total, daily) -> Latest F:G, song rows only. The album rows in Latest are formulas.
   var toolsData = toolsSheet.getRange(firstSongRow, CONFIG.TOOLS.TOTALS_COLUMN, songRows, 2).getValues();
   latestSheet.getRange(firstSongRow, CONFIG.LATEST.COLS.TOTAL, songRows, 2).setValues(toolsData);
+
+  // --- 6. Album totals in Latest, from the Tracklist ---
+  setLatestAggregateFormulas(latestSheet);
+}
+
+
+/**
+ * Writes Latest's album/category totals and dailies (F and G, rows 2 to the last category) as
+ * sums over the Tracklist's categories - the same formulas the archives get, for columns F and G.
+ * Rewritten on every update and after songs are added, so a new song is always counted.
+ * The other album columns (H-L) are sheet formulas on the same row and follow on their own.
+ */
+function setLatestAggregateFormulas(latestSheet) {
+  latestSheet = latestSheet || SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.LATEST);
+  const totals = buildAlbumFormulas('F');
+  const dailies = buildAlbumFormulas('G');
+  const both = totals.map((t, i) => [t[0], dailies[i][0]]);
+  latestSheet.getRange(CONFIG.LAYOUT.TOTAL_ROW, CONFIG.LATEST.COLS.TOTAL, both.length, 2).setFormulas(both);
 }
 
 
@@ -209,14 +227,15 @@ function buildAlbumFormulas(column) {
   const layout = CONFIG.LAYOUT;
   const rowsByCategory = getRowsByCategory();
 
-  const configured = CONFIG.CATEGORIES.map(c => c.name);
+  const categories = getCategories();
+  const configured = categories.map(c => c.name);
   Object.keys(rowsByCategory).forEach(name => {
     if (configured.indexOf(name) === -1) {
-      throw new Error(`The ${CONFIG.SHEETS.SONGS} sheet uses category "${name}", which is not in CONFIG.CATEGORIES.`);
+      throw new Error(`The ${CONFIG.SHEETS.SONGS} sheet uses category "${name}", which is not in the ${CONFIG.SHEETS.CATEGORIES} sheet.`);
     }
   });
 
-  const lastRow = Math.max.apply(null, CONFIG.CATEGORIES.map(c => c.row));
+  const lastRow = getLastCategoryRow();
   const formulas = [];
   for (let r = layout.TOTAL_ROW; r <= lastRow; r++) formulas.push(['']);
   const put = (row, formula) => {
@@ -228,11 +247,11 @@ function buildAlbumFormulas(column) {
 
   // Artist total over the whole song range, and the solo total (the artist total minus one category).
   put(layout.TOTAL_ROW, `=SUM(${column}${layout.FIRST_SONG_ROW}:${column}${getLastSongRow()})`);
-  const excluded = CONFIG.CATEGORIES.filter(c => c.name === layout.SOLO_EXCLUDES)[0];
+  const excluded = categories.filter(c => c.name === layout.SOLO_EXCLUDES)[0];
   if (!excluded) throw new Error(`CONFIG.LAYOUT.SOLO_EXCLUDES names "${layout.SOLO_EXCLUDES}", which is not a category.`);
   put(layout.SOLO_ROW, `=${column}${layout.TOTAL_ROW}-${column}${excluded.row}`);
 
-  CONFIG.CATEGORIES.forEach(c => {
+  categories.forEach(c => {
     if (c.row <= layout.SOLO_ROW || c.row > layout.LAST_AGGREGATE_ROW) {
       throw new Error(`Category "${c.name}" has row ${c.row}; categories go in rows ${layout.SOLO_ROW + 1}-${layout.LAST_AGGREGATE_ROW}.`);
     }

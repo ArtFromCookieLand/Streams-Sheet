@@ -9,6 +9,8 @@
  *   active song, ID found    -> its stream count
  *   active song, ID missing  -> CONFIG.TOOLS.MISSING_MARKER, which makes
  *                               C1 an error so main() refuses to run
+ *   upcoming song            -> its stream count once the ID is in the
+ *                               import, 0 until then (never a marker)
  *   retired song             -> 0
  *
  * It only reads the raw import, so it can be re-run at no Apify cost -
@@ -57,13 +59,19 @@ function matchTotalsById() {
   // --- 2. Work out each song's total ---
   const songs = getSongs();
   const totalByRow = {};
-  const result = { matched: 0, retired: 0, missing: [] };
+  const result = { matched: 0, retired: 0, upcoming: 0, nowLive: [], missing: [] };
 
   songs.forEach(s => {
+    const found = s.trackId && countById.hasOwnProperty(s.trackId);
     if (s.status === SONG_STATUS.RETIRED) {
       totalByRow[s.row] = 0;
       result.retired++;
-    } else if (s.trackId && countById.hasOwnProperty(s.trackId)) {
+    } else if (s.status === SONG_STATUS.UPCOMING) {
+      // Not out yet: 0 until its ID turns up, then counted like any other song.
+      totalByRow[s.row] = found ? countById[s.trackId] : 0;
+      if (found) result.nowLive.push({ row: s.row, title: s.title });
+      else result.upcoming++;
+    } else if (found) {
       totalByRow[s.row] = countById[s.trackId];
       result.matched++;
     } else {
@@ -95,8 +103,17 @@ function matchTotalsById() {
  * @return {string} A message for a dialog.
  */
 function describeMatchResult(result) {
-  let text = `Matched ${result.matched} songs by track ID` +
-    (result.retired ? ` (${result.retired} retired, held at 0).` : '.');
+  const held = [];
+  if (result.retired) held.push(`${result.retired} retired`);
+  if (result.upcoming) held.push(`${result.upcoming} upcoming`);
+  let text = `Matched ${result.matched + result.nowLive.length} songs by track ID` +
+    (held.length ? ` (${held.join(', ')}, held at 0).` : '.');
+
+  if (result.nowLive.length) {
+    const list = result.nowLive.map(m => `• row ${m.row}: ${m.title}`).join('\n');
+    text += `\n\n🎉 ${result.nowLive.length} upcoming song(s) are now on Spotify and counted:\n${list}\n` +
+      `Switch them to "active" in the ${CONFIG.SHEETS.SONGS} sheet once you're happy, so a missing ID is caught again.`;
+  }
 
   if (result.missing.length) {
     const list = result.missing.map(m => `• row ${m.row}: ${m.title}`).join('\n');

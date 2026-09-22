@@ -11,14 +11,19 @@
  * ignoring case and spaces. Extra columns are ignored.
  *
  * Status:
- *   active  - tracked normally, its total is matched by track ID
- *   retired - kept only for its archive history (e.g. a mix Spotify
- *             merged into the original). Held at 0 and left out of
- *             milestones and summaries.
+ *   active   - tracked normally, its total is matched by track ID; an ID
+ *              missing from the import stops the daily update
+ *   upcoming - added before release. The track ID may still be blank.
+ *              Held at 0 until its ID appears in an import, then counted
+ *              like an active song; never stops the update. Switch it to
+ *              active once it is out.
+ *   retired  - kept only for its archive history (e.g. a mix Spotify
+ *              merged into the original). Held at 0 and left out of
+ *              milestones and summaries.
  * ===================================================================
  */
 
-const SONG_STATUS = { ACTIVE: 'active', RETIRED: 'retired' };
+const SONG_STATUS = { ACTIVE: 'active', UPCOMING: 'upcoming', RETIRED: 'retired' };
 
 var _songsCache = null;
 
@@ -130,16 +135,28 @@ function getSongRowCount() {
  * @return {Object} e.g. { row: 0, status: 1, ... }
  */
 function findSongColumns(headerRow) {
+  return findHeaderColumns(headerRow, CONFIG.SONGS_SHEET.HEADERS, CONFIG.SHEETS.SONGS);
+}
+
+/**
+ * Finds each wanted column by its header, ignoring case and spaces. Shared by every sheet the
+ * code reads by header (Tracklist, Categories, Pending).
+ * @param {Array} headerRow - Row 1 of the sheet.
+ * @param {Object} headers - { key: 'Header text' }.
+ * @param {string} sheetName - For the error message.
+ * @return {Object} { key: column index }
+ */
+function findHeaderColumns(headerRow, headers, sheetName) {
   const normalize = h => String(h).toLowerCase().replace(/\s+/g, '');
-  const headers = headerRow.map(normalize);
+  const found = headerRow.map(normalize);
   const col = {};
 
-  for (const [key, header] of Object.entries(CONFIG.SONGS_SHEET.HEADERS)) {
-    const index = headers.indexOf(normalize(header));
+  for (const [key, header] of Object.entries(headers)) {
+    const index = found.indexOf(normalize(header));
     if (index === -1) {
       // Listing what is there makes a typo in a header obvious.
-      const found = headerRow.filter(h => String(h).trim()).map(h => `"${h}"`).join(', ');
-      throw new Error(`The ${CONFIG.SHEETS.SONGS} sheet has no "${header}" column in row 1. Row 1 has: ${found}.`);
+      const list = headerRow.filter(h => String(h).trim()).map(h => `"${h}"`).join(', ');
+      throw new Error(`The ${sheetName} sheet has no "${header}" column in row 1. Row 1 has: ${list}.`);
     }
     col[key] = index;
   }

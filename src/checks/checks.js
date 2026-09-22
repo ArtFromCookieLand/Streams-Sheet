@@ -28,7 +28,7 @@ const HEALTH_CHECKS = [
   { name: 'Date sequence',      run: checkDateSequence },
   { name: 'Covers',             run: checkCovers },
   { name: 'Spare category rows', run: checkSpareRows },
-  { name: 'Config',             run: checkConfig }
+  { name: 'Categories',         run: checkCategories }
 ];
 
 // Cheap, and each one catches damage a daily update could do. Run after every update.
@@ -128,10 +128,14 @@ function loadCheckData() {
       const songs = data.tracklist().songs;
       return songs.length ? songs[songs.length - 1].row : CONFIG.LAYOUT.FIRST_SONG_ROW - 1;
     }),
-    // Last aggregate row in use: the highest category row.
-    lastAggregateRow: Math.max.apply(null, CONFIG.CATEGORIES.map(c => c.row)),
+    categories: once('categories', readCategories),
     rawImport: once('rawImport', () => ss.getSheetByName(CONFIG.SHEETS.TOOLS).getRange(CONFIG.TOOLS.RAW_DATA).getValues())
   };
+  // Last aggregate row in use: the highest category row (the solo row if none can be read).
+  data.lastAggregateRow = once('lastAggregateRow', () => {
+    const cats = data.categories().categories;
+    return cats.length ? cats[cats.length - 1].row : CONFIG.LAYOUT.SOLO_ROW;
+  });
   const songRange = (sheet, col, width) =>
     sheet.getRange(data.firstSongRow, col, data.lastSongRow() - data.firstSongRow + 1, width).getValues();
 
@@ -139,7 +143,7 @@ function loadCheckData() {
   data.latestSongs = once('latestSongs', () => songRange(ss.getSheetByName(CONFIG.SHEETS.LATEST), 1, 16));
   // Latest E:G (title, total, daily) for the aggregate rows, from the artist total down
   data.latestAggregates = once('latestAggregates', () => ss.getSheetByName(CONFIG.SHEETS.LATEST)
-    .getRange(CONFIG.LAYOUT.TOTAL_ROW, CONFIG.LATEST.COLS.TITLE, data.lastAggregateRow - CONFIG.LAYOUT.TOTAL_ROW + 1, 3).getValues());
+    .getRange(CONFIG.LAYOUT.TOTAL_ROW, CONFIG.LATEST.COLS.TITLE, data.lastAggregateRow() - CONFIG.LAYOUT.TOTAL_ROW + 1, 3).getValues());
   data.toolsTotals = once('toolsTotals', () => songRange(ss.getSheetByName(CONFIG.SHEETS.TOOLS), CONFIG.TOOLS.TOTALS_COLUMN, 1).map(r => r[0]));
   data.songsByRow = once('songsByRow', () => {
     const byRow = {};
@@ -152,6 +156,11 @@ function loadCheckData() {
 
 // --- THE CHECKS ---
 
+// For checks that are meaningless without a readable Categories sheet.
+function categoriesUnreadable() {
+  return { status: CHECK_STATUS.FAIL, summary: `Can't read the ${CONFIG.SHEETS.CATEGORIES} sheet - see the Categories check.` };
+}
+
 // For checks that are meaningless without a readable Tracklist.
 function tracklistUnreadable() {
   return { status: CHECK_STATUS.FAIL, summary: `Can't read the ${CONFIG.SHEETS.SONGS} sheet - see the Tracklist check.` };
@@ -161,10 +170,10 @@ function checkTracklist(data) {
   const t = data.tracklist();
   const problems = t.problems.slice();
 
-  const known = CONFIG.CATEGORIES.map(c => c.name);
+  const known = data.categories().categories.map(c => c.name);
   t.songs.forEach(s => {
     if (s.category && known.indexOf(s.category) === -1) {
-      problems.push(`Row ${s.row} ("${s.title}") has category "${s.category}", which is not in CONFIG.CATEGORIES.`);
+      problems.push(`Row ${s.row} ("${s.title}") has category "${s.category}", which is not in the ${CONFIG.SHEETS.CATEGORIES} sheet.`);
     }
     if (s.status === SONG_STATUS.ACTIVE && !s.trackId) {
       problems.push(`Row ${s.row} ("${s.title}") is active but has no track ID.`);
@@ -174,8 +183,9 @@ function checkTracklist(data) {
   if (problems.length) {
     return { status: CHECK_STATUS.FAIL, summary: `${problems.length} problem(s) in the ${CONFIG.SHEETS.SONGS} sheet.`, details: problems };
   }
-  const retired = t.songs.filter(s => s.status === SONG_STATUS.RETIRED).length;
-  return { status: CHECK_STATUS.OK, summary: `${t.songs.length} songs (${t.songs.length - retired} active, ${retired} retired).` };
+  const count = st => t.songs.filter(s => s.status === st).length;
+  const upcoming = count(SONG_STATUS.UPCOMING);
+  return { status: CHECK_STATUS.OK, summary: `${t.songs.length} songs (${count(SONG_STATUS.ACTIVE)} active, ${upcoming ? upcoming + ' upcoming, ' : ''}${count(SONG_STATUS.RETIRED)} retired).` };
 }
 
 
@@ -219,6 +229,8 @@ function checkRowAlignment(data) {
 
 function checkTotals(data) {
   if (data.tracklist().songs.length === 0) return tracklistUnreadable();
+  if (data.categories().problems.length) return categoriesUnreadable();
+  const categories = data.categories().categories;
   const layout = CONFIG.LAYOUT;
   const songs = data.latestSongs();             // F = index 5, G = index 6
   const aggregates = data.latestAggregates();   // E, F, G from the artist total down
@@ -241,14 +253,14 @@ function checkTotals(data) {
     });
   };
 
-  CONFIG.CATEGORIES.forEach(c => {
+  categories.forEach(c => {
     const rows = rowsByCategory[c.name] || [];
     compare(c.name, c.row, songSum(rows, 5), songSum(rows, 6), 'its songs');
   });
   const allRows = data.tracklist().songs.map(s => s.row);
   compare('Total Artist Streams', layout.TOTAL_ROW, songSum(allRows, 5), songSum(allRows, 6), 'all songs');
 
-  const excluded = CONFIG.CATEGORIES.filter(c => c.name === layout.SOLO_EXCLUDES)[0];
+  const excluded = categories.filter(c => c.name === layout.SOLO_EXCLUDES)[0];
   if (excluded) {
     compare('Total Artist Solo Streams', layout.SOLO_ROW,
       inLatest(layout.TOTAL_ROW, 1) - inLatest(excluded.row, 1),
@@ -259,11 +271,12 @@ function checkTotals(data) {
   if (details.length) {
     return { status: CHECK_STATUS.FAIL, summary: `${details.length} album figure(s) in Latest don't match their songs.`, details: details };
   }
-  return { status: CHECK_STATUS.OK, summary: `All ${CONFIG.CATEGORIES.length} categories, the artist total and the solo total match their songs, totals and dailies.` };
+  return { status: CHECK_STATUS.OK, summary: `All ${categories.length} categories, the artist total and the solo total match their songs, totals and dailies.` };
 }
 
 
 function checkAggregateFormulas(data) {
+  if (data.categories().problems.length) return categoriesUnreadable();
   if (data.tracklist().problems.length) {
     return { status: CHECK_STATUS.FAIL, summary: `Can't work out the formulas while the ${CONFIG.SHEETS.SONGS} sheet has problems - see the Tracklist check.` };
   }
@@ -442,8 +455,9 @@ function checkCovers(data) {
 
 
 function checkSpareRows(data) {
-  const spare = CONFIG.LAYOUT.LAST_AGGREGATE_ROW - data.lastAggregateRow;
-  const summary = `${spare} spare row(s) for new categories (rows ${data.lastAggregateRow + 1}-${CONFIG.LAYOUT.LAST_AGGREGATE_ROW}). Songs have no limit.`;
+  if (data.categories().problems.length) return categoriesUnreadable();
+  const spare = CONFIG.LAYOUT.LAST_AGGREGATE_ROW - data.lastAggregateRow();
+  const summary = `${spare} spare row(s) for new categories (rows ${data.lastAggregateRow() + 1}-${CONFIG.LAYOUT.LAST_AGGREGATE_ROW}). Songs have no limit.`;
 
   if (spare <= 0) return { status: CHECK_STATUS.FAIL, summary: summary + ' No room for another category.' };
   if (spare < CONFIG.CHECKS.SPARE_ROWS_WARN) return { status: CHECK_STATUS.WARN, summary: summary };
@@ -451,27 +465,19 @@ function checkSpareRows(data) {
 }
 
 
-function checkConfig() {
-  const details = [];
+function checkCategories(data) {
+  const read = data.categories();
+  const details = read.problems.slice();
   const layout = CONFIG.LAYOUT;
-  const cats = CONFIG.CATEGORIES;
-  const duplicates = (key) => {
-    const seen = {};
-    cats.forEach(c => {
-      if (seen.hasOwnProperty(c[key])) details.push(`CONFIG.CATEGORIES: "${c.name}" and "${seen[c[key]]}" share ${key} ${c[key]}.`);
-      else seen[c[key]] = c.name;
-    });
-  };
-  duplicates('name');
-  duplicates('row');
+  const cats = read.categories;
 
-  cats.forEach(c => {
-    if (c.row <= layout.SOLO_ROW || c.row > layout.LAST_AGGREGATE_ROW) {
-      details.push(`CONFIG.CATEGORIES: "${c.name}" has row ${c.row}, outside ${layout.SOLO_ROW + 1}-${layout.LAST_AGGREGATE_ROW}.`);
+  // New categories are placed by type (after the last studio album, after the last "other"), which
+  // only works if the types come in that order: studio rows, then other, then fixed.
+  const order = CATEGORY_TYPES;
+  for (let i = 1; i < cats.length; i++) {
+    if (order.indexOf(cats[i].type) < order.indexOf(cats[i - 1].type)) {
+      details.push(`${CONFIG.SHEETS.CATEGORIES}: "${cats[i].name}" (row ${cats[i].row}, ${cats[i].type}) comes after "${cats[i - 1].name}" (${cats[i - 1].type}); rows must run studio, then other, then fixed.`);
     }
-  });
-  if (!cats.some(c => c.name === layout.SOLO_EXCLUDES)) {
-    details.push(`CONFIG.LAYOUT.SOLO_EXCLUDES is "${layout.SOLO_EXCLUDES}", which is not a category.`);
   }
   if (layout.FIRST_SONG_ROW <= layout.LAST_AGGREGATE_ROW) {
     details.push(`CONFIG.LAYOUT: songs start at row ${layout.FIRST_SONG_ROW}, inside the aggregate rows (up to ${layout.LAST_AGGREGATE_ROW}).`);
@@ -483,7 +489,7 @@ function checkConfig() {
     .concat([{ name: 'Discography summary', cell: CONFIG.ALBUMS.TOTAL_SUMMARY }]);
   cells.forEach(({ name, cell }) => {
     const m = String(cell).match(/^([A-Z]+)(\d+)$/);
-    if (!m) { details.push(`"${name}" has summary cell "${cell}", which is not a single cell.`); return; }
+    if (!m) return; // readCategories() already reported it
     (byColumn[m[1]] = byColumn[m[1]] || []).push({ name: name, row: Number(m[2]) });
   });
   Object.keys(byColumn).forEach(col => {
@@ -495,6 +501,7 @@ function checkConfig() {
     }
   });
 
-  if (details.length) return { status: CHECK_STATUS.FAIL, summary: `${details.length} problem(s) in config.js.`, details: details };
-  return { status: CHECK_STATUS.OK, summary: `${cats.length} categories, rows and summary cells are consistent.` };
+  if (details.length) return { status: CHECK_STATUS.FAIL, summary: `${details.length} problem(s) with the categories.`, details: details };
+  const n = t => cats.filter(c => c.type === t).length;
+  return { status: CHECK_STATUS.OK, summary: `${cats.length} categories (${n('studio')} studio, ${n('other')} other, ${n('fixed')} fixed); rows and summary cells are consistent.` };
 }

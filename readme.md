@@ -49,6 +49,12 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 2.0.0.3 (22/9/26)
+    * New songs are added through a **Pending** sheet and **Update → Add Pending Songs**. Each song goes at the end of its album's block, at the same row in Latest, Tools, every Daily Archive and the Total Archive, and the Tracklist is renumbered to match. The whole batch is checked first; if any row has a problem nothing changes, and the problem is written next to that row.
+    * Songs can be added before they're released, with the new **upcoming** status. The track ID can be left blank, the song stays at 0 until it appears in an import, and it never stops the daily update. The import says when an upcoming song has gone live.
+    * Album and category definitions moved from the code into a **Categories** sheet (row, type, summary cell, summary limit), so changing them needs no code push. Type is studio, other or fixed; the discography summary uses every studio album, wherever it sits.
+    * Latest's album totals and dailies are now written by the script from the Tracklist, so a new song is always counted in its album.
+    * Removed the one-off layout migration from 2.0.0.2, now that both spreadsheets are migrated.
 * 2.0.0.2 (22/9/26)
     * New spreadsheet layout, the same in Latest, Tools, every Daily Archive and the Total Archive: the whole discography on row 2, the solo total on row 3, the 24 albums and categories on rows 4-27, spare rows for new categories up to 49, and songs from row 50 with no upper limit. Before, songs were capped at row 549, with the album totals below them in the archives and beside them in Latest.
     * Latest's album table now uses the same columns as the songs, and an album's row is the same number in Latest and in every archive. Albums also get "a day ago" and "a week ago" figures, and "best since" is worked out in one pass for albums and songs.

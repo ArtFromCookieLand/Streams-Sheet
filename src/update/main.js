@@ -9,28 +9,33 @@ var latestSheet = ss.getSheetByName(CONFIG.SHEETS.LATEST);
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
   // Labelled so you can never mistake the dev copy for the live sheet.
-  ui.createMenu(isDev() ? 'Update [DEV]' : 'Update')
+  const updateMenu = ui.createMenu(isDev() ? 'Update [DEV]' : 'Update')
       .addItem('⬇️ Import Data', 'importSpotifyData')
       .addItem('🔃 Update Daily Stats', 'main')
       .addItem('🔄 Switch Token', 'switchApifyToken')
       .addItem('🔗 Match Totals by ID', 'matchTotalsMenu')
+      .addItem('➕ Add Pending Songs', 'addPendingSongsMenu')
       .addSeparator()
       .addItem('Update Auxiliary Stats', 'updateStats')
       .addItem('Update Best-Since-Days', 'transferBestSinceRows')
       .addItem("Check Today's Milestones", 'checkMilestones')
       .addItem("Check Upcoming Milestones", 'updateUpcomingMilestones')
-      .addItem("Update Text Summaries", 'generateSummaries')
-      .addToUi()
+      .addItem("Update Text Summaries", 'generateSummaries');
+
+  // One-off setup (src/setup/setup_sheets.js), shown only while a sheet is missing.
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const setup = ui.createMenu('Setup');
+  let setupNeeded = false;
+  if (!ss.getSheetByName(CONFIG.SHEETS.CATEGORIES)) { setup.addItem('Create Categories sheet', 'createCategoriesSheet'); setupNeeded = true; }
+  if (!ss.getSheetByName(CONFIG.SHEETS.PENDING)) { setup.addItem('Create Pending sheet', 'createPendingSheet'); setupNeeded = true; }
+  if (setupNeeded) updateMenu.addSeparator().addSubMenu(setup);
+  updateMenu.addToUi();
 
   // Read-only health checks (src/checks/checks.js)
-  const checksMenu = ui.createMenu(isDev() ? 'Checks [DEV]' : 'Checks')
+  ui.createMenu(isDev() ? 'Checks [DEV]' : 'Checks')
       .addItem('🩺 Run All Checks', 'runAllChecksMenu')
-      .addItem('↔️ Check Row Alignment', 'checkRowAlignmentMenu');
-  // One-off (src/migration/migrate_layout.js); disappears once it has run.
-  if (!isLayoutMigrated()) {
-    checksMenu.addSeparator().addItem('⚠️ Migrate Layout (one-off)', 'migrateLayoutMenu');
-  }
-  checksMenu.addToUi();
+      .addItem('↔️ Check Row Alignment', 'checkRowAlignmentMenu')
+      .addToUi()
 }
 
 function main() {
@@ -39,13 +44,13 @@ function main() {
   
   const checkSheet = ss.getSheetByName(CONFIG.SHEETS.TOOLS); 
   
-  // --- 0a. TRACKLIST CHECK ---
-  // Everything below reads the Tracklist, and transferStats() is destructive, so a broken
-  // Tracklist has to be caught first.
+  // --- 0a. TRACKLIST AND CATEGORIES CHECK ---
+  // Everything below reads them, and transferStats() is destructive, so a broken Tracklist or
+  // Categories sheet has to be caught first.
   try {
     buildAlbumFormulas();
   } catch (error) {
-    ui.alert('Update Aborted', `The ${CONFIG.SHEETS.SONGS} sheet has a problem:\n\n` + error.message, ui.ButtonSet.OK);
+    ui.alert('Update Aborted', `The ${CONFIG.SHEETS.SONGS} or ${CONFIG.SHEETS.CATEGORIES} sheet has a problem:\n\n` + error.message, ui.ButtonSet.OK);
     return;
   }
 
