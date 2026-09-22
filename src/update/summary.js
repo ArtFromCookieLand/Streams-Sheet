@@ -54,7 +54,8 @@ function generateSummaries() {
   const sevenDaysAgoTime = sevenDaysAgo.getTime();
 
   // Every song row in Latest, E (title) to L (best since), read once for all albums.
-  const allSongsRange = latestSheet.getRange(CONFIG.SONGS.START_ROW, 5, CONFIG.SONGS.COUNT, 8);
+  const firstSongRow = CONFIG.LAYOUT.FIRST_SONG_ROW;
+  const allSongsRange = latestSheet.getRange(firstSongRow, CONFIG.LATEST.COLS.TITLE, getSongRowCount(), 8);
   const allSongData = allSongsRange.getValues();
   const allSongDisplayData = allSongsRange.getDisplayValues();
 
@@ -79,8 +80,8 @@ function generateSummaries() {
     // --- 2. EXTRACT SONG DATA ---
     let rows = rowsByCategory[albumName] || [];
     if (category.summaryLimit) rows = rows.slice(0, category.summaryLimit);
-    const songData = rows.map(row => allSongData[row - CONFIG.SONGS.START_ROW]);
-    const songDisplayData = rows.map(row => allSongDisplayData[row - CONFIG.SONGS.START_ROW]);
+    const songData = rows.map(row => allSongData[row - firstSongRow]);
+    const songDisplayData = rows.map(row => allSongDisplayData[row - firstSongRow]);
 
     let maxPercent = -Infinity;
     let biggestGainer = null;
@@ -165,9 +166,10 @@ function generateSummaries() {
     }
 
     // --- 5. EXTRACT ALBUM DATA ---
-    const albumBestSinceRaw = latestSheet.getRange(category.latestRow, 25).getValue();
-    const albumDailyRaw = latestSheet.getRange(category.latestRow, 26).getValue();
-    const albumWeeklyRaw = latestSheet.getRange(category.latestRow, 27).getValue();
+    const cols = CONFIG.LATEST.COLS;
+    const albumBestSinceRaw = latestSheet.getRange(category.row, cols.BEST_SINCE).getValue();
+    const albumDailyRaw = latestSheet.getRange(category.row, cols.DAILY_CHANGE).getValue();
+    const albumWeeklyRaw = latestSheet.getRange(category.row, cols.WEEKLY_CHANGE).getValue();
 
     // --- 6. BUILD POINT 4 (CLOSING LINE) ---
     summaryLines.push("");
@@ -216,9 +218,10 @@ function generateDiscographySummary() {
   // Albums only. Deriving this from the number of summarised albums used to make the scan
   // 17 rows wide, which reached row 18 (Droplets) and grew with every album added.
   const albumsCount = CONFIG.LATEST.DISCOGRAPHY_ALBUMS_COUNT;
-  const albumsStartRow = CONFIG.LATEST.ALBUMS_START_ROW;
+  const albumsStartRow = CONFIG.LATEST.DISCOGRAPHY_FIRST_ROW;
   
-  const albumsDataRange = latestSheet.getRange(albumsStartRow, 20, albumsCount, 8);
+  // E (title) to L (best since) - the same columns as the song rows.
+  const albumsDataRange = latestSheet.getRange(albumsStartRow, CONFIG.LATEST.COLS.TITLE, albumsCount, 8);
   const albumsData = albumsDataRange.getValues();
   const albumsDisplayData = albumsDataRange.getDisplayValues();
 
@@ -235,7 +238,7 @@ function generateDiscographySummary() {
 
     const rawPercent = albumsData[i][3]; 
     const displayPercent = albumsDisplayData[i][3]; 
-    const bestSinceDate = albumsData[i][5];
+    const bestSinceDate = albumsData[i][7];
 
     // Logic for Biggest Gainer / Most Stable
     if (typeof rawPercent === 'number' && rawPercent > maxPercent) {
@@ -302,11 +305,11 @@ function generateDiscographySummary() {
   }
 
   // --- 5. EXTRACT OVERALL DISCOGRAPHY DATA ---
-  const overallRow = CONFIG.LATEST.OVERALL_ROW;
+  const overallRow = CONFIG.LAYOUT.TOTAL_ROW;
   
-  const overallBestSinceRaw = latestSheet.getRange(overallRow, 25).getValue();
-  const overallDailyRaw = latestSheet.getRange(overallRow, 26).getValue();
-  const overallWeeklyRaw = latestSheet.getRange(overallRow, 27).getValue();
+  const overallBestSinceRaw = latestSheet.getRange(overallRow, CONFIG.LATEST.COLS.BEST_SINCE).getValue();
+  const overallDailyRaw = latestSheet.getRange(overallRow, CONFIG.LATEST.COLS.DAILY_CHANGE).getValue();
+  const overallWeeklyRaw = latestSheet.getRange(overallRow, CONFIG.LATEST.COLS.WEEKLY_CHANGE).getValue();
 
   // --- 6. BUILD CLOSING LINES ---
   summaryLines.push("");

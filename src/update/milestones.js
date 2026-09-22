@@ -20,12 +20,13 @@ function checkMilestones() {
 
   // --- 2. Get all required data from 'Latest' ---
   var newDate = latestSheet.getRange(CONFIG.LATEST.DATE_CELL).getValue();
-  var songNames = latestSheet.getRange(CONFIG.LATEST.SONG_NAMES).getValues();
+  var songCount = getSongRowCount();
+  var songNames = latestSheet.getRange(CONFIG.LAYOUT.FIRST_SONG_ROW, CONFIG.LATEST.COLS.TITLE, songCount, 1).getValues();
   // F = Total Streams, G = Daily Streams
   var streamData = latestSheet.getRange(
-    CONFIG.SONGS.START_ROW, 
-    6, // Column F
-    CONFIG.SONGS.COUNT, 
+    CONFIG.LAYOUT.FIRST_SONG_ROW, 
+    CONFIG.LATEST.COLS.TOTAL, // Column F
+    songCount, 
     2  // 2 columns (F and G)
   ).getValues();
 
@@ -37,13 +38,13 @@ function checkMilestones() {
   var retiredRows = getRetiredRows(); // Kept only for their history - never milestones
 
   // --- 4. Loop through every song ---
-  for (var i = 0; i < CONFIG.SONGS.COUNT; i++) {
+  for (var i = 0; i < songCount; i++) {
     var songName = songNames[i][0];
     var todayTotal = Number(streamData[i][0]);
     var todayDaily = Number(streamData[i][1]);
     
     // Skip if data is bad or empty
-    if (isNaN(todayTotal) || isNaN(todayDaily) || !songName || retiredRows[CONFIG.SONGS.START_ROW + i]) {
+    if (isNaN(todayTotal) || isNaN(todayDaily) || !songName || retiredRows[CONFIG.LAYOUT.FIRST_SONG_ROW + i]) {
       continue;
     }
 
@@ -124,10 +125,11 @@ function updateUpcomingMilestones() {
   tracksSheet.getRange(CONFIG.TRACKS.UPCOMING_MILESTONES_CLEAR).clearContent();
   
   // --- 2. Get all required data from 'Latest' ---
-  var songNames = latestSheet.getRange(CONFIG.LATEST.SONG_NAMES).getValues();
+  var songCount = getSongRowCount();
+  var songNames = latestSheet.getRange(CONFIG.LAYOUT.FIRST_SONG_ROW, CONFIG.LATEST.COLS.TITLE, songCount, 1).getValues();
   // F = Total Streams, G = Daily Streams
   var streamData = latestSheet.getRange(
-    CONFIG.SONGS.START_ROW, 6, CONFIG.SONGS.COUNT, 2
+    CONFIG.LAYOUT.FIRST_SONG_ROW, CONFIG.LATEST.COLS.TOTAL, songCount, 2
   ).getValues();
   
   // Create a 1D array of just the total streams for rank calculation
@@ -141,12 +143,12 @@ function updateUpcomingMilestones() {
   var retiredRows = getRetiredRows();
 
   // --- 4. Loop through every song ---
-  for (var i = 0; i < CONFIG.SONGS.COUNT; i++) {
+  for (var i = 0; i < songCount; i++) {
     var songName = songNames[i][0];
     var todayTotal = Number(streamData[i][0]);
     var todayDaily = Number(streamData[i][1]);
 
-    if (isNaN(todayTotal) || isNaN(todayDaily) || todayDaily <= 0 || !songName || retiredRows[CONFIG.SONGS.START_ROW + i]) {
+    if (isNaN(todayTotal) || isNaN(todayDaily) || todayDaily <= 0 || !songName || retiredRows[CONFIG.LAYOUT.FIRST_SONG_ROW + i]) {
       continue;
     }
 

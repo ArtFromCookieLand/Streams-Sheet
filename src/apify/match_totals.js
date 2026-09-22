@@ -74,8 +74,8 @@ function matchTotalsById() {
 
   // --- 3. Write Col L in one go ---
   // Rows that are not songs keep whatever they hold now, formulas included.
-  const startRow = CONFIG.SONGS.START_ROW;
-  const range = toolsSheet.getRange(startRow, CONFIG.TOOLS.TOTALS_COLUMN, CONFIG.SONGS.COUNT, 1);
+  const startRow = CONFIG.LAYOUT.FIRST_SONG_ROW;
+  const range = toolsSheet.getRange(startRow, CONFIG.TOOLS.TOTALS_COLUMN, getSongRowCount(), 1);
   const currentFormulas = range.getFormulas();
   const currentValues = range.getValues();
 

@@ -21,6 +21,16 @@ function onOpen() {
       .addItem("Check Upcoming Milestones", 'updateUpcomingMilestones')
       .addItem("Update Text Summaries", 'generateSummaries')
       .addToUi()
+
+  // Read-only health checks (src/checks/checks.js)
+  const checksMenu = ui.createMenu(isDev() ? 'Checks [DEV]' : 'Checks')
+      .addItem('🩺 Run All Checks', 'runAllChecksMenu')
+      .addItem('↔️ Check Row Alignment', 'checkRowAlignmentMenu');
+  // One-off (src/migration/migrate_layout.js); disappears once it has run.
+  if (!isLayoutMigrated()) {
+    checksMenu.addSeparator().addItem('⚠️ Migrate Layout (one-off)', 'migrateLayoutMenu');
+  }
+  checksMenu.addToUi();
 }
 
 function main() {
@@ -29,13 +39,23 @@ function main() {
   
   const checkSheet = ss.getSheetByName(CONFIG.SHEETS.TOOLS); 
   
-  // --- 0a. MISSING TRACK IDS ---
+  // --- 0a. TRACKLIST CHECK ---
+  // Everything below reads the Tracklist, and transferStats() is destructive, so a broken
+  // Tracklist has to be caught first.
+  try {
+    buildAlbumFormulas();
+  } catch (error) {
+    ui.alert('Update Aborted', `The ${CONFIG.SHEETS.SONGS} sheet has a problem:\n\n` + error.message, ui.ButtonSet.OK);
+    return;
+  }
+
+  // --- 0b. MISSING TRACK IDS ---
   // matchTotalsById() marks songs whose ID was not in the import. They would otherwise surface
   // only as an unexplained error in C1.
-  const totals = checkSheet.getRange(CONFIG.TOOLS.SONG_DATA).getValues();
+  const totals = checkSheet.getRange(CONFIG.LAYOUT.FIRST_SONG_ROW, CONFIG.TOOLS.TOTALS_COLUMN, getSongRowCount(), 1).getValues();
   const missingRows = [];
   totals.forEach((r, i) => {
-    if (r[0] === CONFIG.TOOLS.MISSING_MARKER) missingRows.push(CONFIG.SONGS.START_ROW + i);
+    if (r[0] === CONFIG.TOOLS.MISSING_MARKER) missingRows.push(CONFIG.LAYOUT.FIRST_SONG_ROW + i);
   });
   if (missingRows.length) {
     ui.alert(
@@ -47,7 +67,7 @@ function main() {
     return;
   }
 
-  // --- 0b. AUTOMATED SPOTIFY UPDATE CHECK ---
+  // --- 0c. AUTOMATED SPOTIFY UPDATE CHECK ---
   const sumValue = checkSheet.getRange(CONFIG.TOOLS.SUM_OF_DAILYS).getValue();
   
   if (sumValue <= 0 || isNaN(sumValue)) {
@@ -56,15 +76,6 @@ function main() {
       `The sum of daily streams in cell C1 is ${sumValue}.\n\nThis indicates that Spotify has not updated yet today, or there was an error importing the data. Please try again later.`,
       ui.ButtonSet.OK
     );
-    return;
-  }
-
-  // --- 0c. SONGS SHEET CHECK ---
-  // transferStats() is destructive, so a broken Tracklist sheet has to be caught before it starts.
-  try {
-    buildAlbumFormulas();
-  } catch (error) {
-    ui.alert('Update Aborted', `The ${CONFIG.SHEETS.SONGS} sheet has a problem:\n\n` + error.message, ui.ButtonSet.OK);
     return;
   }
 
@@ -104,7 +115,12 @@ function main() {
   generateSummaries();
   generateDiscographySummary();
 
-  // --- 3. COMPLETION ---
+  // --- 3. CHECKS ---
+  // A dialog only if something is off; nothing to click through on a clean run.
+  ss.toast('Running checks...', 'Status');
+  runChecksAfterUpdate();
+
+  // --- 4. COMPLETION ---
   ss.toast('All updates completed successfully!', 'Success', 5);
 }
 

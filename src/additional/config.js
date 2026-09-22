@@ -31,7 +31,16 @@ const CONFIG = {
     TRACKS: 'Tracks',
     MILESTONE_LOG: 'Milestone Log',
     ALBUMS: 'Albums',
-    SONGS: 'Tracklist'
+    SONGS: 'Tracklist',
+    COVERS: 'Covers',               // Cover key in column A
+    TOTAL_ARCHIVE: 'Total Archive'  // Hand-kept cumulative backup; the script only reads it (checks)
+  },
+
+  // --- Health checks (see src/checks/checks.js) ---
+  CHECKS: {
+    MAX_DETAILS: 8,       // Problem lines shown per check in the report dialog
+    SPARE_ROWS_WARN: 5,   // Warn when fewer spare category rows than this are left
+    RAW_ROWS_WARN: 950    // Warn when the raw import gets this close to its 999-row range
   },
 
   // --- Songs registry (see src/additional/songs.js) ---
@@ -42,92 +51,102 @@ const CONFIG = {
       row: 'row',
       status: 'status',
       category: 'category',
+      coverKey: 'coverKey',
       title: 'title',
       trackId: 'trackId'
     }
   },
-  
-  // --- Row & Count Definitions ---
-  SONGS: {
-    START_ROW: 2,
-    COUNT: 548 // e.g., rows 2 to 549
-  },
-  ALBUMS: {
-    START_ROW: 550, // e.g., rows 550 to 574
-    COUNT: 25,
-    TOTAL_SUMMARY: 'G5',
+
+  // --- Row layout ---
+  // A row means the same thing in Latest, Tools (J:M), every Daily Archive and the Total Archive:
+  //   1       headers / dates
+  //   2       Total Artist Streams
+  //   3       Total Artist Solo Streams (the total minus SOLO_EXCLUDES)
+  //   4-27    the categories below; up to LAST_AGGREGATE_ROW is spare for new ones
+  //   50 ->   songs, open-ended. The last song row is the highest `row` in the Tracklist.
+  LAYOUT: {
+    TOTAL_ROW: 2,
+    SOLO_ROW: 3,
+    SOLO_EXCLUDES: 'Features',
+    LAST_AGGREGATE_ROW: 49,
+    FIRST_SONG_ROW: 50
   },
 
-  // --- Range Definitions (A1 Notation) ---
+  // --- Range Definitions ---
   TOOLS: {
     RAW_DATA: 'E2:H1000',       // Raw import: E album, F Spotify name, G stream count, H track ID
     TOTALS_COLUMN: 12,          // Col L - each song's total, written by matchTotalsById()
+    DAILY_COLUMN: 13,           // Col M - each song's daily (sheet formula)
     // Written into Col L for a song whose track ID is missing from the import. It breaks the
     // daily formula in Col M, so C1 becomes an error and main() refuses to run.
     MISSING_MARKER: '#MISSING',
-    SONG_DATA: 'L2:M549',       // Data to copy to Latest (Totals + Daily)
-    DAILY_STREAMS: 'M2:M549',   // Daily streams to copy to Archive
     SUM_OF_DAILYS: 'C1'
   },
   LATEST: {
-    DATE_CELL: 'Q1',           // Cell to increment date
-    SONG_DATA_DEST: 'F2:G549', // Destination for TOOLS_SONG_DATA
-    YESTERDAY_STREAMS_DEST: 'M2:M549',
-    WEEK_STREAMS_DEST: 'N2:N549',
-    SONG_BEST_SINCE_DEST: 'L2', // Output for "Best Since" (Songs)
-    ALBUM_BEST_SINCE_DEST: 'Y2', // Output for "Best Since" (Albums)
-    SONG_NAMES: 'E2:E549',
-    ALBUMS_START_ROW: 2, 
-    // How many album rows the discography summary scans, starting at ALBUMS_START_ROW.
-    // 16 = the studio albums only (rows 2-17). It must NOT reach Droplets (18), the live and
-    // compilation rows (19-22), Soundtracks (23), Remixes (24) or Features (25) — the
-    // discography summary is about albums, not everything in the catalogue.
-    DISCOGRAPHY_ALBUMS_COUNT: 16,
-    OVERALL_ROW: 26
+    DATE_CELL: 'Q1',            // Cell to increment date
+    // Songs and albums share these columns.
+    COLS: {
+      TITLE: 5,                 // E
+      TOTAL: 6,                 // F
+      DAILY: 7,                 // G
+      DAILY_PERCENT: 8,         // H
+      DAILY_CHANGE: 10,         // J
+      WEEKLY_CHANGE: 11,        // K
+      BEST_SINCE: 12,           // L - written by findBestSince()
+      DAY_AGO: 13,              // M - written by updateStats()
+      WEEK_AGO: 14              // N - written by updateStats()
+    },
+    // The discography summary scans the studio albums only: 16 rows from row 4. It must NOT reach
+    // Droplets (20), the live and compilation rows (21-24), Soundtracks (25), Remixes (26) or
+    // Features (27) - it is about albums, not everything in the catalogue.
+    DISCOGRAPHY_FIRST_ROW: 4,
+    DISCOGRAPHY_ALBUMS_COUNT: 16
   },
   ARCHIVE: {
-    DAILY_STREAMS_DEST: 'B2:B549',
-    YESTERDAY_STREAMS: 'C2:C549',
-    WEEK_DATA: 'I2:I549'
+    YESTERDAY_COLUMN: 3,        // Col C - newest first, so C is yesterday
+    WEEK_AGO_COLUMN: 9          // Col I - a week ago
+  },
+  ALBUMS: {
+    TOTAL_SUMMARY: 'G5'         // Albums sheet cell for the whole-discography summary
   },
   TRACKS: {
     UPCOMING_MILESTONES_DEST: 'N45',       // Start cell for header
     UPCOMING_MILESTONES_CLEAR: 'N45:Q549'  // Range to clear
   },
+
   // --- Categories ---
   // One entry per value used in the Tracklist sheet's "category" column; `name` must match it
-  // exactly. Which rows belong to a category comes from the Tracklist sheet, not from here.
-  //   archiveRow   - its aggregate row in each Daily Archive (550-573; 574 is the artist total)
-  //   latestRow    - its row in Latest's album table (T:AB)
+  // exactly. Which songs belong to a category comes from the Tracklist sheet, not from here.
+  //   row          - its row in Latest and in every archive (see LAYOUT)
   //   summaryCell  - where its text summary goes in the Albums sheet (no summary if absent)
   //   summaryLimit - the summary only considers the first N songs of the category. Used for
   //                  the deluxe eras, where the bonus-track tail is summed into the album
   //                  total but never named as its biggest gainer.
   CATEGORIES: [
-    { name: 'Taylor Swift (Debut)',                  archiveRow: 550, latestRow: 2,  summaryCell: 'F23' },
-    { name: 'Fearless (2008)',                       archiveRow: 551, latestRow: 3,  summaryCell: 'F79' },
-    { name: 'Speak Now (2010)',                      archiveRow: 552, latestRow: 4,  summaryCell: 'L93',  summaryLimit: 17 },
-    { name: 'Red (2012)',                            archiveRow: 553, latestRow: 5,  summaryCell: 'L119', summaryLimit: 19 },
-    { name: '1989 (2014)',                           archiveRow: 554, latestRow: 6,  summaryCell: 'R23',  summaryLimit: 16 },
-    { name: 'reputation',                            archiveRow: 555, latestRow: 7,  summaryCell: 'R78' },
-    { name: 'Lover',                                 archiveRow: 556, latestRow: 8,  summaryCell: 'W23' },
-    { name: 'folklore',                              archiveRow: 557, latestRow: 9,  summaryCell: 'W51' },
-    { name: 'evermore',                              archiveRow: 558, latestRow: 10, summaryCell: 'W78' },
-    { name: 'Midnights',                             archiveRow: 559, latestRow: 11, summaryCell: 'W102' },
-    { name: 'The Tortured Poets Department',         archiveRow: 560, latestRow: 12, summaryCell: 'AB23' },
-    { name: "Fearless (Taylor's Version)",           archiveRow: 561, latestRow: 13, summaryCell: 'F45' },
-    { name: "Red (Taylor's Version)",                archiveRow: 562, latestRow: 14, summaryCell: 'L54' },
-    { name: "Speak Now (Taylor's Version)",          archiveRow: 563, latestRow: 15, summaryCell: 'L23' },
-    { name: "1989 (Taylor's Version)",               archiveRow: 564, latestRow: 16, summaryCell: 'R49' },
-    { name: 'The Life of a Showgirl',                archiveRow: 565, latestRow: 17, summaryCell: 'AB89', summaryLimit: 12 },
-    { name: 'Droplets',                              archiveRow: 566, latestRow: 18 },
-    { name: 'The Taylor Swift Holiday Collection',   archiveRow: 567, latestRow: 19 },
-    { name: 'Live From Clear Channel Stripped 2008', archiveRow: 568, latestRow: 20 },
-    { name: 'Speak Now World Tour Live',             archiveRow: 569, latestRow: 21 },
-    { name: 'Live From Paris',                       archiveRow: 570, latestRow: 22 },
-    { name: 'Soundtracks',                           archiveRow: 571, latestRow: 23, summaryCell: 'R99' },
-    { name: 'Remixes and etc.',                      archiveRow: 572, latestRow: 24 },
-    { name: 'Features',                              archiveRow: 573, latestRow: 25 }
+    { name: 'Taylor Swift (Debut)',                    row: 4,  summaryCell: 'F23' },
+    { name: 'Fearless (2008)',                         row: 5,  summaryCell: 'F79' },
+    { name: 'Speak Now (2010)',                        row: 6,  summaryCell: 'L93', summaryLimit: 17 },
+    { name: 'Red (2012)',                              row: 7,  summaryCell: 'L119', summaryLimit: 19 },
+    { name: '1989 (2014)',                             row: 8,  summaryCell: 'R23', summaryLimit: 16 },
+    { name: 'reputation',                              row: 9,  summaryCell: 'R78' },
+    { name: 'Lover',                                   row: 10, summaryCell: 'W23' },
+    { name: 'folklore',                                row: 11, summaryCell: 'W51' },
+    { name: 'evermore',                                row: 12, summaryCell: 'W78' },
+    { name: 'Midnights',                               row: 13, summaryCell: 'W102' },
+    { name: 'The Tortured Poets Department',           row: 14, summaryCell: 'AB23' },
+    { name: "Fearless (Taylor's Version)",             row: 15, summaryCell: 'F45' },
+    { name: "Red (Taylor's Version)",                  row: 16, summaryCell: 'L54' },
+    { name: "Speak Now (Taylor's Version)",            row: 17, summaryCell: 'L23' },
+    { name: "1989 (Taylor's Version)",                 row: 18, summaryCell: 'R49' },
+    { name: 'The Life of a Showgirl',                  row: 19, summaryCell: 'AB89', summaryLimit: 12 },
+    { name: 'Droplets',              row: 20 },
+    { name: 'The Taylor Swift Holiday Collection',         row: 21 },
+    { name: 'Live From Clear Channel Stripped 2008',       row: 22 },
+    { name: 'Speak Now World Tour Live',                   row: 23 },
+    { name: 'Live From Paris',       row: 24 },
+    { name: 'Soundtracks',                             row: 25, summaryCell: 'R99' },
+    { name: 'Remixes and etc.',      row: 26 },
+    { name: 'Features',              row: 27 }
   ],
 
   // --- Apify Definitions ---

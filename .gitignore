@@ -9,3 +9,6 @@ examples/
 
 .DS_Store
 Thumbs.db
+
+# Local roadmap / working notes
+PLAN.md

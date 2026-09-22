@@ -31,6 +31,7 @@ The script detects at runtime which spreadsheet it is attached to. In the dev co
 titled **Update [DEV]**, and the Apify import is blocked so that testing never spends scraper
 credits — the last raw import copied over in `Tools!E2:H1000` is used as the test data instead,
 via **Match Totals by ID**. It must be one that includes track IDs, i.e. one made after 2.0.0.1.
+The **Checks** menu runs read-only health checks on either copy at any time.
 
 ### Setting up the dev copy
 
@@ -48,6 +49,14 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 2.0.0.2 (22/9/26)
+    * New spreadsheet layout, the same in Latest, Tools, every Daily Archive and the Total Archive: the whole discography on row 2, the solo total on row 3, the 24 albums and categories on rows 4-27, spare rows for new categories up to 49, and songs from row 50 with no upper limit. Before, songs were capped at row 549, with the album totals below them in the archives and beside them in Latest.
+    * Latest's album table now uses the same columns as the songs, and an album's row is the same number in Latest and in every archive. Albums also get "a day ago" and "a week ago" figures, and "best since" is worked out in one pass for albums and songs.
+    * The solo total (all streams minus Features) now has a row in the archives, with its full history, so it gets a "best since" date too.
+    * The Total Archive has album and category totals for the first time, in every column back to the start.
+    * The Tracklist's `row` column now says where each song lives, so the Tracklist can be sorted freely.
+    * Added a **Checks** menu with ten read-only health checks: row alignment across every sheet, album totals against their songs, archive dates (gaps or repeated days), the import, covers, spare rows and config. The quick ones also run at the end of every Update Daily Stats and only show a dialog if something is wrong.
+    * Included a one-off **Migrate Layout** script that converted the sheets. It refuses to start unless the sheets are exactly in the old layout, and can't run twice.
 * 2.0.0.1 (22/9/26)
     * Added the Tracklist sheet: one row per song with its category, status, cover key, display title and Spotify track ID. It is now the single place that decides which rows belong to which album.
     * Stream totals are matched by Spotify track ID instead of by title, so Spotify renaming a track no longer loses its streams. The import now also saves each track's album and ID in Tools (E:H).
