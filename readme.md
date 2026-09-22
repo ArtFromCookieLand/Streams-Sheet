@@ -29,7 +29,8 @@ npm run open:dev      npm run open:prod
 
 The script detects at runtime which spreadsheet it is attached to. In the dev copy the menu is
 titled **Update [DEV]**, and the Apify import is blocked so that testing never spends scraper
-credits — the last raw import copied over in `Tools!F2:G1000` is used as the test data instead.
+credits — the last raw import copied over in `Tools!E2:H1000` is used as the test data instead,
+via **Match Totals by ID**. It must be one that includes track IDs, i.e. one made after 2.0.0.1.
 
 ### Setting up the dev copy
 
@@ -47,6 +48,12 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 2.0.0.1 (22/9/26)
+    * Added the Tracklist sheet: one row per song with its category, status, cover key, display title and Spotify track ID. It is now the single place that decides which rows belong to which album.
+    * Stream totals are matched by Spotify track ID instead of by title, so Spotify renaming a track no longer loses its streams. The import now also saves each track's album and ID in Tools (E:H).
+    * If a track ID is missing from an import, the update refuses to run and names the songs, instead of failing silently. The new **Match Totals by ID** menu item re-matches after a fix without spending Apify credits.
+    * The album and category totals in the Daily Archive are now built from the Tracklist instead of hardcoded row ranges. Album summaries also take their songs from it.
+    * Songs can be retired: they keep their row and archive history, but are held at 0 and left out of milestones and summaries. Our Song (International Mix) and Love Story (Pop Mix) are the first, after Spotify merged their counts into the originals.
 * 1.1.4 (21/9/26)
     * Added a separate dev environment, so changes can be tested on a copy of the spreadsheet before they touch the live one. Apify imports are blocked there to avoid spending scraper credits.
     * Fixed the discography summary including Droplets among the albums. It scanned one row too many because the number of rows was taken from the length of CONFIG.STATS, which grew when Soundtracks was added in 1.1.

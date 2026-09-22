@@ -34,6 +34,7 @@ function checkMilestones() {
   const dynamicMilestone = 50000000; // Every 50M
   
   var allMilestonesHit = []; // To store [Date, Name, Milestone]
+  var retiredRows = getRetiredRows(); // Kept only for their history - never milestones
 
   // --- 4. Loop through every song ---
   for (var i = 0; i < CONFIG.SONGS.COUNT; i++) {
@@ -42,7 +43,7 @@ function checkMilestones() {
     var todayDaily = Number(streamData[i][1]);
     
     // Skip if data is bad or empty
-    if (isNaN(todayTotal) || isNaN(todayDaily) || !songName) {
+    if (isNaN(todayTotal) || isNaN(todayDaily) || !songName || retiredRows[CONFIG.SONGS.START_ROW + i]) {
       continue;
     }
 
@@ -137,6 +138,7 @@ function updateUpcomingMilestones() {
   const dynamicMilestone = 50000000;
 
   var upcomingHits = []; // To store [Name, '', Milestone, Text]
+  var retiredRows = getRetiredRows();
 
   // --- 4. Loop through every song ---
   for (var i = 0; i < CONFIG.SONGS.COUNT; i++) {
@@ -144,7 +146,7 @@ function updateUpcomingMilestones() {
     var todayTotal = Number(streamData[i][0]);
     var todayDaily = Number(streamData[i][1]);
 
-    if (isNaN(todayTotal) || isNaN(todayDaily) || todayDaily <= 0 || !songName) {
+    if (isNaN(todayTotal) || isNaN(todayDaily) || todayDaily <= 0 || !songName || retiredRows[CONFIG.SONGS.START_ROW + i]) {
       continue;
     }
 

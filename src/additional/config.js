@@ -30,7 +30,21 @@ const CONFIG = {
     LATEST: 'Latest',
     TRACKS: 'Tracks',
     MILESTONE_LOG: 'Milestone Log',
-    ALBUMS: 'Albums'
+    ALBUMS: 'Albums',
+    SONGS: 'Tracklist'
+  },
+
+  // --- Songs registry (see src/additional/songs.js) ---
+  // Header text of each column the code reads. Matching ignores case and spaces, so
+  // "Track ID" and "trackId" are the same column; the column order does not matter.
+  SONGS_SHEET: {
+    HEADERS: {
+      row: 'row',
+      status: 'status',
+      category: 'category',
+      title: 'title',
+      trackId: 'trackId'
+    }
   },
   
   // --- Row & Count Definitions ---
@@ -46,7 +60,11 @@ const CONFIG = {
 
   // --- Range Definitions (A1 Notation) ---
   TOOLS: {
-    RAW_DATA: 'F2:G1000',       // Where the raw imported data goes into
+    RAW_DATA: 'E2:H1000',       // Raw import: E album, F Spotify name, G stream count, H track ID
+    TOTALS_COLUMN: 12,          // Col L - each song's total, written by matchTotalsById()
+    // Written into Col L for a song whose track ID is missing from the import. It breaks the
+    // daily formula in Col M, so C1 becomes an error and main() refuses to run.
+    MISSING_MARKER: '#MISSING',
     SONG_DATA: 'L2:M549',       // Data to copy to Latest (Totals + Daily)
     DAILY_STREAMS: 'M2:M549',   // Daily streams to copy to Archive
     SUM_OF_DAILYS: 'C1'
@@ -76,25 +94,41 @@ const CONFIG = {
     UPCOMING_MILESTONES_DEST: 'N45',       // Start cell for header
     UPCOMING_MILESTONES_CLEAR: 'N45:Q549'  // Range to clear
   },
-  STATS: {
-    'Taylor Swift (Debut)':                 { songRow: 2,   count: 15, summaryRow: 2, destCell: 'F23' },
-    'Fearless (2008)':                      { songRow: 17,  count: 19, summaryRow: 3, destCell: 'F79' },
-    'Speak Now (2010)':                     { songRow: 36,  count: 17, summaryRow: 4, destCell: 'L93' },
-    'Red (2012)':                           { songRow: 57,  count: 19, summaryRow: 5, destCell: 'L119'},
-    '1989 (2014)':                          { songRow: 79,  count: 16, summaryRow: 6, destCell: 'R23' },
-    'reputation':                           { songRow: 98,  count: 15, summaryRow: 7, destCell: 'R78' },
-    'Lover':                                { songRow: 113, count: 18, summaryRow: 8, destCell: 'W23' },
-    'folklore':                             { songRow: 131, count: 34, summaryRow: 9, destCell: 'W51' },
-    'evermore':                             { songRow: 165, count: 17, summaryRow: 10, destCell: 'W78' },
-    "Fearless (Taylor's Version)":          { songRow: 182, count: 26, summaryRow: 13, destCell: 'F45' },
-    "Red (Taylor's Version)":               { songRow: 208, count: 30, summaryRow: 14, destCell: 'L54' },
-    'Midnights':                            { songRow: 238, count: 23, summaryRow: 11, destCell: 'W102'},
-    "Speak Now (Taylor's Version)":         { songRow: 261, count: 22, summaryRow: 15, destCell: 'L23' },
-    "1989 (Taylor's Version)":              { songRow: 283, count: 22, summaryRow: 16, destCell: 'R49' },
-    'The Tortured Poets Department ':       { songRow: 305, count: 31, summaryRow: 12, destCell: 'AB23' },
-    'The Life of a Showgirl':               { songRow: 336, count: 12, summaryRow: 17, destCell: 'AB89'},
-    'Soundtracks':                          { songRow: 405, count: 12, summaryRow: 23, destCell: 'R99'}
-  },
+  // --- Categories ---
+  // One entry per value used in the Tracklist sheet's "category" column; `name` must match it
+  // exactly. Which rows belong to a category comes from the Tracklist sheet, not from here.
+  //   archiveRow   - its aggregate row in each Daily Archive (550-573; 574 is the artist total)
+  //   latestRow    - its row in Latest's album table (T:AB)
+  //   summaryCell  - where its text summary goes in the Albums sheet (no summary if absent)
+  //   summaryLimit - the summary only considers the first N songs of the category. Used for
+  //                  the deluxe eras, where the bonus-track tail is summed into the album
+  //                  total but never named as its biggest gainer.
+  CATEGORIES: [
+    { name: 'Taylor Swift (Debut)',                  archiveRow: 550, latestRow: 2,  summaryCell: 'F23' },
+    { name: 'Fearless (2008)',                       archiveRow: 551, latestRow: 3,  summaryCell: 'F79' },
+    { name: 'Speak Now (2010)',                      archiveRow: 552, latestRow: 4,  summaryCell: 'L93',  summaryLimit: 17 },
+    { name: 'Red (2012)',                            archiveRow: 553, latestRow: 5,  summaryCell: 'L119', summaryLimit: 19 },
+    { name: '1989 (2014)',                           archiveRow: 554, latestRow: 6,  summaryCell: 'R23',  summaryLimit: 16 },
+    { name: 'reputation',                            archiveRow: 555, latestRow: 7,  summaryCell: 'R78' },
+    { name: 'Lover',                                 archiveRow: 556, latestRow: 8,  summaryCell: 'W23' },
+    { name: 'folklore',                              archiveRow: 557, latestRow: 9,  summaryCell: 'W51' },
+    { name: 'evermore',                              archiveRow: 558, latestRow: 10, summaryCell: 'W78' },
+    { name: 'Midnights',                             archiveRow: 559, latestRow: 11, summaryCell: 'W102' },
+    { name: 'The Tortured Poets Department',         archiveRow: 560, latestRow: 12, summaryCell: 'AB23' },
+    { name: "Fearless (Taylor's Version)",           archiveRow: 561, latestRow: 13, summaryCell: 'F45' },
+    { name: "Red (Taylor's Version)",                archiveRow: 562, latestRow: 14, summaryCell: 'L54' },
+    { name: "Speak Now (Taylor's Version)",          archiveRow: 563, latestRow: 15, summaryCell: 'L23' },
+    { name: "1989 (Taylor's Version)",               archiveRow: 564, latestRow: 16, summaryCell: 'R49' },
+    { name: 'The Life of a Showgirl',                archiveRow: 565, latestRow: 17, summaryCell: 'AB89', summaryLimit: 12 },
+    { name: 'Droplets',                              archiveRow: 566, latestRow: 18 },
+    { name: 'The Taylor Swift Holiday Collection',   archiveRow: 567, latestRow: 19 },
+    { name: 'Live From Clear Channel Stripped 2008', archiveRow: 568, latestRow: 20 },
+    { name: 'Speak Now World Tour Live',             archiveRow: 569, latestRow: 21 },
+    { name: 'Live From Paris',                       archiveRow: 570, latestRow: 22 },
+    { name: 'Soundtracks',                           archiveRow: 571, latestRow: 23, summaryCell: 'R99' },
+    { name: 'Remixes and etc.',                      archiveRow: 572, latestRow: 24 },
+    { name: 'Features',                              archiveRow: 573, latestRow: 25 }
+  ],
 
   // --- Apify Definitions ---
   APIFY: {

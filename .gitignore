@@ -1,4 +1,5 @@
 node_modules/
+examples/
 
 # Local spreadsheet exports/backups — 35MB+ each, do not commit
 *.xlsx

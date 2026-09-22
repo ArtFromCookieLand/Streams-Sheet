@@ -53,7 +53,23 @@ function generateSummaries() {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const sevenDaysAgoTime = sevenDaysAgo.getTime();
 
-  for (const [albumName, stats] of Object.entries(CONFIG.STATS)) {
+  // Every song row in Latest, E (title) to L (best since), read once for all albums.
+  const allSongsRange = latestSheet.getRange(CONFIG.SONGS.START_ROW, 5, CONFIG.SONGS.COUNT, 8);
+  const allSongData = allSongsRange.getValues();
+  const allSongDisplayData = allSongsRange.getDisplayValues();
+
+  // Which rows each album's summary looks at comes from the Tracklist sheet. Retired songs are
+  // left out, and summaryLimit keeps a deluxe era's bonus tail out of the running.
+  const rowsByCategory = {};
+  getSongs().forEach(s => {
+    if (!s.category || s.status === SONG_STATUS.RETIRED) return;
+    if (!rowsByCategory[s.category]) rowsByCategory[s.category] = [];
+    rowsByCategory[s.category].push(s.row);
+  });
+
+  for (const category of CONFIG.CATEGORIES) {
+    if (!category.summaryCell) continue;
+    const albumName = category.name;
     let summaryLines = [];
 
     // --- 1. HEADER ---
@@ -61,9 +77,10 @@ function generateSummaries() {
     summaryLines.push("");
 
     // --- 2. EXTRACT SONG DATA ---
-    const songDataRange = latestSheet.getRange(stats.songRow, 5, stats.count, 8);
-    const songData = songDataRange.getValues();
-    const songDisplayData = songDataRange.getDisplayValues(); 
+    let rows = rowsByCategory[albumName] || [];
+    if (category.summaryLimit) rows = rows.slice(0, category.summaryLimit);
+    const songData = rows.map(row => allSongData[row - CONFIG.SONGS.START_ROW]);
+    const songDisplayData = rows.map(row => allSongDisplayData[row - CONFIG.SONGS.START_ROW]);
 
     let maxPercent = -Infinity;
     let biggestGainer = null;
@@ -148,9 +165,9 @@ function generateSummaries() {
     }
 
     // --- 5. EXTRACT ALBUM DATA ---
-    const albumBestSinceRaw = latestSheet.getRange(stats.summaryRow, 25).getValue();
-    const albumDailyRaw = latestSheet.getRange(stats.summaryRow, 26).getValue();
-    const albumWeeklyRaw = latestSheet.getRange(stats.summaryRow, 27).getValue();
+    const albumBestSinceRaw = latestSheet.getRange(category.latestRow, 25).getValue();
+    const albumDailyRaw = latestSheet.getRange(category.latestRow, 26).getValue();
+    const albumWeeklyRaw = latestSheet.getRange(category.latestRow, 27).getValue();
 
     // --- 6. BUILD POINT 4 (CLOSING LINE) ---
     summaryLines.push("");
@@ -162,7 +179,7 @@ function generateSummaries() {
     }
 
     // --- 8. WRITE TO ALBUMS SHEET ---
-    const destRange = albumsSheet.getRange(stats.destCell);
+    const destRange = albumsSheet.getRange(category.summaryCell);
     const startRow = destRange.getRow();
     const startCol = destRange.getColumn();
 
@@ -196,8 +213,8 @@ function generateDiscographySummary() {
   summaryLines.push("");
 
   // --- 2. EXTRACT ALBUMS DATA ---
-  // Albums only. Deriving this from CONFIG.STATS used to make the scan 17 rows wide, which
-  // reached row 18 (Droplets) and would grow by a row every time an entry was added to STATS.
+  // Albums only. Deriving this from the number of summarised albums used to make the scan
+  // 17 rows wide, which reached row 18 (Droplets) and grew with every album added.
   const albumsCount = CONFIG.LATEST.DISCOGRAPHY_ALBUMS_COUNT;
   const albumsStartRow = CONFIG.LATEST.ALBUMS_START_ROW;
   

@@ -70,10 +70,12 @@ function importSpotifyData() {
     
     let flatTrackList = [];
 
+    // [album, name, stream count, track ID] - the ID is what matchTotalsById() matches on;
+    // the album and name are kept for a human reading the Tools sheet.
     rawData.forEach(album => {
       if (album.tracks && Array.isArray(album.tracks)) {
         album.tracks.forEach(track => {
-          flatTrackList.push([track.name, Number(track.streamCount)]);
+          flatTrackList.push([album.name || '', track.name, Number(track.streamCount), track.id || '']);
         });
       }
     });
@@ -93,13 +95,22 @@ function importSpotifyData() {
       
       // Slice and Write
       const safeData = flatTrackList.slice(0, range.getNumRows());
-      toolsSheet.getRange(range.getRow(), range.getColumn(), safeData.length, 2)
+      toolsSheet.getRange(range.getRow(), range.getColumn(), safeData.length, safeData[0].length)
         .setValues(safeData);
     }
-    
-    // Success Message
-    ui.alert('Success', `Imported ${flatTrackList.length} tracks successfully.`, ui.ButtonSet.OK);
+
+    // The run has already spent its credits, so count it before anything else can fail.
     logRunAndCheckLimits();
+
+    // --- 5. MATCH TOTALS INTO TOOLS!L ---
+    const matchResult = matchTotalsById();
+
+    // Success Message
+    ui.alert(
+      'Import finished',
+      `Imported ${flatTrackList.length} tracks.\n\n` + describeMatchResult(matchResult),
+      ui.ButtonSet.OK
+    );
 
   } catch (error) {
     console.error(error);

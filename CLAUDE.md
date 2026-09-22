@@ -44,8 +44,10 @@ Anything that is not the live sheet is dev, so a fresh copy needs no setup. A sc
 - `importSpotifyData()` refuses to run, because Apify credits are limited (~17 runs per token)
   and shared. Override with `CONFIG.ENV.ALLOW_APIFY_IN_DEV`.
 
-The dev copy arrives with production's last raw import already in `Tools!F2:G1000`; that is the
+The dev copy arrives with production's last raw import already in `Tools!E2:H1000`; that is the
 fixture to develop against, so the whole pipeline can be exercised without touching Apify.
+A dump written before track-ID matching (2026-09-22) has no track IDs, and `matchTotalsById()`
+refuses it. Paste a dump that has IDs at `Tools!E2` instead.
 Script properties do **not** copy across, so the dev project has no Apify tokens at all —
 which is the intended state.
 
@@ -74,8 +76,10 @@ names a global function — renaming a function requires updating the menu strin
 
 `main()` is the full daily pipeline and the usual path:
 
-1. Guards on `Tools!C1` (sum of today's daily streams). If `<= 0`, Spotify hasn't refreshed
-   yet and the run aborts — this guard exists because running twice would corrupt the archive.
+1. Guards, all before anything is written: any `#MISSING` total in `Tools!L` (a track ID
+   absent from the import); `Tools!C1` (sum of today's daily streams) `<= 0`, meaning
+   Spotify hasn't refreshed yet — this guard exists because running twice would corrupt the
+   archive; and a Tracklist sheet that fails validation (`buildAlbumFormulas()`).
 2. `transferStats()` — advances the date in `Latest!Q1` by one day, **inserts a new column B**
    in the current Daily Archive sheet, and copies today's numbers in.
 3. `updateStats()` → `transferBestSinceRows()` → `findBestSince()`.
@@ -88,10 +92,10 @@ speculatively.
 ### Data flow
 
 ```
-Apify actor ──> Tools!F2:G1000 (raw name + streamCount)
-                      │  (spreadsheet formulas do the matching/ordering)
+Apify actor ──> Tools!E2:H1000 (album, raw name, streamCount, track ID)
+                      │  matchTotalsById(): Tracklist sheet track ID -> row
                       ▼
-              Tools!L2:M549 (total, daily)
+              Tools!L2:M549 (total written by script, daily = sheet formula)
                  ├──> Latest!F2:G549   (today's totals + dailies)
                  └──> Daily Archive!B2:B549, new column per day
                             │
@@ -118,13 +122,19 @@ Rows are fixed across sheets and hardcoded in several places that must be change
   padding is harmless — but never read 548 as "number of songs".
 - Rows 550–574 = 25 album/category aggregate rows (`CONFIG.ALBUMS`), with row 574 the
   artist-wide total. These are sums of song-row blocks above, not data.
-- `setAlbumFormulas()` in `src/update/daily_update.js` hardcodes the `=SUM(Bx:By)` ranges for
-  those 25 aggregate rows. **Adding or reordering songs invalidates these sums** as well as
-  `CONFIG.SONGS.COUNT`, `CONFIG.ALBUMS.START_ROW`, and every `songRow`/`count` in
-  `CONFIG.STATS`.
-- `CONFIG.STATS` maps each album to its song block in `Latest` (`songRow` + `count`), its
-  aggregate row in `Latest` (`summaryRow`), and the cell in the `Albums` sheet where its text
-  summary is written (`destCell`).
+- **Which rows belong to which category comes from the `Tracklist` sheet** (see
+  `src/additional/songs.js`), not from code. `buildAlbumFormulas()` turns its `category` column
+  into the `=SUM()` formulas for those 25 aggregate rows, and `generateSummaries()` takes each
+  album's song rows from it. Tracklist sheet row N is song row N; `getSongs()` refuses to run if
+  the sheet's `row` column disagrees, which is what sorting it would cause.
+- `CONFIG.CATEGORIES` maps each category name (exactly as written in the Tracklist sheet) to its
+  aggregate row in the Daily Archive (`archiveRow`), its row in Latest's album table
+  (`latestRow`), and optionally the Albums cell for its text summary (`summaryCell`) and
+  `summaryLimit` (see Known inconsistency 2). An unknown category in the Tracklist sheet is an
+  error.
+- Inserting a song row mid-sheet is still manual. It has to happen in Tracklist, Latest, Tools,
+  every Daily Archive and the Total archive at once, and then a headroom row must be deleted
+  so rows 550+ stay put. Automating that is the next planned step.
 
 ### Column conventions on `Latest`
 
@@ -137,18 +147,28 @@ with row 26 (`CONFIG.LATEST.OVERALL_ROW`) being the whole discography.
 ### `CONFIG` is the single source of truth
 
 `src/additional/config.js` holds the environment IDs, all sheet names, A1 ranges, row counts,
-the per-album `STATS` table, and the Apify actor ID + album URL map. Range changes belong here,
-not inline —
-the only significant exceptions are the hardcoded sums in `setAlbumFormulas()` and the numeric
-column indices described above. Adding a new release means adding its Spotify album URL to
-`CONFIG.APIFY.ALBUMS` *and* fixing up the row layout above.
+the `CATEGORIES` table, and the Apify actor ID + album URL map. Range changes belong here,
+not inline — the significant exception is the numeric column indices described above. The
+per-song facts (category, status, track ID) live in the `Tracklist` sheet instead. Adding a new
+release means adding its Spotify album URL to `CONFIG.APIFY.ALBUMS`, its songs to the Tracklist
+sheet with their track IDs, and the matching rows in the other sheets.
 
 ### Apify integration
 
 `src/apify/apify_service.js` is a thin API wrapper (start actor, poll status every 5s for up
 to 5 minutes, fetch dataset). `src/apify/apify_import.js` builds the input from
-`CONFIG.APIFY.ALBUMS`, flattens `album.tracks` into `[name, streamCount]` pairs, and writes
-them to `Tools`.
+`CONFIG.APIFY.ALBUMS`, flattens `album.tracks` into `[album name, name, streamCount, id]`
+rows, writes them to `Tools!E:H` (album first, for readability), then calls `matchTotalsById()` (`src/apify/match_totals.js`).
+The dataset is fetched unfiltered, so every field the actor returns (`coverArt`, album
+`artists`, `_url`, …) is available if needed.
+
+`matchTotalsById()` writes each song's total into `Tools!L` by its Tracklist track ID. Retired
+songs get 0. An active song whose ID is absent gets `#MISSING`, which breaks `Tools!M`/`C1` and
+makes `main()` abort — deliberate, since a silent 0 would corrupt the archive. It reads only the
+dump, so the **Match Totals by ID** menu item re-runs it for free after fixing an ID.
+Track IDs survive Spotify renaming a track (the old title-based `XLOOKUP` did not). One
+recording on several albums has several IDs sharing one stream count; each song stores the ID
+from its own album.
 
 Tokens are **never** stored in the repo. `src/apify/token_manager.js` keeps three tokens in
 `PropertiesService.getScriptProperties()` under `APIFY_TOKEN_1..3`, with
@@ -184,14 +204,41 @@ deliberately not kept in sync with `CONFIG`. Don't update it unless asked.
 
 What each sheet holds, and which parts of it the script reads or writes. Anything marked
 **[sheet-side]** is maintained by spreadsheet formulas, not by this codebase — the script never
-writes it. Row/column facts below were reconciled against `CONFIG` and `setAlbumFormulas()`;
+writes it. Row/column facts below were reconciled against `CONFIG` and the Tracklist sheet;
 where a description and the code disagree, the code wins.
+
+### `Tracklist` — the song registry
+
+One row per song, and row N here is song row N in every other sheet. The sheet must never be
+sorted. In code it is `CONFIG.SHEETS.SONGS` (read by `getSongs()` in `src/additional/songs.js`),
+so renaming the tab needs only that one string changed. The code finds columns by header, ignoring case and spaces (`CONFIG.SONGS_SHEET.HEADERS`),
+so headers may be renamed as long as the words stay the same, and columns may be reordered.
+Extra columns are ignored.
+
+| Header | Read by code | Contents |
+| --- | --- | --- |
+| `row` | yes | The row's own number — a tripwire against sorting |
+| `status` | yes | `active`, or `retired` (kept only for its archive history) |
+| `category` | yes | Aggregate it sums into; must be a `CONFIG.CATEGORIES` name. Blank = none |
+| `coverKey` | not yet | Key into the Covers sheet (same value as `Latest!A`) |
+| `title` | yes | Display title, same as `Latest!E`. Blank = headroom row |
+| `Spotify Title` | no | Spotify's own name for the track, for humans |
+| `trackId` | yes | Spotify track ID — what `matchTotalsById()` matches on |
+| `sourceAlbum` | no | Which scraped album the ID came from |
+
+**Retired songs** are rows 437 *Our Song (International Mix)* and 439 *Love Story (Pop Mix)*:
+Spotify merged their counts into the originals around August 2026. They are held at 0, left out
+of milestones and summaries, and should be hidden from Tracks. The rows remain because the
+archives hold ~3 years of their history. Retire a song rather than deleting its row.
+
+**Display titles differ from Spotify's on purpose** ("TV" for Taylor's Version etc.). Spotify's
+names exist only in Tools and the `Spotify Title` column; never "correct" `title` to match them.
 
 ### The song-row blocks
 
-Rows 2–549 mean the same thing in `Tools!J:M`, `Latest` (left table), and every `Daily Archive`
-sheet, so one song sits on one row everywhere. The blocks come from the `=SUM()` formulas in
-`setAlbumFormulas()`, which is the only authoritative listing of them:
+Rows 2–549 mean the same thing in `Tracklist`, `Tools!J:M`, `Latest` (left table), and every
+`Daily Archive` sheet, so one song sits on one row everywhere. The blocks are defined by the
+Tracklist sheet's `category` column; as of 2026-09-22 they are:
 
 | Song rows | # | Category | Aggregate row | `Latest` album row |
 | --- | --- | --- | --- | --- |
@@ -219,8 +266,8 @@ sheet, so one song sits on one row everywhere. The blocks come from the `=SUM()`
 | 405–416 | 12 | Soundtracks | 571 | 23 |
 | 417–428 | 12 | Features | 573 | 25 |
 | 429–435 | 7 | Droplets | 566 | 18 |
-| 436–518 | 83 | Remixes and etc. | 572 | 24 |
-| 519–549 | 31 | empty headroom | — | — |
+| 436–491 | 56 | Remixes and etc. (437, 439 retired) | 572 | 24 |
+| 492–549 | 58 | empty headroom | — | — |
 | | | **Total artist streams** = `SUM(B2:B549)` | 574 | 26 |
 
 Note that the aggregate rows are **not** in song-block order — `Midnights` and `TTPD` sit at
@@ -230,28 +277,33 @@ than assuming the orders line up.
 Real tracks occupy rows 2–491 (490 songs); 492–549 are blank. That total only reconciles if
 rows 393–404 are populated, which is how we know that block holds 12 real tracks.
 
-**Adding new tracks** currently means appending at the next free row (492, then 493, …), which
-puts them outside whichever category block they belong to and leaves them summed only by the
-row 574 artist total — the same trap rows 393–404 fell into. Making new releases land in the
-right block is known outstanding work; do not design around the append-at-the-end behaviour as
-if it were intended.
+Until 2026-09-22 the Remixes sum was hardcoded as `B436:B518`, so a track appended at row
+492–518 was summed as a remix whatever it was. Now a song is summed only by the category the
+Tracklist sheet gives it. **A track added to Latest/Tools but not to Tracklist gets no total from the
+import and is in no category.**
+
+**Adding new tracks** still means inserting rows by hand. Automating the insert, so a song lands
+at the end of its category's block in every sheet at once, is the next planned step. Do not
+design around appending at the end as if it were intended.
 
 ### `Tools` — ingestion and normalisation **[sheet-side, except the raw dump]**
 
 | Range | Contents |
 | --- | --- |
 | `C1` | `SUM_OF_DAILYS` — the freshness guard `main()` aborts on when `<= 0` |
-| `F2:G1000` | **Raw Apify dump**, written by `importSpotifyData()`. Cleared and rewritten each import |
-| `J2:M491` | **Mapping block** — the 490 tracked songs. J = album/era, K = title, L = total, M = daily |
+| `E2:H1000` | **Raw Apify dump**, written by `importSpotifyData()`: E album, F name, G stream count, H track ID. Cleared and rewritten each import |
+| `J2:M491` | **Mapping block** — J = album/era, K = Spotify name, L = total (**written** by `matchTotalsById()`), M = daily (sheet formula) |
 
 The raw dump holds **more tracks than are tracked** (roughly 700+, varying per import). Apify
 scrapes whole albums, and several albums in `CONFIG.APIFY.ALBUMS` (compilations, soundtracks,
-other artists' records carrying a Swift feature) contain tracks she is not credited on. The
-mapping block is what filters that down: sheet formulas look each tracked title up in `F:G` and
-pull its total into `L`. Extra rows in the dump are simply never looked up.
+other artists' records carrying a Swift feature) contain tracks she is not credited on. Tracks
+whose ID is in no Tracklist row are simply never used. The actor gives no per-track artist, only
+album-level `artists`, so non-Swift tracks can't be filtered out automatically.
 
-The script only ever *writes* `F2:G1000` and *reads* `L2:M549` — it never touches the matching
-logic in between. The import warns if the dump would exceed 998 rows.
+`Tools!L` used to be `=XLOOKUP(K,F:F,G:G)` on the Spotify name, with `MIN`/`MAX` variants
+for the same-named pairs on rows 42/56 (*The Story Of Us*) and 86/441 (*Bad Blood*). The first
+`matchTotalsById()` run replaces those formulas with values, so K is now informational.
+The import warns if the dump would exceed 998 rows.
 
 ### `Latest` — current-day snapshot
 
@@ -310,7 +362,9 @@ yesterday, column I is a week ago) apply.
 
 ### `Tracks` — sortable leaderboard **[sheet-side]** + one written block
 
-Sorting controls in A–B drive a formula-sorted leaderboard in C–M. The script's only stake is
+Sorting controls in A–B drive a formula-sorted leaderboard in C–M (`=SORT(Latest!B2:L500,A6,A4)`
+as of 2026-09-22; the owner is switching it to a `FILTER` that drops blank and retired rows
+and covers the full range to 549). The script's only stake is
 `N45:Q549` (`CONFIG.TRACKS`), cleared and rewritten by `updateUpcomingMilestones()`: headers on
 row 45 (`N45:O45` merged), then one row per predicted milestone with title (N), milestone
 value (P) and the generated announcement sentence (Q).
@@ -318,8 +372,10 @@ value (P) and the generated announcement sentence (Q).
 ### `Albums` — era analysis **[sheet-side]** + the generated summaries
 
 Summary tables and per-era track breakdowns are laid out in column groups, with each era's
-generated text summary written into the column just right of its breakdown. Destinations are
-`destCell` in `CONFIG.STATS` (F23, F45, F79, L23, L54, L93, L119, R23, R49, R78, R99, W23,
+generated text summary written into the column just right of its breakdown. The breakdowns
+reference specific `Latest` cells, which Sheets shifts along when rows are inserted in Latest,
+but a newly inserted song does not appear in them by itself. Destinations are
+`summaryCell` in `CONFIG.CATEGORIES` (F23, F45, F79, L23, L54, L93, L119, R23, R49, R78, R99, W23,
 W51, W78, W102, AB23, AB89) plus `G5` for the whole-discography summary
 (`CONFIG.ALBUMS.TOTAL_SUMMARY`). Each write clears 10 rows first, so summaries must stay at
 least 10 rows apart.
@@ -331,22 +387,24 @@ they will bite whoever next edits these areas.
 
 1. **Rows 393–404 fall through every category sum.** These are the 12 *Track by Track* versions
    of The Life of a Showgirl, scraped from the `"The Life of a Showgirl (Track by Track
-   Version)"` entry in `CONFIG.APIFY.ALBUMS`. The 24 category formulas cover rows 2–392 and
-   405–518, so these 12 are in none of them — yet they are included in the `SUM(B2:B549)`
+   Version)"` entry in `CONFIG.APIFY.ALBUMS`. Their `category` in the Tracklist sheet is blank,
+   so they are in none of the 24 category sums — yet they are included in the `SUM(B2:B549)`
    artist total on row 574. The 24 category rows therefore do not add up to row 574. The
    omission was not deliberate, but **the decision (2026-09-22) is to leave it as it is** —
    the tracks are low-value and not worth restructuring the aggregates for. Treat this as a
    known and accepted gap, not a bug to fix; do not "correct" it without being asked.
 
    Note this scatters the Showgirl era across three blocks: 336–347 (standard, the only part
-   `CONFIG.STATS` scans for summaries), 348–354 (the Acoustic Collection tail) and 393–404
-   (Track by Track). Only the first two are in the era's aggregate on row 565.
+   the summary scans), 348–354 (the Acoustic Collection tail) and 393–404 (Track by Track).
+   Only the first two are in the era's aggregate on row 565. If the gap ever needs closing,
+   it is now a one-cell change per row in the Tracklist sheet.
 
-2. **`CONFIG.STATS.count` is narrower than the sum block for four albums.** Speak Now (17 vs
-   21), Red (19 vs 22), 1989 (16 vs 19) and The Life of a Showgirl (12 vs 19). These are the
-   deluxe/bonus-track eras, so it looks intentional — the summary scans a narrower tracklist
-   than the album total sums — but the effect is that tracks in the excluded tail can never be
-   named as an era's biggest gainer. Which tracks those are has not been confirmed.
+2. **Four summaries scan fewer songs than their album sums.** `summaryLimit` in
+   `CONFIG.CATEGORIES` (formerly `CONFIG.STATS.count`): Speak Now (17 of 21), Red (19 of 22),
+   1989 (16 of 19) and The Life of a Showgirl (12 of 19). These are the deluxe/bonus-track
+   eras, so it looks intentional, but tracks in the excluded tail can never be named as an
+   era's biggest gainer. The limit counts from the start of the category, so songs appended to
+   one of these eras are summed but not summarised.
 
 3. ~~**`generateDiscographySummary()` derives a row span from an entry count.**~~ **Fixed
    2026-09-22.** It used `Object.keys(CONFIG.STATS).length` (17) as the number of album rows to
@@ -364,5 +422,6 @@ they will bite whoever next edits these areas.
 
    The discography summary is deliberately about **albums**, so it must never reach Droplets
    (18), the live/compilation rows (19–22), Soundtracks (23), Remixes (24) or Features (25).
-   Those categories still get their own per-era summaries where they have a `CONFIG.STATS`
-   entry (Soundtracks does, writing to `R99`); that is separate and intended.
+   Those categories still get their own per-era summaries where they have a `summaryCell` in
+   `CONFIG.CATEGORIES` (Soundtracks does, writing to `R99`); that is separate and intended.
+   (`CONFIG.STATS` was folded into `CONFIG.CATEGORIES` on 2026-09-22.)

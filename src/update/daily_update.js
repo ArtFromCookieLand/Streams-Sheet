@@ -1,4 +1,9 @@
 function transferStats() {
+  // --- 0. Build the album formulas first ---
+  // Reads the Tracklist sheet, so any problem with it throws here, before the date is advanced
+  // or a column is inserted - never halfway through.
+  var albumFormulas = buildAlbumFormulas();
+
   // --- 1. Advance date in Latest by +1 ---
   var latestDateCell = latestSheet.getRange(CONFIG.LATEST.DATE_CELL);
   var currentDate = new Date(latestDateCell.getValue());
@@ -25,7 +30,7 @@ function transferStats() {
 
   // --- 4. Set Album Formulas ---
   // Calculates SUMs for albums in the new Col B
-  setAlbumFormulas(dailyArchiveSheet);
+  setAlbumFormulas(dailyArchiveSheet, albumFormulas);
 
   // --- 5. Copy Tools -> Latest (Today's Data) ---
   var toolsData = toolsSheet.getRange(CONFIG.TOOLS.SONG_DATA).getValues();
@@ -174,40 +179,70 @@ function findBestSince(activeSheet, sheetNames, latestSheet, sourceStartRow, num
     .setValues(output);
 }
 
-function setAlbumFormulas(dailyArchiveSheet) {
-  // Define all formulas for the new column B
-  var formulas = [
-    ['=SUM(B2:B16)'],    // Row 550: Taylor Swift
-    ['=SUM(B17:B35)'],   // Row 551: Fearless
-    ['=SUM(B36:B56)'],   // Row 552: Speak Now
-    ['=SUM(B57:B78)'],   // Row 553: Red
-    ['=SUM(B79:B97)'],   // Row 554: 1989
-    ['=SUM(B98:B112)'],  // Row 555: reputation
-    ['=SUM(B113:B130)'], // Row 556: Lover
-    ['=SUM(B131:B164)'], // Row 557: folklore
-    ['=SUM(B165:B181)'], // Row 558: evermore
-    ['=SUM(B238:B260)'], // Row 559: Midnights
-    ['=SUM(B305:B335)'], // Row 560: The Tortured Poets Department
-    ['=SUM(B182:B207)'], // Row 561: Fearless (Taylor's Version)
-    ['=SUM(B208:B237)'], // Row 562: Red (Taylor's Version)
-    ['=SUM(B261:B282)'], // Row 563: Speak Now (Taylor's Version)
-    ['=SUM(B283:B304)'], // Row 564: 1989 (Taylor's Version)
-    ['=SUM(B336:B354)'], // Row 565: The Life of a Showgirl
-    ['=SUM(B429:B435)'], // Row 566: Droplets
-    ['=SUM(B363:B368)'], // Row 567: The Taylor Swift Holiday Collection
-    ['=SUM(B355:B362)'], // Row 568: Live Clear Channel Stripped 2008
-    ['=SUM(B377:B392)'], // Row 569: Speak Now World Tour
-    ['=SUM(B369:B376)'], // Row 570: Live From Paris
-    ['=SUM(B405:B416)'], // Row 571: Soundtracks
-    ['=SUM(B436:B518)'], // Row 572: Remixes and etc.
-    ['=SUM(B417:B428)'], // Row 573: Features
-    ['=SUM(B2:B549)']    // Row 574: Total Artist Streams
-  ];
+/**
+ * Writes the aggregate formulas into the new column B (rows 550-574).
+ * @param {Sheet} dailyArchiveSheet
+ * @param {Array<Array<string>>} formulas - From buildAlbumFormulas(). Built by the caller
+ *   before anything destructive happens, so a Tracklist sheet problem aborts the run cleanly.
+ */
+function setAlbumFormulas(dailyArchiveSheet, formulas) {
+  if (!formulas) formulas = buildAlbumFormulas();
 
-  // Write all formulas at once starting at CONFIG.ALBUMS.START_ROW
   dailyArchiveSheet.getRange(CONFIG.ALBUMS.START_ROW, 2, formulas.length, 1)
     .setFormulas(formulas)
     .setNumberFormat("#,##0")
     .setFontColor("black")
     .setFontWeight("normal");
+}
+
+
+/**
+ * Builds the aggregate formulas for Daily Archive rows 550-574 from the Tracklist sheet.
+ * Each category sums exactly the rows the Tracklist sheet assigns to it; songs with a blank
+ * category (the Track by Track rows) are in none, but still in the row-574 artist total.
+ * @return {Array<Array<string>>} One [formula] per aggregate row, top to bottom.
+ */
+function buildAlbumFormulas() {
+  const rowsByCategory = getRowsByCategory();
+  const firstRow = CONFIG.ALBUMS.START_ROW;
+  const lastSongRow = CONFIG.SONGS.START_ROW + CONFIG.SONGS.COUNT - 1;
+
+  const configured = CONFIG.CATEGORIES.map(c => c.name);
+  Object.keys(rowsByCategory).forEach(name => {
+    if (configured.indexOf(name) === -1) {
+      throw new Error(`The ${CONFIG.SHEETS.SONGS} sheet uses category "${name}", which is not in CONFIG.CATEGORIES.`);
+    }
+  });
+
+  const formulas = new Array(CONFIG.ALBUMS.COUNT).fill(null);
+  CONFIG.CATEGORIES.forEach(c => {
+    formulas[c.archiveRow - firstRow] = [sumOfRows(rowsByCategory[c.name] || [])];
+  });
+  // The last aggregate row is the artist-wide total over the whole song range.
+  formulas[CONFIG.ALBUMS.COUNT - 1] = [`=SUM(B${CONFIG.SONGS.START_ROW}:B${lastSongRow})`];
+
+  const gap = formulas.indexOf(null);
+  if (gap !== -1) {
+    throw new Error(`No category in CONFIG.CATEGORIES has archiveRow ${firstRow + gap}.`);
+  }
+  return formulas;
+}
+
+
+/**
+ * @param {Array<number>} rows - Ascending row numbers.
+ * @return {string} e.g. "=SUM(B2:B16)", or "=SUM(B336:B354,B600)" for a scattered category.
+ */
+function sumOfRows(rows) {
+  if (!rows.length) return '=0';
+
+  const parts = [];
+  let start = rows[0];
+  for (let i = 1; i <= rows.length; i++) {
+    if (i < rows.length && rows[i] === rows[i - 1] + 1) continue;
+    const end = rows[i - 1];
+    parts.push(start === end ? `B${start}` : `B${start}:B${end}`);
+    start = rows[i];
+  }
+  return `=SUM(${parts.join(',')})`;
 }

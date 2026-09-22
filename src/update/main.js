@@ -13,6 +13,7 @@ function onOpen() {
       .addItem('⬇️ Import Data', 'importSpotifyData')
       .addItem('🔃 Update Daily Stats', 'main')
       .addItem('🔄 Switch Token', 'switchApifyToken')
+      .addItem('🔗 Match Totals by ID', 'matchTotalsMenu')
       .addSeparator()
       .addItem('Update Auxiliary Stats', 'updateStats')
       .addItem('Update Best-Since-Days', 'transferBestSinceRows')
@@ -28,7 +29,25 @@ function main() {
   
   const checkSheet = ss.getSheetByName(CONFIG.SHEETS.TOOLS); 
   
-  // --- 0. AUTOMATED SPOTIFY UPDATE CHECK ---
+  // --- 0a. MISSING TRACK IDS ---
+  // matchTotalsById() marks songs whose ID was not in the import. They would otherwise surface
+  // only as an unexplained error in C1.
+  const totals = checkSheet.getRange(CONFIG.TOOLS.SONG_DATA).getValues();
+  const missingRows = [];
+  totals.forEach((r, i) => {
+    if (r[0] === CONFIG.TOOLS.MISSING_MARKER) missingRows.push(CONFIG.SONGS.START_ROW + i);
+  });
+  if (missingRows.length) {
+    ui.alert(
+      'Update Aborted',
+      `${missingRows.length} song(s) have no total because their track ID was not in the import (rows ${missingRows.join(', ')}).\n\n` +
+      `Correct their track IDs in the ${CONFIG.SHEETS.SONGS} sheet, then run "Match Totals by ID" and try again.`,
+      ui.ButtonSet.OK
+    );
+    return;
+  }
+
+  // --- 0b. AUTOMATED SPOTIFY UPDATE CHECK ---
   const sumValue = checkSheet.getRange(CONFIG.TOOLS.SUM_OF_DAILYS).getValue();
   
   if (sumValue <= 0 || isNaN(sumValue)) {
@@ -37,6 +56,15 @@ function main() {
       `The sum of daily streams in cell C1 is ${sumValue}.\n\nThis indicates that Spotify has not updated yet today, or there was an error importing the data. Please try again later.`,
       ui.ButtonSet.OK
     );
+    return;
+  }
+
+  // --- 0c. SONGS SHEET CHECK ---
+  // transferStats() is destructive, so a broken Tracklist sheet has to be caught before it starts.
+  try {
+    buildAlbumFormulas();
+  } catch (error) {
+    ui.alert('Update Aborted', `The ${CONFIG.SHEETS.SONGS} sheet has a problem:\n\n` + error.message, ui.ButtonSet.OK);
     return;
   }
 
