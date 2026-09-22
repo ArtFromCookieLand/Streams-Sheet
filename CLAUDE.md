@@ -286,8 +286,8 @@ Rows must run studio, then other, then fixed; the Categories check enforces it. 
 ### `Pending` — songs waiting to be added
 
 Created once by **Update → Setup → Create Pending sheet**. One row per song: `title`, `category`
-(dropdown from Categories), `coverKey`, `trackId`, `status` (`active` / `upcoming`; blank means
-active if there's an ID, else upcoming), optional `Spotify Title` and `album` (filled in from the
+(dropdown from Categories), `coverKey`, `trackId`, `status` (`active` / `upcoming` / `ignore`; blank
+means active if there's an ID, else upcoming; `ignore` needs only the ID and sends it to Ignored), optional `Spotify Title` and `album` (filled in from the
 import by ID when blank), and `result`. **Add Pending Songs** validates the whole batch first
 (category exists, active songs need an ID that is in the import, no ID or title already tracked,
 rows aligned) and changes nothing if any row fails, writing each row's problems into `result`.
@@ -296,6 +296,33 @@ after the nearest category above it), runs Match Totals, regenerates Latest's al
 re-checks alignment and totals, and marks each row `✅ Added at row N`. Rows marked ✅ are skipped
 from then on. What it can't do: the Albums-sheet breakdowns, and Covers entries for new keys (it
 lists both).
+
+### `Ignored` — track IDs deliberately not tracked
+
+Created once by **Update → Setup → Create Ignored sheet**, which starts it with every track in the
+current import that isn't tracked (other artists on soundtracks, other editions). **Create it
+before adding a new album's URL**, or that album's tracks are ignored along with the rest.
+Columns: `trackId`, `Spotify Title`, `album`, `reason`, `date`. Rows are only ever appended
+(by Find New Tracks for same-recording duplicates, and by Add Pending Songs for `ignore` rows).
+To start tracking an ignored track, delete its row here and add it through Pending.
+
+### Finding new tracks
+
+`findNewTracks()` (`src/songs/detect_new.js`) runs at the end of every import and from
+**Update → Find New Tracks** (reads the import already in Tools; no Apify cost). Every ID in the
+raw import that is in none of Tracklist, Pending and Ignored is sorted:
+- **Same recording on another edition**: same stream count (> 0) and a matching name as a tracked
+  song. It goes to Ignored with the reason. This is what a new deluxe edition's standard tracks
+  look like; so do mixes whose counts Spotify merged into the original.
+- **An announced song now out**: its name matches exactly one `upcoming` Tracklist song without an
+  ID. The ID is written into the Tracklist, and the song counts from that import. Names are compared
+  normalised: case, punctuation, "(Taylor's Version)", "(From The Vault)", "(TV)" and "(FTV)" are
+  ignored.
+- **Anything else**: a new Pending row (`status` active) with category and cover key suggested
+  from the most common among tracked songs on the same album (blank for an unknown album).
+
+It never touches Latest, the archives or Tools; adding songs stays with Add Pending Songs. The
+**New tracks** health check warns while the import holds IDs that are unaccounted for.
 
 ### The song-row blocks
 

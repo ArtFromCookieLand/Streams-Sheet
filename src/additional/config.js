@@ -35,6 +35,7 @@ const CONFIG = {
     COVERS: 'Covers',               // Cover key in column A
     CATEGORIES: 'Categories',       // One row per category (src/additional/categories.js)
     PENDING: 'Pending',             // Songs waiting to be added (src/songs/add_songs.js)
+    IGNORED: 'Ignored',             // Track IDs in the import that are deliberately not tracked
     TOTAL_ARCHIVE: 'Total Archive'  // Hand-kept cumulative backup; the script only reads it (checks)
   },
 
@@ -83,7 +84,21 @@ const CONFIG = {
       album: 'album',
       result: 'result'
     },
-    DONE_PREFIX: '✅'   // A result starting with this marks the row as already added
+    DONE_PREFIX: '✅',  // A result starting with this marks the row as already added
+    // Pending's status dropdown. "ignore" sends the row's track ID to the Ignored sheet instead.
+    STATUSES: ['active', 'upcoming', 'ignore'],
+    IGNORE_STATUS: 'ignore'
+  },
+
+  // --- Ignored sheet (see src/songs/detect_new.js) ---
+  IGNORED_SHEET: {
+    HEADERS: {
+      trackId: 'trackId',
+      spotifyTitle: 'Spotify Title',
+      album: 'album',
+      reason: 'reason',
+      date: 'date'
+    }
   },
 
   // --- Row layout ---

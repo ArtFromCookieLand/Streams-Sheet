@@ -49,6 +49,10 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 2.0.0.4 (22/9/26)
+    * New tracks are found automatically after every import, or with **Update → Find New Tracks** against the current import. Tracks that are the same recording on another edition of an album (same stream count and name, for example a deluxe's standard tracks) are ignored automatically. A track matching an announced **upcoming** song gets its ID filled in and counts straight away. Anything else lands in **Pending** with the album and cover key suggested from songs already tracked on that album.
+    * New **Ignored** sheet for tracks that are deliberately not tracked, such as other artists on soundtracks and other editions. It is started with everything untracked in the import, and Pending rows set to **ignore** are moved there.
+    * New **New tracks** health check, which warns while the import holds tracks nobody has looked at yet.
 * 2.0.0.3 (22/9/26)
     * New songs are added through a **Pending** sheet and **Update → Add Pending Songs**. Each song goes at the end of its album's block, at the same row in Latest, Tools, every Daily Archive and the Total Archive, and the Tracklist is renumbered to match. The whole batch is checked first; if any row has a problem nothing changes, and the problem is written next to that row.
     * Songs can be added before they're released, with the new **upcoming** status. The track ID can be left blank, the song stays at 0 until it appears in an import, and it never stops the daily update. The import says when an upcoming song has gone live.

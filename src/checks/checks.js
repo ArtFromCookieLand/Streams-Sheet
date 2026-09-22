@@ -24,6 +24,7 @@ const HEALTH_CHECKS = [
   { name: 'Totals add up',      run: checkTotals },
   { name: 'Aggregate formulas', run: checkAggregateFormulas },
   { name: 'Import',             run: checkImport },
+  { name: 'New tracks',         run: checkNewTracks },
   { name: 'Latest vs Tools',    run: checkLatestVsTools },
   { name: 'Date sequence',      run: checkDateSequence },
   { name: 'Covers',             run: checkCovers },
@@ -504,4 +505,22 @@ function checkCategories(data) {
   if (details.length) return { status: CHECK_STATUS.FAIL, summary: `${details.length} problem(s) with the categories.`, details: details };
   const n = t => cats.filter(c => c.type === t).length;
   return { status: CHECK_STATUS.OK, summary: `${cats.length} categories (${n('studio')} studio, ${n('other')} other, ${n('fixed')} fixed); rows and summary cells are consistent.` };
+}
+
+
+function checkNewTracks(data) {
+  if (!data.sheet(CONFIG.SHEETS.IGNORED)) {
+    return { status: CHECK_STATUS.WARN, summary: `No ${CONFIG.SHEETS.IGNORED} sheet yet, so new tracks aren't being looked for. Run Update → Setup → Create Ignored sheet.` };
+  }
+  if (data.tracklist().songs.length === 0) return tracklistUnreadable();
+  const known = knownTrackIds(data.tracklist().songs);
+  const fresh = data.rawImport().filter(r => { const id = String(r[3]).trim(); return id && !known[id]; });
+  if (fresh.length) {
+    return {
+      status: CHECK_STATUS.WARN,
+      summary: `${fresh.length} track(s) in the import aren't tracked, pending or ignored. Run Update → Find New Tracks.`,
+      details: fresh.map(r => `${r[1]} (${r[0]})`)
+    };
+  }
+  return { status: CHECK_STATUS.OK, summary: 'Every track in the import is tracked, pending or ignored.' };
 }

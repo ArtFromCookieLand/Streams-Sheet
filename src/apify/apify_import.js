@@ -105,10 +105,22 @@ function importSpotifyData() {
     // --- 5. MATCH TOTALS INTO TOOLS!L ---
     const matchResult = matchTotalsById();
 
+    // --- 6. LOOK FOR NEW TRACKS ---
+    // Links announced songs that are now out, and lists anything else new in Pending.
+    let newTracksText;
+    try {
+      const found = findNewTracks();
+      newTracksText = describeNewTracks(found);
+      // A linked upcoming song has just got its ID, so its total needs matching.
+      if (found.linked.length) matchTotalsById();
+    } catch (error) {
+      newTracksText = 'Looking for new tracks was skipped: ' + error.message;
+    }
+
     // Success Message
     ui.alert(
       'Import finished',
-      `Imported ${flatTrackList.length} tracks.\n\n` + describeMatchResult(matchResult),
+      `Imported ${flatTrackList.length} tracks.\n\n` + describeMatchResult(matchResult) + '\n\n' + newTracksText,
       ui.ButtonSet.OK
     );
 

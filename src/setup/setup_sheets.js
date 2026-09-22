@@ -1,6 +1,6 @@
 /**
  * ===================================================================
- * SETUP: THE CATEGORIES AND PENDING SHEETS
+ * SETUP: THE CATEGORIES, PENDING AND IGNORED SHEETS
  * -------------------------------------------------------------------
  * One-off helpers, under Update → Setup, shown only while the sheet is
  * missing. Each refuses to touch a sheet that already exists.
@@ -100,7 +100,7 @@ function createPendingSheet() {
   const catRule = SpreadsheetApp.newDataValidation()
     .requireValueInRange(categories.getRange(2, catCol, categories.getMaxRows() - 1, 1), true).build();
   const statusRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList([SONG_STATUS.ACTIVE, SONG_STATUS.UPCOMING], true).build();
+    .requireValueInList(CONFIG.PENDING_SHEET.STATUSES, true).build();
   sheet.getRange(2, 2, rows, 1).setDataValidation(catRule);
   sheet.getRange(2, 5, rows, 1).setDataValidation(statusRule);
   sheet.getRange(1, 8).setNote('Filled in by Add Pending Songs. A row whose result starts with ' + CONFIG.PENDING_SHEET.DONE_PREFIX + ' has been added and is skipped.');
@@ -109,4 +109,43 @@ function createPendingSheet() {
   ui.alert('Pending sheet created' + envTag(),
     'One row per song to add. Title, category and cover key are required; the track ID is required for "active" and optional for "upcoming" (a song not out yet). Spotify Title and album are optional - they are filled in from the import when the ID is there.\n\n' +
     'Then run Update → Add Pending Songs.', ui.ButtonSet.OK);
+}
+
+
+/**
+ * [MENU] Creates the Ignored sheet, starting it with every track in the current import that isn't
+ * tracked or waiting in Pending - other artists on soundtracks, other editions of an album - so
+ * that Find New Tracks only reports what is genuinely new from then on.
+ */
+function createIgnoredSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ui = SpreadsheetApp.getUi();
+  const name = CONFIG.SHEETS.IGNORED;
+  if (ss.getSheetByName(name)) {
+    ui.alert('Nothing changed', `The "${name}" sheet already exists.`, ui.ButtonSet.OK);
+    return;
+  }
+  const raw = readRawImport();
+  if (!raw.length) {
+    ui.alert('Import first', 'The raw import in Tools has no track IDs, so there is nothing to start the Ignored sheet from.', ui.ButtonSet.OK);
+    return;
+  }
+
+  const known = knownTrackIds(getSongs());
+  const untracked = raw.filter(t => !known[t.id]);
+  const response = ui.alert('Create Ignored sheet' + envTag(),
+    `${untracked.length} of the ${raw.length} tracks in the current import aren't tracked. They'll all be marked as ignored, so Find New Tracks only reports tracks that appear after today.\n\n` +
+    'Anything in there you do want to track can be added later through Pending.\n\nGo ahead?', ui.ButtonSet.YES_NO);
+  if (response !== ui.Button.YES) return;
+
+  const h = CONFIG.IGNORED_SHEET.HEADERS;
+  const header = [h.trackId, h.spotifyTitle, h.album, h.reason, h.date];
+  const sheet = ss.insertSheet(name);
+  sheet.getRange(1, 1, 1, header.length).setValues([header]).setFontWeight('bold');
+  sheet.setFrozenRows(1);
+  if (untracked.length) {
+    addToIgnored(untracked.map(t => ({ trackId: t.id, spotifyTitle: t.name, album: t.album, reason: 'Not tracked when detection started' })));
+  }
+  sheet.autoResizeColumns(1, header.length);
+  ui.alert('Ignored sheet created' + envTag(), `${untracked.length} track(s) marked as ignored.`, ui.ButtonSet.OK);
 }

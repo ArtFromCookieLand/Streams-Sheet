@@ -46,19 +46,27 @@ function addPendingSongsMenu() {
   }
 
   // --- 2. Confirm ---
-  const list = plan.entries.map(e => `• ${e.title} → ${e.category}, row ${e.targetRow}${e.status === SONG_STATUS.UPCOMING ? ' (upcoming)' : ''}`).join('\n');
-  const response = ui.alert('Add ' + plan.entries.length + ' song(s)?' + envTag(),
-    list + '\n\nSongs below each one move down a row in every sheet.' +
-    (plan.entries.length > 3 ? ' For a batch this size, a named version in Version history first is a good idea.' : ''),
+  const toAdd = plan.entries.filter(e => !e.ignore);
+  const toIgnore = plan.entries.filter(e => e.ignore);
+  let list = toAdd.map(e => `• ${e.title} → ${e.category}, row ${e.targetRow}${e.status === SONG_STATUS.UPCOMING ? ' (upcoming)' : ''}`).join('\n');
+  if (toIgnore.length) list += (list ? '\n\n' : '') + `Ignore ${toIgnore.length} track(s):\n` + toIgnore.map(e => `• ${e.spotifyTitle || e.title}`).join('\n');
+  const response = ui.alert(`Add ${toAdd.length} song(s)${toIgnore.length ? `, ignore ${toIgnore.length}` : ''}?` + envTag(),
+    list + (toAdd.length ? '\n\nSongs below each one move down a row in every sheet.' : '') +
+    (toAdd.length > 3 ? ' For a batch this size, a named version in Version history first is a good idea.' : ''),
     ui.ButtonSet.YES_NO);
   if (response !== ui.Button.YES) return;
 
   // --- 3. Add, one at a time, in the planned order ---
   ss.toast('Adding songs... do not edit the spreadsheet.', 'Add Pending Songs', -1);
   const results = plan.entries.map(() => '');
+  if (toIgnore.length) {
+    addToIgnored(toIgnore.map(e => ({ trackId: e.trackId, spotifyTitle: e.spotifyTitle || e.title, album: e.album, reason: 'Set to ignore in Pending' })));
+    plan.entries.forEach((e, i) => { if (e.ignore) results[i] = `${CONFIG.PENDING_SHEET.DONE_PREFIX} Ignored on ${formatDateString(new Date())}`; });
+  }
   let failed = null;
   for (let i = 0; i < plan.entries.length; i++) {
     const e = plan.entries[i];
+    if (e.ignore) continue;
     try {
       insertSongRow(e);
       results[i] = `${CONFIG.PENDING_SHEET.DONE_PREFIX} Added at row ${e.targetRow} on ${formatDateString(new Date())}`;
@@ -95,15 +103,16 @@ function addPendingSongsMenu() {
   const checks = runChecks(HEALTH_CHECKS.filter(c => c.name === 'Row alignment' || c.name === 'Totals add up'));
   const todo = [];
   const covers = coverKeysInCoversSheet();
-  plan.entries.forEach(e => {
+  toAdd.forEach(e => {
     if (covers && !covers[e.coverKey.toLowerCase()]) todo.push(`Add cover key "${e.coverKey}" to the ${CONFIG.SHEETS.COVERS} sheet (${e.title}).`);
     if (e.beyondSummaryLimit) todo.push(`"${e.title}" is past ${e.category}'s summary limit, so it won't be named in that album's summary.`);
   });
-  todo.push('Add the new song(s) to their album breakdowns on the Albums sheet, if they belong there.');
+  if (toAdd.length) todo.push('Add the new song(s) to their album breakdowns on the Albums sheet, if they belong there.');
 
-  ui.alert('Added ' + plan.entries.length + ' song(s)' + envTag(),
-    plan.entries.map(e => `✅ ${e.title} → row ${e.targetRow}`).join('\n') + '\n\n' + matchText + '\n\n' +
-    formatCheckReport(checks) + '\n\nStill to do by hand:\n• ' + todo.join('\n• '),
+  ui.alert(`Added ${toAdd.length} song(s)${toIgnore.length ? `, ignored ${toIgnore.length}` : ''}` + envTag(),
+    toAdd.map(e => `✅ ${e.title} → row ${e.targetRow}`).join('\n') +
+    (toIgnore.length ? `\n🚫 ${toIgnore.length} track(s) moved to the ${CONFIG.SHEETS.IGNORED} sheet.` : '') + '\n\n' + matchText + '\n\n' +
+    formatCheckReport(checks) + (todo.length ? '\n\nStill to do by hand:\n• ' + todo.join('\n• ') : ''),
     ui.ButtonSet.OK);
 }
 
@@ -120,10 +129,10 @@ function readPending() {
   const entries = [];
   for (let i = 1; i < values.length; i++) {
     const r = values[i];
-    const title = String(r[col.title]).trim();
+    const trackId = String(r[col.trackId]).trim();
+    const title = String(r[col.title]).trim() || trackId;   // an "ignore" row may have only an ID
     if (!title) continue;
     if (String(r[col.result]).indexOf(CONFIG.PENDING_SHEET.DONE_PREFIX) === 0) continue;
-    const trackId = String(r[col.trackId]).trim();
     entries.push({
       sheetRow: i + 1,
       title: title,
@@ -184,11 +193,25 @@ function planPendingSongs(entries) {
 
   entries.forEach(e => {
     e.errors = [];
+    const info = imported[e.trackId] || {};
+    e.spotifyTitle = e.spotifyTitle || info.name || '';
+    e.album = e.album || info.album || '';
+
+    // "ignore": only the track ID matters; it goes to the Ignored sheet, not into any row.
+    if (e.status === CONFIG.PENDING_SHEET.IGNORE_STATUS) {
+      e.ignore = true;
+      if (!e.trackId) e.errors.push('Ignoring needs the track ID.');
+      else if (knownIds[e.trackId]) e.errors.push(`Track ID is tracked as "${knownIds[e.trackId]}" - retire that song instead.`);
+      else if (idsInBatch[e.trackId]) e.errors.push('Track ID appears twice in Pending.');
+      idsInBatch[e.trackId] = true;
+      return;
+    }
+
     const cat = byName[e.category];
     if (!e.category) e.errors.push('No category.');
     else if (!cat) e.errors.push(`Category "${e.category}" is not in the ${CONFIG.SHEETS.CATEGORIES} sheet.`);
     if (!e.coverKey) e.errors.push('No cover key.');
-    if ([SONG_STATUS.ACTIVE, SONG_STATUS.UPCOMING].indexOf(e.status) === -1) e.errors.push(`Status "${e.status}" must be active or upcoming.`);
+    if (CONFIG.PENDING_SHEET.STATUSES.indexOf(e.status) === -1) e.errors.push(`Status "${e.status}" must be one of: ${CONFIG.PENDING_SHEET.STATUSES.join(', ')}.`);
     if (e.status === SONG_STATUS.ACTIVE && !e.trackId) e.errors.push('An active song needs its track ID (use "upcoming" if it isn\'t out yet).');
     if (e.trackId) {
       if (knownIds[e.trackId]) e.errors.push(`Track ID is already used by "${knownIds[e.trackId]}".`);
@@ -197,10 +220,6 @@ function planPendingSongs(entries) {
       if (e.status === SONG_STATUS.ACTIVE && !imported[e.trackId]) e.errors.push('Track ID is not in the latest import - import first, or use "upcoming".');
     }
     if (cat && knownTitles[e.category + '|' + e.title.toLowerCase()]) e.errors.push(`"${e.title}" is already in ${e.category}.`);
-
-    const info = imported[e.trackId] || {};
-    e.spotifyTitle = e.spotifyTitle || info.name || '';
-    e.album = e.album || info.album || '';
     if (e.errors.length || !cat) return;
 
     // Where it goes: after the category's last song, or - for a category with none yet - after the

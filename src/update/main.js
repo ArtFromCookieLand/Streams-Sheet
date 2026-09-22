@@ -14,6 +14,7 @@ function onOpen() {
       .addItem('🔃 Update Daily Stats', 'main')
       .addItem('🔄 Switch Token', 'switchApifyToken')
       .addItem('🔗 Match Totals by ID', 'matchTotalsMenu')
+      .addItem('🔍 Find New Tracks', 'findNewTracksMenu')
       .addItem('➕ Add Pending Songs', 'addPendingSongsMenu')
       .addSeparator()
       .addItem('Update Auxiliary Stats', 'updateStats')
@@ -28,6 +29,7 @@ function onOpen() {
   let setupNeeded = false;
   if (!ss.getSheetByName(CONFIG.SHEETS.CATEGORIES)) { setup.addItem('Create Categories sheet', 'createCategoriesSheet'); setupNeeded = true; }
   if (!ss.getSheetByName(CONFIG.SHEETS.PENDING)) { setup.addItem('Create Pending sheet', 'createPendingSheet'); setupNeeded = true; }
+  if (!ss.getSheetByName(CONFIG.SHEETS.IGNORED)) { setup.addItem('Create Ignored sheet', 'createIgnoredSheet'); setupNeeded = true; }
   if (setupNeeded) updateMenu.addSeparator().addSubMenu(setup);
   updateMenu.addToUi();
 
