@@ -116,9 +116,18 @@ const CONFIG = {
     FIRST_SONG_ROW: 50
   },
 
+  // --- Covers sheet (see src/songs/covers.js) ---
+  // No header row: one cover per row. Latest!D shows the image with XLOOKUP(key, A, B).
+  COVERS: {
+    KEY_COLUMN: 1,              // A - cover key
+    IMAGE_COLUMN: 2,            // B - the image formula (=IMAGE of the URL), what Latest!D shows
+    URL_COLUMN: 3,              // C - image URL
+    SIZE: 300                   // Width of the Spotify cover picked from the import's coverArt
+  },
+
   // --- Range Definitions ---
   TOOLS: {
-    RAW_DATA: 'E2:H1000',       // Raw import: E album, F Spotify name, G stream count, H track ID
+    RAW_DATA: 'E2:I1000',       // Raw import: E album, F Spotify name, G stream count, H track ID, I album cover URL
     TOTALS_COLUMN: 12,          // Col L - each song's total, written by matchTotalsById()
     DAILY_COLUMN: 13,           // Col M - each song's daily (sheet formula)
     // Written into Col L for a song whose track ID is missing from the import. It breaks the

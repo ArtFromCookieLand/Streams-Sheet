@@ -49,6 +49,10 @@ Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual nam
 
 ## Version History
 
+* 2.0.0.5 (22/9/26)
+    * New cover keys get their Covers row automatically, with the key, the image formula and the URL. The URL is the cover of the album the track was scraped from, which the import now keeps in Tools!I, or else Spotify's embed lookup for the track. This happens when songs are added, and when an upcoming song turns up on Spotify. **Update → Fill Missing Covers** does the same for the whole Tracklist.
+    * Existing covers are never changed; to use a different image, edit the URL in Covers.
+    * The Covers check also warns if a cover key in use has no image formula.
 * 2.0.0.4 (22/9/26)
     * New tracks are found automatically after every import, or with **Update → Find New Tracks** against the current import. Tracks that are the same recording on another edition of an album (same stream count and name, for example a deluxe's standard tracks) are ignored automatically. A track matching an announced **upcoming** song gets its ID filled in and counts straight away. Anything else lands in **Pending** with the album and cover key suggested from songs already tracked on that album.
     * New **Ignored** sheet for tracks that are deliberately not tracked, such as other artists on soundtracks and other editions. It is started with everything untracked in the import, and Pending rows set to **ignore** are moved there.

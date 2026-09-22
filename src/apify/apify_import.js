@@ -8,12 +8,12 @@ function importSpotifyData() {
   // --- 0. ENVIRONMENT GUARD ---
   // Apify credits are shared and limited (~17 runs per token), so the dev copy
   // does not spend them. The raw data that came across with the spreadsheet copy
-  // in Tools!F2:G1000 is the fixture to develop against instead.
+  // in Tools!E2:I1000 is the fixture to develop against instead.
   if (isDev() && !CONFIG.ENV.ALLOW_APIFY_IN_DEV) {
     ui.alert(
       'Blocked in DEV',
       'This is a DEV copy, and an Apify run would spend credits from the shared token budget.\n\n' +
-      'The raw data already sitting in Tools!F2:G1000 was copied from production — run "Update Daily Stats" against that instead.\n\n' +
+      'The raw data already sitting in Tools!E2:I1000 was copied from production — use "Match Totals by ID" and "Update Daily Stats" against that instead.\n\n' +
       'To override, set CONFIG.ENV.ALLOW_APIFY_IN_DEV to true.',
       ui.ButtonSet.OK
     );
@@ -70,12 +70,13 @@ function importSpotifyData() {
     
     let flatTrackList = [];
 
-    // [album, name, stream count, track ID] - the ID is what matchTotalsById() matches on;
-    // the album and name are kept for a human reading the Tools sheet.
+    // [album, name, stream count, track ID, album cover] - the ID is what matchTotalsById() matches
+    // on; the album and name are for a human reading Tools; the cover seeds new Covers rows.
     rawData.forEach(album => {
       if (album.tracks && Array.isArray(album.tracks)) {
+        const cover = pickCoverArt(album.coverArt);
         album.tracks.forEach(track => {
-          flatTrackList.push([album.name || '', track.name, Number(track.streamCount), track.id || '']);
+          flatTrackList.push([album.name || '', track.name, Number(track.streamCount), track.id || '', cover]);
         });
       }
     });
@@ -140,4 +141,14 @@ function importSpotifyData() {
       ui.alert('Error', errorString, ui.ButtonSet.OK);
     }
   }
+}
+
+/**
+ * @param {Array<{url, width, height}>} coverArt - As the actor returns it (usually 64, 300 and 640px).
+ * @return {string} The URL at CONFIG.COVERS.SIZE if there is one, else the first, else ''.
+ */
+function pickCoverArt(coverArt) {
+  if (!Array.isArray(coverArt) || !coverArt.length) return '';
+  const sized = coverArt.filter(c => Number(c.width) === CONFIG.COVERS.SIZE)[0];
+  return (sized || coverArt[0]).url || '';
 }

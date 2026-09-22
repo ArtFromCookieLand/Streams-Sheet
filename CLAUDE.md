@@ -44,7 +44,7 @@ Anything that is not the live sheet is dev, so a fresh copy needs no setup. A sc
 - `importSpotifyData()` refuses to run, because Apify credits are limited (~17 runs per token)
   and shared. Override with `CONFIG.ENV.ALLOW_APIFY_IN_DEV`.
 
-The dev copy arrives with production's last raw import already in `Tools!E2:H1000`; that is the
+The dev copy arrives with production's last raw import already in `Tools!E2:I1000`; that is the
 fixture to develop against, so the whole pipeline can be exercised without touching Apify.
 A dump written before track-ID matching (2026-09-22) has no track IDs, and `matchTotalsById()`
 refuses it. Paste a dump that has IDs at `Tools!E2` instead.
@@ -92,7 +92,7 @@ speculatively.
 ### Data flow
 
 ```
-Apify actor ──> Tools!E2:H1000 (album, raw name, streamCount, track ID)
+Apify actor ──> Tools!E2:I1000 (album, raw name, streamCount, track ID, album cover)
                       │  matchTotalsById(): Tracklist sheet track ID -> row
                       ▼
               Tools!L:M, rows 50+ (total written by script, daily = sheet formula)
@@ -324,6 +324,19 @@ raw import that is in none of Tracklist, Pending and Ignored is sorted:
 It never touches Latest, the archives or Tools; adding songs stays with Add Pending Songs. The
 **New tracks** health check warns while the import holds IDs that are unaccounted for.
 
+### Covers for new cover keys
+
+The Covers sheet has no header row: key in column A, the image formula (`=IMAGE` of the URL) in B,
+the image URL in C (`CONFIG.COVERS`). Latest!D shows `XLOOKUP(key, Covers!A:A, Covers!B:B)`. `ensureCovers()` (`src/songs/covers.js`) adds a row for
+any key that isn't there yet, straight under the last key, copying column B's formula from the
+row above. It uses the cover of the album the
+track was scraped from (Tools!I), or else Spotify's oEmbed endpoint for the track
+(`open.spotify.com/oembed`, no login, no credits). It runs after Add Pending Songs and when
+Find New Tracks links an upcoming song, and **Update → Fill Missing Covers** runs it for the whole
+Tracklist. Existing keys are never changed; to use a different image (e.g. the standard green
+TLOAS rather than the scraped Acoustic edition), edit the URL in Covers by hand. The Covers check
+warns if a key in use has no image formula in Covers!B.
+
 ### The song-row blocks
 
 The song rows mean the same thing in `Tools!J:M`, `Latest`, every `Daily Archive` and the
@@ -375,7 +388,7 @@ Pending sheet (see the row-layout contract), which keeps every block contiguous.
 | Range | Contents |
 | --- | --- |
 | `C1` | `SUM_OF_DAILYS` — the freshness guard `main()` aborts on when `<= 0` |
-| `E2:H1000` | **Raw Apify dump**, written by `importSpotifyData()`: E album, F name, G stream count, H track ID. Cleared and rewritten each import |
+| `E2:I1000` | **Raw Apify dump**, written by `importSpotifyData()`: E album, F name, G stream count, H track ID, I album cover URL (300px, from the actor's `coverArt`). Cleared and rewritten each import |
 | `J50:M` | **Mapping block**, one row per song row — J = album/era, K = Spotify name, L = total (**written** by `matchTotalsById()`), M = daily (sheet formula) |
 
 The raw dump holds **more tracks than are tracked** (roughly 700+, varying per import). Apify
@@ -398,7 +411,7 @@ indices matter, because the summary and milestone code reads by number, not by h
 | --- | --- | --- | --- |
 | A | 1 | Album/era cover key (`debutOG`, `fearlessTV`, …) | — |
 | B / C | 2 / 3 | Rank, rank change vs. yesterday | — |
-| D | 4 | Cover art placeholder | (as for songs) |
+| D | 4 | Cover image: `XLOOKUP(A, Covers!A:A, Covers!B:B)` | (as for songs) |
 | E | 5 | Title; a blank here means "skip this row" | Album/category title |
 | F / G | 6 / 7 | Total, daily — **written** by `transferStats()` | Total, daily (sheet formulas) |
 | H / I | 8 / 9 | % change vs. yesterday / vs. a week ago | same |
@@ -406,7 +419,7 @@ indices matter, because the summary and milestone code reads by number, not by h
 | L | 12 | Best-since date — **written** by `findBestSince()` | same |
 | M / N | 13 / 14 | Daily a day ago / a week ago — **written** by `updateStats()` | same |
 | O | 15 | Previous day's rank | — |
-| P | 16 | Cover art URL | same |
+| P | 16 | Cover URL (`VLOOKUP` into Covers) — redundant with D; the owner plans to clear it | same |
 
 Rows 28–35 hold the special-edition side table in **T:AB** (T title, U total, V daily, W/X %,
 Y best since, Z/AA change, AB URL), which is sheet-side and read only by the Albums sheet.

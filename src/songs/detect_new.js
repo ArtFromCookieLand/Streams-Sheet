@@ -116,7 +116,11 @@ function findNewTracks() {
   });
 
   if (result.duplicates.length) addToIgnored(result.duplicates);
-  if (result.linked.length) linkUpcomingSongs(result.linked);
+  if (result.linked.length) {
+    linkUpcomingSongs(result.linked);
+    // Their cover keys may be new too; now there is an album to take the cover from.
+    result.covers = ensureCovers(result.linked.map(l => ({ coverKey: l.song.coverKey, trackId: l.trackId, album: l.album, title: l.song.title })));
+  }
   if (result.pending.length) appendPendingRows(result.pending);
   return result;
 }
@@ -138,17 +142,18 @@ function describeNewTracks(r) {
   if (r.duplicates.length) {
     lines.push(`🔁 ${r.duplicates.length} track(s) are the same recording on another edition - ignored automatically.`);
   }
+  if (r.covers && describeCovers(r.covers)) lines.push(describeCovers(r.covers));
   return lines.join('\n');
 }
 
 
 // --- helpers ---
 
-/** @return {Array<{album: string, name: string, count: number, id: string}>} Rows that have an ID. */
+/** @return {Array<{album: string, name: string, count: number, id: string, cover: string}>} Rows that have an ID. */
 function readRawImport() {
   return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.TOOLS)
     .getRange(CONFIG.TOOLS.RAW_DATA).getValues()
-    .map(r => ({ album: String(r[0]), name: String(r[1]), count: Number(r[2]) || 0, id: String(r[3]).trim() }))
+    .map(r => ({ album: String(r[0]), name: String(r[1]), count: Number(r[2]) || 0, id: String(r[3]).trim(), cover: String(r[4] || '').trim() }))
     .filter(t => t.id);
 }
 

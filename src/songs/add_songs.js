@@ -102,9 +102,15 @@ function addPendingSongsMenu() {
   // --- 5. Check the rows still line up, and report ---
   const checks = runChecks(HEALTH_CHECKS.filter(c => c.name === 'Row alignment' || c.name === 'Totals add up'));
   const todo = [];
-  const covers = coverKeysInCoversSheet();
+  let coverText = '';
+  try {
+    const covers = ensureCovers(toAdd.map(e => ({ coverKey: e.coverKey, trackId: e.trackId, album: e.album, title: e.title })));
+    coverText = describeCovers({ added: covers.added, missing: [] });   // missing ones become to-dos below
+    covers.missing.forEach(m => todo.push(`Add cover key "${m.key}" to the ${CONFIG.SHEETS.COVERS} sheet${m.title ? ` (${m.title})` : ''} - no cover to copy yet${toAdd.some(e => e.coverKey === m.key && !e.trackId) ? '; it can be filled once the song is out (Update → Fill Missing Covers)' : ''}.`));
+  } catch (error) {
+    coverText = 'Adding covers failed: ' + error.message;
+  }
   toAdd.forEach(e => {
-    if (covers && !covers[e.coverKey.toLowerCase()]) todo.push(`Add cover key "${e.coverKey}" to the ${CONFIG.SHEETS.COVERS} sheet (${e.title}).`);
     if (e.beyondSummaryLimit) todo.push(`"${e.title}" is past ${e.category}'s summary limit, so it won't be named in that album's summary.`);
   });
   if (toAdd.length) todo.push('Add the new song(s) to their album breakdowns on the Albums sheet, if they belong there.');
@@ -112,6 +118,7 @@ function addPendingSongsMenu() {
   ui.alert(`Added ${toAdd.length} song(s)${toIgnore.length ? `, ignored ${toIgnore.length}` : ''}` + envTag(),
     toAdd.map(e => `✅ ${e.title} → row ${e.targetRow}`).join('\n') +
     (toIgnore.length ? `\n🚫 ${toIgnore.length} track(s) moved to the ${CONFIG.SHEETS.IGNORED} sheet.` : '') + '\n\n' + matchText + '\n\n' +
+    (coverText ? coverText + '\n\n' : '') +
     formatCheckReport(checks) + (todo.length ? '\n\nStill to do by hand:\n• ' + todo.join('\n• ') : ''),
     ui.ButtonSet.OK);
 }
@@ -334,15 +341,3 @@ function writePendingResults(pending, results) {
   pending.entries.forEach((e, i) => pending.sheet.getRange(e.sheetRow, col).setValue(results[i] || ''));
 }
 
-
-/** @return {Object|null} Lower-cased cover keys in the Covers sheet, or null if it has none. */
-function coverKeysInCoversSheet() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.COVERS);
-  if (!sheet || sheet.getLastRow() < 1) return null;
-  const keys = {};
-  sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues().forEach(r => {
-    const k = String(r[0]).trim().toLowerCase();
-    if (k) keys[k] = true;
-  });
-  return keys;
-}

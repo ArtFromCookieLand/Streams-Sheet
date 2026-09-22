@@ -16,6 +16,7 @@ function onOpen() {
       .addItem('🔗 Match Totals by ID', 'matchTotalsMenu')
       .addItem('🔍 Find New Tracks', 'findNewTracksMenu')
       .addItem('➕ Add Pending Songs', 'addPendingSongsMenu')
+      .addItem('🖼️ Fill Missing Covers', 'fillMissingCoversMenu')
       .addSeparator()
       .addItem('Update Auxiliary Stats', 'updateStats')
       .addItem('Update Best-Since-Days', 'transferBestSinceRows')

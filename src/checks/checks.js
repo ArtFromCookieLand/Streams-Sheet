@@ -425,12 +425,20 @@ function checkCovers(data) {
   const details = [];
   const notes = [];
 
-  let keys = null;
+  let keys = null, imageless = null;
   if (coversSheet && coversSheet.getLastRow() > 0) {
-    keys = {};
+    keys = {}; imageless = {};
+    const c = CONFIG.COVERS;
+    const n = coversSheet.getLastRow();
+    const keyValues = coversSheet.getRange(1, c.KEY_COLUMN, n, 1).getValues();
+    const imageFormulas = coversSheet.getRange(1, c.IMAGE_COLUMN, n, 1).getFormulas();
     // The cover lookup in the sheet is case-insensitive, so this is too.
-    coversSheet.getRange(1, 1, coversSheet.getLastRow(), 1).getValues()
-      .forEach(r => { const k = String(r[0]).trim().toLowerCase(); if (k) keys[k] = true; });
+    keyValues.forEach((r, i) => {
+      const k = String(r[0]).trim().toLowerCase();
+      if (!k) return;
+      keys[k] = true;
+      if (!imageFormulas[i][0]) imageless[k] = i + 1;
+    });
   } else {
     notes.push(`Sheet "${CONFIG.SHEETS.COVERS}" not found, so cover keys were not looked up.`);
   }
@@ -447,10 +455,19 @@ function checkCovers(data) {
     }
   });
 
+  // Latest!D shows Covers!B, so every key in use needs its image formula there.
+  if (imageless) {
+    const used = {};
+    songs.forEach(s => { if (s.coverKey) used[s.coverKey.toLowerCase()] = s.coverKey; });
+    Object.keys(used).forEach(k => {
+      if (imageless[k]) notes.push(`Cover key "${used[k]}" has no image formula in ${CONFIG.SHEETS.COVERS}!B (row ${imageless[k]}), so Latest!D shows nothing for its songs.`);
+    });
+  }
+
   if (details.length) {
     return { status: CHECK_STATUS.FAIL, summary: `${details.length} cover problem(s).`, details: details.concat(notes) };
   }
-  if (notes.length) return { status: CHECK_STATUS.WARN, summary: 'Latest!A matches every cover key.', details: notes };
+  if (notes.length) return { status: CHECK_STATUS.WARN, summary: `${notes.length} thing(s) to look at with covers.`, details: notes };
   return { status: CHECK_STATUS.OK, summary: `Every song's cover key is in ${CONFIG.SHEETS.COVERS} and matches Latest!A.` };
 }
 
