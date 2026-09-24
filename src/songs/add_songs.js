@@ -4,9 +4,8 @@
  * -------------------------------------------------------------------
  * Adds every not-yet-added row of the Pending sheet to the spreadsheet:
  * each song gets a row at the end of its category's block, inserted at
- * the same row in Latest (A:P cells only, so the side table beside the
- * songs stays put), and as a whole row in Tools, every Daily Archive and
- * the Total Archive, plus an entry in the Tracklist. Songs below it move down one row everywhere; their
+ * the same row in Latest, every Daily Archive and the Total Archive,
+ * plus an entry in the Tracklist. Songs below it move down one row everywhere; their
  * Tracklist rows are renumbered to match.
  *
  * The whole batch is validated first. If any row has a problem, nothing
@@ -90,6 +89,7 @@ function addPendingSongsMenu() {
   }
   writePendingResults(pending, results);
   SpreadsheetApp.flush();
+  ss.toast('Finished - see the report.', 'Add Pending Songs', 3);   // replaces the one with no timeout
 
   if (failed) {
     ui.alert('Stopped partway' + envTag(),
@@ -169,8 +169,10 @@ function planPendingSongs(entries) {
   if (blockers.length) return { blockers: blockers, entries: entries.map(e => Object.assign(e, { errors: [] })) };
 
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  [CONFIG.SHEETS.LATEST, CONFIG.SHEETS.TOOLS, CONFIG.SHEETS.TOTAL_ARCHIVE].concat(CONFIG.SHEETS.ARCHIVE_YEARS)
+  [CONFIG.SHEETS.LATEST, CONFIG.SHEETS.TOTAL_ARCHIVE].concat(CONFIG.SHEETS.ARCHIVE_YEARS)
     .forEach(n => { if (!ss.getSheetByName(n)) blockers.push(`Sheet "${n}" not found.`); });
+  let raw = [];
+  try { raw = readRawImport(); } catch (e) { blockers.push(e.message); }
 
   // The rows must line up before anything is inserted, or the inserts would make it worse.
   const alignment = runChecks(HEALTH_CHECKS.filter(c => c.name === 'Row alignment'))[0];
@@ -178,10 +180,7 @@ function planPendingSongs(entries) {
 
   // What the import knows about each track ID.
   const imported = {};
-  ss.getSheetByName(CONFIG.SHEETS.TOOLS).getRange(CONFIG.TOOLS.RAW_DATA).getValues().forEach(r => {
-    const id = String(r[3]).trim();
-    if (id) imported[id] = { album: String(r[0]), name: String(r[1]) };
-  });
+  raw.forEach(t => { imported[t.id] = { album: t.album, name: t.name }; });
 
   const byName = {};
   categories.forEach(c => { byName[c.name] = c; });
@@ -269,14 +268,10 @@ function insertSongRow(e) {
   const row = e.targetRow;
   const first = CONFIG.LAYOUT.FIRST_SONG_ROW;
   const latest = ss.getSheetByName(CONFIG.SHEETS.LATEST);
-  const tools = ss.getSheetByName(CONFIG.SHEETS.TOOLS);
   const archives = CONFIG.SHEETS.ARCHIVE_YEARS.map(n => ss.getSheetByName(n)).concat([ss.getSheetByName(CONFIG.SHEETS.TOTAL_ARCHIVE)]);
 
   // --- 1. Open the row everywhere ---
   [latest].concat(archives).forEach(sheet => insertRowAt(sheet, row));
-  // A whole row in Tools as well: the raw import below simply shifts down, and the next import
-  // clears and rewrites it anyway. Shifting only J:M would break on any merged cell in the way.
-  insertRowAt(tools, row);
 
   // A neighbouring song row to copy formulas and formatting from.
   const template = row - 1 >= first ? row - 1 : row + 1;
@@ -287,15 +282,10 @@ function insertSongRow(e) {
   latest.getRange(row, CONFIG.LATEST.COLS.TITLE).setValue(e.title);
   latest.getRange(row, CONFIG.LATEST.COLS.TOTAL, 1, 2).setValues([[0, 0]]);
 
-  // --- 3. Tools: K:M only (J is a merged separator column). The daily formula comes from the
-  // neighbouring row; the total is filled in by Match Totals.
-  copyFormulasOnly(tools, template, row, CONFIG.TOOLS.SPOTIFY_TITLE_COLUMN, 3);
-  tools.getRange(row, CONFIG.TOOLS.SPOTIFY_TITLE_COLUMN).setValue(e.spotifyTitle || e.title);
-
-  // --- 4. Archives: just the title; there is no history yet ---
+  // --- 3. Archives: just the title; there is no history yet ---
   archives.forEach(sheet => sheet.getRange(row, 1).setValue(e.title));
 
-  // --- 5. Tracklist: move everything at or below the row down one, then add this song ---
+  // --- 4. Tracklist: move everything at or below the row down one, then add this song ---
   const tracklist = ss.getSheetByName(CONFIG.SHEETS.SONGS);
   const values = tracklist.getDataRange().getValues();
   const col = findSongColumns(values[0]);
@@ -315,7 +305,8 @@ function insertSongRow(e) {
   newRow[col.title] = e.title;
   newRow[col.trackId] = e.trackId;
   // Optional reference columns, filled when the Tracklist has them.
-  const optional = { spotifytitle: e.spotifyTitle, sourcealbum: e.album };
+  // A new song has no history yet, so its history category is simply its category.
+  const optional = { spotifytitle: e.spotifyTitle, sourcealbum: e.album, historycategory: e.category };
   header.forEach((h, i) => { if (optional.hasOwnProperty(h)) newRow[i] = optional[h]; });
   tracklist.getRange(values.length + 1, 1, 1, newRow.length).setValues([newRow]);
   _songsCache = null;

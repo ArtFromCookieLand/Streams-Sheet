@@ -1,0 +1,492 @@
+row,status,category,coverKey,title,Spotify Title,trackId,sourceAlbum
+50,active,Taylor Swift (Debut),debutOG,Tim McGraw,Tim McGraw,2Fn01AIMyHbha2ceNQeOqw,Taylor Swift (Deluxe Edition)
+51,active,Taylor Swift (Debut),debutOG,Picture To Burn,Picture To Burn,4BYejINgfZF0qKDMEH2cim,Taylor Swift (Deluxe Edition)
+52,active,Taylor Swift (Debut),debutOG,Teardrops on My Guitar,Teardrops On My Guitar - Radio Single Remix,2TF4UtYreqNbQ6Z9AccldU,Taylor Swift (Deluxe Edition)
+53,active,Taylor Swift (Debut),debutOG,A Place in this World,A Place in this World,1oR4MUBpyNrAViC8wPNpfm,Taylor Swift (Deluxe Edition)
+54,active,Taylor Swift (Debut),debutOG,Cold As You,Cold As You,569sXXQ7t0jSdqHooi2yqs,Taylor Swift (Deluxe Edition)
+55,active,Taylor Swift (Debut),debutOG,The Outside,The Outside,5Tj2MqcFMf60CaGsKbM1aq,Taylor Swift (Deluxe Edition)
+56,active,Taylor Swift (Debut),debutOG,Tied Together with a Smile,Tied Together with a Smile,2zzxwmoOBnXDT0KnJsoIWk,Taylor Swift (Deluxe Edition)
+57,active,Taylor Swift (Debut),debutOG,Stay Beautiful,Stay Beautiful,41sjzdjScVwnxnxADElts6,Taylor Swift (Deluxe Edition)
+58,active,Taylor Swift (Debut),debutOG,Should've Said No,Should've Said No,6CdaXOq1MWe2JHDalTG01d,Taylor Swift (Deluxe Edition)
+59,active,Taylor Swift (Debut),debutOG,Mary's Song (Oh My My My),Mary's Song (Oh My My My),2O8sogKJCfVZ4rotBv1vVF,Taylor Swift (Deluxe Edition)
+60,active,Taylor Swift (Debut),debutOG,Our Song,Our Song,1j6gmK6u4WNI33lMZ8dC1s,Taylor Swift (Deluxe Edition)
+61,active,Taylor Swift (Debut),debutOG,I'm Only Me When I'm With You,I'm Only Me When I'm With You,7CzxXgQXurKZCyHz9ufbo1,Taylor Swift (Deluxe Edition)
+62,active,Taylor Swift (Debut),debutOG,Invisible,Invisible,1k3PzDNjg38cWqOvL4M9vq,Taylor Swift (Deluxe Edition)
+63,active,Taylor Swift (Debut),debutOG,A Perfectly Good Heart,A Perfectly Good Heart,0YgHuReCSPwTXYny7isLja,Taylor Swift (Deluxe Edition)
+64,active,Taylor Swift (Debut),debutOG,Teardrops on My Guitar (Pop Version),Teardrops on My Guitar - Pop Version,1hxLyjC9D9Jpw6EAPKqWv4,Taylor Swift (Deluxe Edition)
+65,active,Fearless (2008),fearlessOG,Fearless,Fearless,2okho7vU7Nsq1UZD0kgIMi,Fearless (Platinum Edition)
+66,active,Fearless (2008),fearlessOG,Fifteen,Fifteen,5Ora3Ish2A1JN5veGYTxhw,Fearless (Platinum Edition)
+67,active,Fearless (2008),fearlessOG,Love Story,Love Story,5hnJCRSo4pxRsaEwT9YusG,Fearless (Platinum Edition)
+68,active,Fearless (2008),fearlessOG,Hey Stephen,Hey Stephen,3CI1f4yLwdHzcUnH7o0Xyh,Fearless (Platinum Edition)
+69,active,Fearless (2008),fearlessOG,White Horse,White Horse,5yKB8qcTSflDercM2PXwot,Fearless (Platinum Edition)
+70,active,Fearless (2008),fearlessOG,You Belong With Me,You Belong With Me,4kgTdThcDHfuDS2kKxB7Lc,Fearless (Platinum Edition)
+71,active,Fearless (2008),fearlessOG,Breathe,Breathe,23qIWGhpwvDgC23TyZOUck,Fearless (Platinum Edition)
+72,active,Fearless (2008),fearlessOG,Tell Me Why,Tell Me Why,4x7Gxk2GfwZJcqpoVT1PbR,Fearless (Platinum Edition)
+73,active,Fearless (2008),fearlessOG,You're Not Sorry,You're Not Sorry,3JhvYnOfKLJuWC7jEU0GmJ,Fearless (Platinum Edition)
+74,active,Fearless (2008),fearlessOG,The Way I Loved You,The Way I Loved You,4pEZUytwBzha5Un6m3SCFf,Fearless (Platinum Edition)
+75,active,Fearless (2008),fearlessOG,Forever & Always,Forever & Always,3NKCWBT2uKp8rxSkcvIrdX,Fearless (Platinum Edition)
+76,active,Fearless (2008),fearlessOG,The Best Day,The Best Day,7CjuAoOiSrwWv7wJonAUmw,Fearless (Platinum Edition)
+77,active,Fearless (2008),fearlessOG,Change,Change,3gFaNwyiafgUoQhR0pHYA9,Fearless (Platinum Edition)
+78,active,Fearless (2008),fearlessOG,Jump Then Fall,Jump Then Fall,6WWvcA62QlnRguluWAk6bv,Fearless (Platinum Edition)
+79,active,Fearless (2008),fearlessOG,Untouchable,Untouchable,6ovFJkdau79DuXEvQjPaNH,Fearless (Platinum Edition)
+80,active,Fearless (2008),fearlessOG,Forever & Always (Piano Version),Forever & Always - Piano Version,13MAWVUSkbGMUi6I7RowRK,Fearless (Platinum Edition)
+81,active,Fearless (2008),fearlessOG,Come In With The Rain,Come In With The Rain,0cEG04R5cldkTLzK6phlcn,Fearless (Platinum Edition)
+82,active,Fearless (2008),fearlessOG,SuperStar,SuperStar,0XfTh16YcKPzdxMPTeKTAq,Fearless (Platinum Edition)
+83,active,Fearless (2008),fearlessOG,The Other Side Of The Door,The Other Side Of The Door,1yDJcXc549N6AabNBzFAku,Fearless (Platinum Edition)
+84,active,Speak Now (2010),SNOG,Mine,Mine,67Io3gxHwfbUreBf114c0u,Speak Now (Deluxe Package)
+85,active,Speak Now (2010),SNOG,Sparks Fly,Sparks Fly,09cM9BjyNFizKUOXh6j9rT,Speak Now (Deluxe Package)
+86,active,Speak Now (2010),SNOG,Back To December,Back To December,0tr6XR58KBdDYd8qvHVTs8,Speak Now (Deluxe Package)
+87,active,Speak Now (2010),SNOG,Speak Now,Speak Now,2PBghI9zJkQEWBzMSMo2Ki,Speak Now (Deluxe Package)
+88,active,Speak Now (2010),SNOG,Dear John,Dear John,1GeLxMgpeCnMJntwyW6rLw,Speak Now (Deluxe Package)
+89,active,Speak Now (2010),SNOG,Mean,Mean,6yM6QsnTCTVOkKEvg3hGlo,Speak Now (Deluxe Package)
+90,active,Speak Now (2010),SNOG,The Story Of Us,The Story Of Us,2jt90bYlYDg1lXYWES34LJ,Speak Now (Deluxe Package)
+91,active,Speak Now (2010),SNOG,Never Grow Up,Never Grow Up,57w0Uyk2jJAkO2hMJ36xJZ,Speak Now (Deluxe Package)
+92,active,Speak Now (2010),SNOG,Enchanted,Enchanted,3sqrvkNC6IPTIXvvbx9Arw,Speak Now (Deluxe Package)
+93,active,Speak Now (2010),SNOG,Better Than Revenge,Better Than Revenge,55mh9j2aB7xZ1Oh463gK8k,Speak Now (Deluxe Package)
+94,active,Speak Now (2010),SNOG,Innocent,Innocent,4LraIz87diVQdDK0rhi0S4,Speak Now (Deluxe Package)
+95,active,Speak Now (2010),SNOG,Haunted,Haunted,72idZxdEHLbi2YI486c3sE,Speak Now (Deluxe Package)
+96,active,Speak Now (2010),SNOG,Last Kiss,Last Kiss,1VCJ7vk3Y2DoJIAEOXe3V8,Speak Now (Deluxe Package)
+97,active,Speak Now (2010),SNOG,Long Live,Long Live,7BFc7ffruhZ4Hecnqf5xju,Speak Now (Deluxe Package)
+98,active,Speak Now (2010),SNOG,Ours,Ours,0hK93KD6Y0j9giUGh4Valj,Speak Now (Deluxe Package)
+99,active,Speak Now (2010),SNOG,If This Was A Movie,If This Was A Movie,5tSmAABuoOfR59lrtXdDqm,Speak Now (Deluxe Package)
+100,active,Speak Now (2010),SNOG,Superman,Superman,6aJ0ipi4EPmu1aTbFeXZnw,Speak Now (Deluxe Package)
+101,active,Speak Now (2010),SNOG,Back To December (Acoustic),Back To December - Acoustic,7k7BOXE4u6luKTwcLEAyrd,Speak Now (Deluxe Package)
+102,active,Speak Now (2010),SNOG,Haunted (Acoustic Version),Haunted - Acoustic Version,6SdBf0ZsJZoKaH5zcDaz9X,Speak Now (Deluxe Package)
+103,active,Speak Now (2010),SNOG,Mine (POP Mix),Mine - POP Mix,0OAHsZ8vrS2NKom3cvfJQD,Speak Now (Deluxe Package)
+104,active,Speak Now (2010),SNOG,The Story Of Us,The Story Of Us,7vBlnGdfOLzVEqiOQQxeU8,Speak Now (Deluxe Package)
+105,active,Red (2012),RedOG,State Of Grace,State Of Grace,0b16LTzby1YRVd2nq2Z0fw,Red (Deluxe Edition)
+106,active,Red (2012),RedOG,Red,Red,7gJtmLyPTwKzhGzMBXtuXH,Red (Deluxe Edition)
+107,active,Red (2012),RedOG,Treacherous,Treacherous,7nECwCDHS1JvQbrmuorZIH,Red (Deluxe Edition)
+108,active,Red (2012),RedOG,I Knew You Were Trouble,I Knew You Were Trouble.,3lKZf71jeNi14udIFPJ29V,Red (Deluxe Edition)
+109,active,Red (2012),RedOG,All Too Well,All Too Well,6GNRkaWUB0Lwc19SdkTgx8,Red (Deluxe Edition)
+110,active,Red (2012),RedOG,22,22,3WC5CVAahvn98hiseoIvbw,Red (Deluxe Edition)
+111,active,Red (2012),RedOG,I Almost Do,I Almost Do,1eyqSYBCTane4rl4vc6PWJ,Red (Deluxe Edition)
+112,active,Red (2012),RedOG,We Are Never Ever Getting Back Together,We Are Never Ever Getting Back Together,6kISMRfweKSvgHR0urMQFG,Red (Deluxe Edition)
+113,active,Red (2012),RedOG,Stay Stay Stay,Stay Stay Stay,0F2S1QlnMaOfmNHIgmES3k,Red (Deluxe Edition)
+114,active,Red (2012),RedOG,The Last Time,The Last Time,2Tz4JnXZOcjcp8fWfMjBBk,Red (Deluxe Edition)
+115,active,Red (2012),RedOG,Holy Ground,Holy Ground,3KmYVOuK2eG7LGP7qQ8DLR,Red (Deluxe Edition)
+116,active,Red (2012),RedOG,Sad Beautiful Tragic,Sad Beautiful Tragic,70e9zuv2pJc7ON1OUAJ1zl,Red (Deluxe Edition)
+117,active,Red (2012),RedOG,The Lucky One,The Lucky One,5VQLMrWhailAhErKNUSnv1,Red (Deluxe Edition)
+118,active,Red (2012),RedOG,Everything Has Changed,Everything Has Changed,5PjfMmF06QtxTPZBZHdhoZ,Red (Deluxe Edition)
+119,active,Red (2012),RedOG,Starlight,Starlight,1gL4vMhDV3RgJQmDuY5HK1,Red (Deluxe Edition)
+120,active,Red (2012),RedOG,Begin Again,Begin Again,1yG491M3fRfowMdGN5pey4,Red (Deluxe Edition)
+121,active,Red (2012),RedOG,The Moment I Knew,The Moment I Knew,4qTAwKJQ68gmnrnfPD3vlO,Red (Deluxe Edition)
+122,active,Red (2012),RedOG,Come Back... Be Here,Come Back...Be Here,1n8rB9AhxiAvVP1E2c3yOd,Red (Deluxe Edition)
+123,active,Red (2012),RedOG,Girl At Home,Girl At Home,6VFpuI0DDmbC5UyWZQ4IRY,Red (Deluxe Edition)
+124,active,Red (2012),RedOG,Treacherous (Demo),Treacherous - Original Demo Recording,7skiELMb9SiQCcBpsExIJf,Red (Deluxe Edition)
+125,active,Red (2012),RedOG,Red (Demo),Red - Original Demo Recording,2OghnlGqZZsFzHjG0CSE9l,Red (Deluxe Edition)
+126,active,Red (2012),RedOG,State Of Grace (Acoustic),State Of Grace - Acoustic,5mfDBWY7ncZFm7ykmFTG4i,Red (Deluxe Edition)
+127,active,1989 (2014),1989OG,Welcome To New York,Welcome To New York,3nRmDz7qGCvsMS30rGGY0x,1989 (Deluxe)
+128,active,1989 (2014),1989OG,Blank Space,Blank Space,1u8c2t2Cy7UBoG4ArRcF5g,1989 (Deluxe)
+129,active,1989 (2014),1989OG,Style,Style,0ug5NqcwcFR2xrfTkc7k8e,1989 (Deluxe)
+130,active,1989 (2014),1989OG,Out Of The Woods,Out Of The Woods,0qUnBLZ8bJqUNEeQgayL9t,1989 (Deluxe)
+131,active,1989 (2014),1989OG,All You Had To Do Was Stay,All You Had To Do Was Stay,6aLOekfwbytwWvQftxTEF0,1989 (Deluxe)
+132,active,1989 (2014),1989OG,Shake It Off,Shake It Off,0cqRj7pUJDkTCEsJkx8snD,1989 (Deluxe)
+133,active,1989 (2014),1989OG,I Wish You Would,I Wish You Would,5gRYrtvyVyaCRvLt56OfuV,1989 (Deluxe)
+134,active,1989 (2014),1989OG,Bad Blood,Bad Blood,2NlmmAjGYrrjAp0MED5rGx,1989 (Deluxe)
+135,active,1989 (2014),1989OG,Wildest Dreams,Wildest Dreams,4A4A6dwl5DqdqrZaEtKGPR,1989 (Deluxe)
+136,active,1989 (2014),1989OG,How You Get The Girl,How You Get The Girl,0fM9dEhUFV4MHDuJgrcfOv,1989 (Deluxe)
+137,active,1989 (2014),1989OG,This Love,This Love,4L560fic5PaTuCFm6CviKa,1989 (Deluxe)
+138,active,1989 (2014),1989OG,I Know Places,I Know Places,6EwNJz8CuVsrsLvXprJ20Q,1989 (Deluxe)
+139,active,1989 (2014),1989OG,Clean,Clean,1NmVZsG18CzCAtw7rnV3yA,1989 (Deluxe)
+140,active,1989 (2014),1989OG,Wonderland,Wonderland,6RvRzl1YJTDnUvdOtV21IK,1989 (Deluxe)
+141,active,1989 (2014),1989OG,You Are In Love,You Are In Love,2KrOAg6FftbjgSKdd2a4rS,1989 (Deluxe)
+142,active,1989 (2014),1989OG,New Romantics,New Romantics,0qAIiGFKLdV1xpNlEhjpq8,1989 (Deluxe)
+143,active,1989 (2014),1989OG,I Know Places (Voice Memo),I Know Places - Voice Memo,4FoV729rw7IhoKlMZW5K5V,1989 (Deluxe)
+144,active,1989 (2014),1989OG,I Wish You Would (Voice Memo),I Wish You Would - Voice Memo,4eTXfpHxhxVofrBUjAhPMg,1989 (Deluxe)
+145,active,1989 (2014),1989OG,Blank Space (Voice Memo),Blank Space - Voice Memo,4e6QU4gpfZj9xxcK856RgG,1989 (Deluxe)
+146,active,reputation,reputation,...Ready For It?,...Ready For It?,2yLa0QULdQr0qAIvVwN6B5,reputation
+147,active,reputation,reputation,End Game,End Game,2x0WlnmfG39ZuDmstl9xfX,reputation
+148,active,reputation,reputation,I Did Something Bad,I Did Something Bad,4svZDCRz4cJoneBpjpx8DJ,reputation
+149,active,reputation,reputation,Don't Blame Me,Don’t Blame Me,1R0a2iXumgCiFb7HEZ7gUE,reputation
+150,active,reputation,reputation,Delicate,Delicate,6NFyWDv5CjfwuzoCkw47Xf,reputation
+151,active,reputation,reputation,Look What You Made Me Do,Look What You Made Me Do,1P17dC1amhFzptugyAO7Il,reputation
+152,active,reputation,reputation,So It Goes...,So It Goes...,5PxFv9yJEg9dxvbZggykro,reputation
+153,active,reputation,reputation,Gorgeous,Gorgeous,1ZY1PqizIl78geGM4xWlEA,reputation
+154,active,reputation,reputation,Getaway Car,Getaway Car,0VE4kBnHJUgtMf0dy6DRmW,reputation
+155,active,reputation,reputation,King Of My Heart,King Of My Heart,7HuBDWi18s4aJM8UFnNheH,reputation
+156,active,reputation,reputation,Dancing With Our Hands Tied,Dancing With Our Hands Tied,7I7JbDv63ZJJsSi24DyJrz,reputation
+157,active,reputation,reputation,Dress,Dress,6oVxXO5oQ4pTpO8RSnkzvv,reputation
+158,active,reputation,reputation,This Is Why We Can't Have Nice Things,This Is Why We Can't Have Nice Things,07NxDD1iKCHbAldceD7QLP,reputation
+159,active,reputation,reputation,Call It What You Want,Call It What You Want,1GwMQaZz6Au3QLDbjbMdme,reputation
+160,active,reputation,reputation,New Year's Day,New Year’s Day,7F5oktn5YOsR9eR5YsFtqb,reputation
+161,active,Lover,lover,I Forgot That You Existed,I Forgot That You Existed,43rA71bccXFGD4C8GOpIlN,Lover
+162,active,Lover,lover,Cruel Summer,Cruel Summer,1BxfuPKGuaTgP7aM0Bbdwr,Lover
+163,active,Lover,lover,Lover,Lover,1dGr1c8CrMLDpV6mPbImSI,Lover
+164,active,Lover,lover,The Man,The Man,3RauEVgRgj1IuWdJ9fDs70,Lover
+165,active,Lover,lover,The Archer,The Archer,3pHkh7d0lzM2AldUtz2x37,Lover
+166,active,Lover,lover,I Think He Knows,I Think He Knows,2YWtcWi3a83pdEg3Gif4Pd,Lover
+167,active,Lover,lover,Miss Americana & The Heartbreak Prince,Miss Americana & The Heartbreak Prince,214nt20w5wOxJnY462klLw,Lover
+168,active,Lover,lover,Paper Rings,Paper Rings,4y5bvROuBDPr5fuwXbIBZR,Lover
+169,active,Lover,lover,Cornelia Street,Cornelia Street,12M5uqx0ZuwkpLp5rJim1a,Lover
+170,active,Lover,lover,Death By A Thousand Cuts,Death By A Thousand Cuts,2dgFqt3w9xIQRjhPtwNk3D,Lover
+171,active,Lover,lover,London Boy,London Boy,1LLXZFeAHK9R4xUramtUKw,Lover
+172,active,Lover,lover,Soon You'll Get Better,Soon You’ll Get Better (feat. The Chicks),4AYtqFyFbX0Xkc2wtcygTr,Lover
+173,active,Lover,lover,False God,False God,5hQSXkFgbxjZo9uCwd11so,Lover
+174,active,Lover,lover,You Need To Calm Down,You Need To Calm Down,6RRNNciQGZEXnqk8SQ9yv5,Lover
+175,active,Lover,lover,Afterglow,Afterglow,1SymEzIT3H8UZfibCs3TYi,Lover
+176,active,Lover,lover,ME!,ME! (feat. Brendon Urie of Panic! At The Disco),2Rk4JlNc2TPmZe2af99d45,Lover
+177,active,Lover,lover,It's Nice To Have A Friend,It’s Nice To Have A Friend,1SmiQ65iSAbPto6gPFlBYm,Lover
+178,active,Lover,lover,Daylight,Daylight,1fzAuUVbzlhZ1lJAx9PtY6,Lover
+179,active,folklore,folklore,the 1,the 1,0P9wLFurlgumLXuqFEpw52,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+180,active,folklore,folklore,cardigan,cardigan,7zcnlq38eqNWyUF6eNaB5Z,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+181,active,folklore,folklore,the last great american dynasty,the last great american dynasty,4ojxSyrEraN7d46BMBPThZ,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+182,active,folklore,folklore,exile,exile (feat. Bon Iver),6kz2hkq1xQvDqPcUyBkw8f,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+183,active,folklore,folklore,my tears ricochet,my tears ricochet,0Oju1YcbPCJuUQQWoZNdJK,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+184,active,folklore,folklore,mirrorball,mirrorball,5jQyGzcwqAxwT5QUIMivoX,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+185,active,folklore,folklore,seven,seven,2vJ7QvyCiR4DaHxwO58izA,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+186,active,folklore,folklore,august,august,1UHoF9p75IVsvUt6WdTYhn,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+187,active,folklore,folklore,this is me trying,this is me trying,5DnDBYrfGoxdnomqEAkFIv,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+188,active,folklore,folklore,illicit affairs,illicit affairs,7CVTowKpGPA2MsIbkTl2oc,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+189,active,folklore,folklore,invisible string,invisible string,4WHIqhrbdva5vQSrCuet3l,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+190,active,folklore,folklore,mad woman,mad woman,7klXN6RCN5Rj0VeYO5gBzU,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+191,active,folklore,folklore,epiphany,epiphany,5MFjHn1qfR9AsWuyzJLk1z,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+192,active,folklore,folklore,betty,betty,2jhfs6moEAK13eLM6xim4l,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+193,active,folklore,folklore,peace,peace,0O9i6jhscByEJs1ipy5hu4,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+194,active,folklore,folklore,hoax,hoax,4XCYmu7QLySdIahgBALKJK,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+195,active,folklore,folklore,the lakes,the lakes - bonus track,0zEprKYeuGOIZoHyu6O1E2,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+196,active,folklore,folkloreTLPSS,the 1 (tlpss),the 1 - the long pond studio sessions,08J4bMHbILkwSIhbtrcvjN,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+197,active,folklore,folkloreTLPSS,cardigan (tlpss),cardigan - the long pond studio sessions,3EPgWM1zfTSzEc0z4AwWTM,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+198,active,folklore,folkloreTLPSS,tlgad (tlpss),the last great american dynasty - the long pond studio sessions,28tIMaewZuGR8urkvFhQyA,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+199,active,folklore,folkloreTLPSS,exile (tlpss),exile (feat. Bon Iver) - the long pond studio sessions,7N015NTIWGjQDddHUdHPoO,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+200,active,folklore,folkloreTLPSS,my tears ricochet (tlpss),my tears ricochet - the long pond studio sessions,5mdNyCS7ttVcAyVYOIFEjs,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+201,active,folklore,folkloreTLPSS,mirrorball (tlpss),mirrorball - the long pond studio sessions,2yceD2hx5HhOLgkm1CITCi,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+202,active,folklore,folkloreTLPSS,seven (tlpss),seven - the long pond studio sessions,4cOWq0cVsKjxaQpRMbDoH1,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+203,active,folklore,folkloreTLPSS,august (tlpss),august - the long pond studio sessions,4MGexoZc12lqE0hYkq9YYx,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+204,active,folklore,folkloreTLPSS,this is me trying (tlpss),this is me trying - the long pond studio sessions,1gaLZjPrDnHQWJds2Jg4KT,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+205,active,folklore,folkloreTLPSS,illicit affairs (tlpss),illicit affairs - the long pond studio sessions,560uQyz3p5G9WdnMX39xc6,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+206,active,folklore,folkloreTLPSS,invisible string (tlpss),invisible string - the long pond studio sessions,5KByGq0JijSSDcy0qzuINs,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+207,active,folklore,folkloreTLPSS,mad woman (tlpss),mad woman - the long pond studio sessions,04xrhDrQ2WOW8GLwu7kbc0,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+208,active,folklore,folkloreTLPSS,epiphany (tlpss),epiphany - the long pond studio sessions,4yyKppX85ZkmlGOC2toBZA,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+209,active,folklore,folkloreTLPSS,betty (tlpss),betty - the long pond studio sessions,1mh5dObNoOvCfHmXnhvDEK,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+210,active,folklore,folkloreTLPSS,peace (tlpss),peace - the long pond studio sessions,4YHHz3VIXgNDGdoL9xC1tx,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+211,active,folklore,folkloreTLPSS,hoax (tlpss),hoax - the long pond studio sessions,0QTBsdoJhamY3Aid3fOsOd,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+212,active,folklore,folkloreTLPSS,the lakes (tlpss),the lakes - the long pond studio sessions,6mqyTq948oap5AkyTsd6XF,folklore: the long pond studio sessions (from the Disney+ special) [deluxe edition]
+213,active,evermore,evermore,willow,willow,2gVhfX2Gy1T9kDuS9azrF7,evermore (deluxe version)
+214,active,evermore,evermore,champagne problems,champagne problems,1gcyHQpBQ1lfXGdhZmWrHP,evermore (deluxe version)
+215,active,evermore,evermore,gold rush,gold rush,3Dby3p1m6IOZn2gIIqECgK,evermore (deluxe version)
+216,active,evermore,evermore,tis the damn season,‘tis the damn season,6sQckd3Z8NPxVVKUnavY1F,evermore (deluxe version)
+217,active,evermore,evermore,tolerate it,tolerate it,6lCvK2AR2uOKkVFCVlAzzm,evermore (deluxe version)
+218,active,evermore,evermore,no body no crime (feat. HAIM),"no body, no crime (feat. HAIM)",6uwfVkaOM1mcMkFmSn35ix,evermore (deluxe version)
+219,active,evermore,evermore,happiness,happiness,55Vf4bimc1Rtfg0PAQRAo2,evermore (deluxe version)
+220,active,evermore,evermore,dorothea,dorothea,66tOfHVH3aUrscg8vExRV4,evermore (deluxe version)
+221,active,evermore,evermore,coney island (feat. The National),coney island (feat. The National),2awNGIJHodfLZSClB3PYhz,evermore (deluxe version)
+222,active,evermore,evermore,ivy,ivy,43Ykum9T72UOPhBN31grpN,evermore (deluxe version)
+223,active,evermore,evermore,cowboy like me,cowboy like me,52OkpDsU6MmPx1AwGOb6Ap,evermore (deluxe version)
+224,active,evermore,evermore,long story short,long story short,5VYWxXUpxuxEmCqMLDqICo,evermore (deluxe version)
+225,active,evermore,evermore,marjorie,marjorie,5uICWmZTLkpEVbK22PBP6e,evermore (deluxe version)
+226,active,evermore,evermore,closure,closure,6a8aUhYbaQBUI8PcJ5ZmQ6,evermore (deluxe version)
+227,active,evermore,evermore,evermore (feat. Bon Iver),evermore (feat. Bon Iver),6Wlq9rqkxrqj5Kls4Kw14H,evermore (deluxe version)
+228,active,evermore,evermore,right where you left me,right where you left me - bonus track,3zwMVvkBe2qIKDObWgXw4N,evermore (deluxe version)
+229,active,evermore,evermore,it's time to go,it’s time to go - bonus track,1kdWw77ZpYOkhxeuhzU1j6,evermore (deluxe version)
+230,active,Fearless (Taylor's Version),fearlessTV,Fearless (TV),Fearless (Taylor’s Version),77sMIMlNaSURUAXq5coCxE,Fearless (Taylor's Version)
+231,active,Fearless (Taylor's Version),fearlessTV,Fifteen (TV),Fifteen (Taylor’s Version),2nqio0SfWg6gh2eCtfuMa5,Fearless (Taylor's Version)
+232,active,Fearless (Taylor's Version),fearlessTV,Love Story (TV),Love Story (Taylor’s Version),6YvqWjhGD8mB5QXcbcUKtx,Fearless (Taylor's Version)
+233,active,Fearless (Taylor's Version),fearlessTV,Hey Stephen (TV),Hey Stephen (Taylor’s Version),550erGcdD9n6PnwxrvYqZT,Fearless (Taylor's Version)
+234,active,Fearless (Taylor's Version),fearlessTV,White Horse (TV),White Horse (Taylor’s Version),5YL553x8sHderRBDlm3NM3,Fearless (Taylor's Version)
+235,active,Fearless (Taylor's Version),fearlessTV,You Belong With Me (TV),You Belong With Me (Taylor’s Version),1qrpoAMXodY6895hGKoUpA,Fearless (Taylor's Version)
+236,active,Fearless (Taylor's Version),fearlessTV,Breathe (TV),Breathe (feat. Colbie Caillat) (Taylor’s Version),7HC7R2D8WjXVcUHJyEGjRs,Fearless (Taylor's Version)
+237,active,Fearless (Taylor's Version),fearlessTV,Tell Me Why (TV),Tell Me Why (Taylor’s Version),0k0vFacOHNuArLWMiH60p7,Fearless (Taylor's Version)
+238,active,Fearless (Taylor's Version),fearlessTV,You're Not Sorry (TV),You’re Not Sorry (Taylor’s Version),6iiAfo4wTA2CVC3Uwx9uh8,Fearless (Taylor's Version)
+239,active,Fearless (Taylor's Version),fearlessTV,The Way I Loved You (TV),The Way I Loved You (Taylor’s Version),22bPsP2jCgbLUvh82U0Z3M,Fearless (Taylor's Version)
+240,active,Fearless (Taylor's Version),fearlessTV,Forever & Always (TV),Forever & Always (Taylor’s Version),1msEuwSBneBKpVCZQcFTsU,Fearless (Taylor's Version)
+241,active,Fearless (Taylor's Version),fearlessTV,The Best Day (TV),The Best Day (Taylor’s Version),6ON9UuIq49xXY9GPmHIYRp,Fearless (Taylor's Version)
+242,active,Fearless (Taylor's Version),fearlessTV,Change (TV),Change (Taylor’s Version),3ExweHKZF9B752DPQByRVT,Fearless (Taylor's Version)
+243,active,Fearless (Taylor's Version),fearlessTV,Jump Then Fall (TV),Jump Then Fall (Taylor’s Version),2m3ObD945KvpE5y9A1eUWm,Fearless (Taylor's Version)
+244,active,Fearless (Taylor's Version),fearlessTV,Untouchable (TV),Untouchable (Taylor’s Version),0tQ9vBYpldCuikPsbgOVKA,Fearless (Taylor's Version)
+245,active,Fearless (Taylor's Version),fearlessTV,Forever & Always (Piano Version) (TV),Forever & Always (Piano Version) (Taylor’s Version),01QdEx6kFr78ZejhQtWR5m,Fearless (Taylor's Version)
+246,active,Fearless (Taylor's Version),fearlessTV,Come In With The Rain (TV),Come In With The Rain (Taylor’s Version),1n2wszmJyVkw6FHqyLnQsY,Fearless (Taylor's Version)
+247,active,Fearless (Taylor's Version),fearlessTV,Superstar (TV),SuperStar (Taylor’s Version),51A8eKvvZz9uydvIZ7xRSV,Fearless (Taylor's Version)
+248,active,Fearless (Taylor's Version),fearlessTV,The Other Side Of The Door (TV),The Other Side Of The Door (Taylor’s Version),1cSFlSBdpT4F5vb1frQ231,Fearless (Taylor's Version)
+249,active,Fearless (Taylor's Version),fearlessTV,Today Was A Fairytale (TV),Today Was A Fairytale (Taylor’s Version),2JoJrsEV15OzbijS47lids,Fearless (Taylor's Version)
+250,active,Fearless (Taylor's Version),fearlessTV,You All Over Me (TV) (FTV),You All Over Me (feat. Maren Morris) (Taylor’s Version) (From The Vault),4CHpVfAhuxNJ3ibExe6kxO,Fearless (Taylor's Version)
+251,active,Fearless (Taylor's Version),fearlessTV,Mr Perfectly Fine (TV) (FTV),Mr. Perfectly Fine (Taylor’s Version) (From The Vault),2CYVETnhM9aytqrazYYwrK,Fearless (Taylor's Version)
+252,active,Fearless (Taylor's Version),fearlessTV,We Were Happy (TV) (FTV),We Were Happy (Taylor’s Version) (From The Vault),34V9RiEPe8MNdU32qJsJa1,Fearless (Taylor's Version)
+253,active,Fearless (Taylor's Version),fearlessTV,That's When (TV) (FTV),That’s When (feat. Keith Urban) (Taylor’s Version) (From The Vault),7eResoqEJJAVTkQYSqvO3P,Fearless (Taylor's Version)
+254,active,Fearless (Taylor's Version),fearlessTV,Don't You (TV) (FTV),Don’t You (Taylor’s Version) (From The Vault),4uuEGH5SVuzkkSFjo2DEiY,Fearless (Taylor's Version)
+255,active,Fearless (Taylor's Version),fearlessTV,Bye Bye Baby (TV) (FTV),Bye Bye Baby (Taylor’s Version) (From The Vault),4qUijfYU8EoIWiY6oSyrgT,Fearless (Taylor's Version)
+256,active,Red (Taylor's Version),redTV,State Of Grace (TV),State Of Grace (Taylor's Version),6lzc0Al0zfZOIFsFvBS1ki,Red (Taylor's Version)
+257,active,Red (Taylor's Version),redTV,Red (TV),Red (Taylor's Version),4OAuvHryIVv4kMDNSLuPt6,Red (Taylor's Version)
+258,active,Red (Taylor's Version),redTV,Treacherous (TV),Treacherous (Taylor's Version),3S7HNKPakdwNEBFIVTL6dZ,Red (Taylor's Version)
+259,active,Red (Taylor's Version),redTV,I Knew You Were Trouble (TV),I Knew You Were Trouble (Taylor's Version),6AtZLIzUINvExIUy4QhdjP,Red (Taylor's Version)
+260,active,Red (Taylor's Version),redTV,All Too Well (TV),All Too Well (Taylor's Version),3nsfB1vus2qaloUdcBZvDu,Red (Taylor's Version)
+261,active,Red (Taylor's Version),redTV,22 (TV),22 (Taylor's Version),3yII7UwgLF6K5zW3xad3MP,Red (Taylor's Version)
+262,active,Red (Taylor's Version),redTV,I Almost Do (TV),I Almost Do (Taylor's Version),2r9CbjYgFhtAmcFv1cSquB,Red (Taylor's Version)
+263,active,Red (Taylor's Version),redTV,We Are Never Ever Getting Back Together (TV),We Are Never Ever Getting Back Together (Taylor's Version),5YqltLsjdqFtvqE7Nrysvs,Red (Taylor's Version)
+264,active,Red (Taylor's Version),redTV,Stay Stay Stay (TV),Stay Stay Stay (Taylor's Version),7eQj6r5PIdYKEIZjucBMcq,Red (Taylor's Version)
+265,active,Red (Taylor's Version),redTV,The Last Time (TV),The Last Time (feat. Gary Lightbody of Snow Patrol) (Taylor’s Version),0y6kdSRCVQhSsHSpWvTUm7,Red (Taylor's Version)
+266,active,Red (Taylor's Version),redTV,Holy Ground (TV),Holy Ground (Taylor's Version),7J4b3LVCIGO4CMBDFLPoP6,Red (Taylor's Version)
+267,active,Red (Taylor's Version),redTV,Sad Beautiful Tragic (TV),Sad Beautiful Tragic (Taylor's Version),73qMN9bXy7MSPwwGfH3wQr,Red (Taylor's Version)
+268,active,Red (Taylor's Version),redTV,The Lucky One (TV),The Lucky One (Taylor's Version),4e5ayHsOLJNLTGfjau2mEw,Red (Taylor's Version)
+269,active,Red (Taylor's Version),redTV,Everything Has Changed (TV),Everything Has Changed (feat. Ed Sheeran) (Taylor’s Version),7qEUFOVcxRI19tbT68JcYK,Red (Taylor's Version)
+270,active,Red (Taylor's Version),redTV,Starlight (TV),Starlight (Taylor's Version),7A2cNLRT0YJc1yjxHlKihs,Red (Taylor's Version)
+271,active,Red (Taylor's Version),redTV,Begin Again (TV),Begin Again (Taylor's Version),05GsNucq8Bngd9fnd4fRa0,Red (Taylor's Version)
+272,active,Red (Taylor's Version),redTV,The Moment I Knew (TV),The Moment I Knew (Taylor's Version),0NRHj8hDwwmSPaA41o379r,Red (Taylor's Version)
+273,active,Red (Taylor's Version),redTV,Come Back... Be Here (TV),Come Back...Be Here (Taylor's Version),4pNApnaUWAL2J4KO2eqokq,Red (Taylor's Version)
+274,active,Red (Taylor's Version),redTV,Girl At Home (TV),Girl At Home (Taylor's Version),0DMVrlMUn01M0IcpDbwgu7,Red (Taylor's Version)
+275,active,Red (Taylor's Version),redTV,State Of Grace (Acoustic) (TV),State Of Grace (Acoustic Version) (Taylor's Version),5jAIouBES8LWMiriuNq170,Red (Taylor's Version)
+276,active,Red (Taylor's Version),redTV,Ronan (TV),Ronan (Taylor's Version),7nWui6jiMM2m9qFmET1Mtj,Red (Taylor's Version)
+277,active,Red (Taylor's Version),redTV,Better Man (TV) (FTV),Better Man (Taylor's Version) (From The Vault),4OmFmE0fzcMG6g0Y8p4eSD,Red (Taylor's Version)
+278,active,Red (Taylor's Version),redTV,Nothing New (TV) (FTV),Nothing New (feat. Phoebe Bridgers) (Taylor’s Version) (From The Vault),01K4zKU104LyJ8gMb7227B,Red (Taylor's Version)
+279,active,Red (Taylor's Version),redTV,Babe (TV) (FTV),Babe (Taylor's Version) (From The Vault),0v4z1tuZvn6LGknom9Qx7d,Red (Taylor's Version)
+280,active,Red (Taylor's Version),redTV,Message In A Bottle (TV) (FTV),Message In A Bottle (Taylor's Version) (From The Vault),3z6XUommYDWPHeFhmhhT6j,Red (Taylor's Version)
+281,active,Red (Taylor's Version),redTV,I Bet You Think About Me (TV) (FTV),I Bet You Think About Me (feat. Chris Stapleton) (Taylor’s Version) (From The Vault),4CkgMiMqZ5JzW9iYXSTMTL,Red (Taylor's Version)
+282,active,Red (Taylor's Version),redTV,Forever Winter (TV) (FTV),Forever Winter (Taylor's Version) (From The Vault),3oGVx9RBmiYGv5ZCecWLkx,Red (Taylor's Version)
+283,active,Red (Taylor's Version),redTV,Run (TV) (FTV),Run (feat. Ed Sheeran) (Taylor’s Version) (From The Vault),4IQkfUsrwXol38VV3U7t7T,Red (Taylor's Version)
+284,active,Red (Taylor's Version),redTV,The Very First Night (TV) (FTV),The Very First Night (Taylor's Version) (From The Vault),6pYNq0ZwpPVazKzsqpf0G8,Red (Taylor's Version)
+285,active,Red (Taylor's Version),redTV,All Too Well (10 MV) (TV) (FTV),All Too Well (10 Minute Version) (Taylor's Version) (From The Vault),5enxwA8aAbwZbf5qCHORXi,Red (Taylor's Version)
+286,active,Midnights,midnights,Lavender Haze,Lavender Haze,24emu3sabKISjRkrys28jq,Midnights (The Til Dawn Edition)
+287,active,Midnights,midnights,Maroon,Maroon,6qxvy9Pe4RJIq5JBVbbwbS,Midnights (The Til Dawn Edition)
+288,active,Midnights,midnights,Anti-Hero,Anti-Hero,5qIHFdkW6phMsTZlN2g8Lc,Midnights (The Til Dawn Edition)
+289,active,Midnights,midnights,Snow On The Beach (feat. LDR),Snow On The Beach (feat. Lana Del Rey),7GA86Uo2jYbj8vIXe2nyWd,Midnights (The Til Dawn Edition)
+290,active,Midnights,midnights,You're On Your Own Kid,"You're On Your Own, Kid",6PQOU00xWNrGwCZzboriXy,Midnights (The Til Dawn Edition)
+291,active,Midnights,midnights,Midnight Rain,Midnight Rain,4eKMqf9ZMSclDX7V9Ptg7x,Midnights (The Til Dawn Edition)
+292,active,Midnights,midnights,Question...?,Question...?,7oomkQSYf1ia2VnVEWfFIU,Midnights (The Til Dawn Edition)
+293,active,Midnights,midnights,Vigilante Shit,Vigilante Shit,0GKDhq6ZbmSbRHd3eyGlB7,Midnights (The Til Dawn Edition)
+294,active,Midnights,midnights,Bejeweled,Bejeweled,0VpF6RLdCfPIeYRwMu4tZK,Midnights (The Til Dawn Edition)
+295,active,Midnights,midnights,Labyrinth,Labyrinth,4bBDkw2KBMX0tcgAaXC83Q,Midnights (The Til Dawn Edition)
+296,active,Midnights,midnights,Karma,Karma,45R112Jz5hQeKgITXgSXzs,Midnights (The Til Dawn Edition)
+297,active,Midnights,midnights,Sweet Nothing,Sweet Nothing,2L09RYwH5Pjzca6PmbUAw3,Midnights (The Til Dawn Edition)
+298,active,Midnights,midnights,Mastermind,Mastermind,1QQii3pa5m8MEda0nbkjfw,Midnights (The Til Dawn Edition)
+299,active,Midnights,midnights,The Great War,The Great War,2VuqMjgoKaOHNM8HpxtXKx,Midnights (The Til Dawn Edition)
+300,active,Midnights,midnights,Bigger Than The Whole Sky,Bigger Than The Whole Sky,71CBDRKmF2VeRKYMG1DFBh,Midnights (The Til Dawn Edition)
+301,active,Midnights,midnights,Paris,Paris,5tWxKWq1DSP1s9WQ5PWuqu,Midnights (The Til Dawn Edition)
+302,active,Midnights,midnights,High Infidelity,High Infidelity,1SztNGCwEHJEVFx90E5g7D,Midnights (The Til Dawn Edition)
+303,active,Midnights,midnights,Glitch,Glitch,7C0w28EsX0Um2FrZs9gso2,Midnights (The Til Dawn Edition)
+304,active,Midnights,midnights,Would've Could've Should've,"Would've, Could've, Should've",4txojlesMFQZGWxwz2EeqB,Midnights (The Til Dawn Edition)
+305,active,Midnights,midnights,Dear Reader,Dear Reader,10GRRCR5fctuOF4GFmATJI,Midnights (The Til Dawn Edition)
+306,active,Midnights,midnightsTTD,Hits Different,Hits Different,3xYJScVfxByb61dYHTwiby,Midnights (The Til Dawn Edition)
+307,active,Midnights,midnightsTTD,Snow On The Beach (More LDR),Snow On The Beach (feat. More Lana Del Rey),4zmKGsrXjLmljb5fTaBTot,Midnights (The Til Dawn Edition)
+308,active,Midnights,midnightsTTD,Karma (feat. Ice Spice),Karma (feat. Ice Spice),4i6cwNY6oIUU2XZxPIw82Y,Midnights (The Til Dawn Edition)
+309,active,Speak Now (Taylor's Version),SNTV,Mine (TV),Mine (Taylor's Version),7G0gBu6nLdhFDPRLc0HdDG,Speak Now (Taylor's Version)
+310,active,Speak Now (Taylor's Version),SNTV,Sparks Fly (TV),Sparks Fly (Taylor’s Version),3MytWN8L7shNYzGl4tAKRp,Speak Now (Taylor's Version)
+311,active,Speak Now (Taylor's Version),SNTV,Back To December (TV),Back To December (Taylor's Version),79uDOz0zuuWS7HWxzMmTa2,Speak Now (Taylor's Version)
+312,active,Speak Now (Taylor's Version),SNTV,Speak Now (TV),Speak Now (Taylor's Version),5xXqyjLicvEpch72qEryFT,Speak Now (Taylor's Version)
+313,active,Speak Now (Taylor's Version),SNTV,Dear John (TV),Dear John (Taylor's Version),1zU8j1x3yi9xalMF96pzKp,Speak Now (Taylor's Version)
+314,active,Speak Now (Taylor's Version),SNTV,Mean (TV),Mean (Taylor's Version),30Y4CV7A6YqtQtTTo7Ue4j,Speak Now (Taylor's Version)
+315,active,Speak Now (Taylor's Version),SNTV,The Story Of Us (TV),The Story Of Us (Taylor's Version),6dTA6y0C2ReQklntzZl8l3,Speak Now (Taylor's Version)
+316,active,Speak Now (Taylor's Version),SNTV,Never Grow Up (TV),Never Grow Up (Taylor's Version),2EFZ9emtKWEglWUQGEQ3P9,Speak Now (Taylor's Version)
+317,active,Speak Now (Taylor's Version),SNTV,Enchanted (TV),Enchanted (Taylor's Version),3sW3oSbzsfecv9XoUdGs7h,Speak Now (Taylor's Version)
+318,active,Speak Now (Taylor's Version),SNTV,Better Than Revenge (TV),Better Than Revenge (Taylor's Version),0NwGC0v03ysCYINtg6ns58,Speak Now (Taylor's Version)
+319,active,Speak Now (Taylor's Version),SNTV,Innocent (TV),Innocent (Taylor's Version),12nBPF4Rh4XLFJV0YLN7uj,Speak Now (Taylor's Version)
+320,active,Speak Now (Taylor's Version),SNTV,Haunted (TV),Haunted (Taylor's Version),4tMzIAFTFdqGBQLdfbPces,Speak Now (Taylor's Version)
+321,active,Speak Now (Taylor's Version),SNTV,Last Kiss (TV),Last Kiss (Taylor's Version),59KOoHFcw5XfICnO57holu,Speak Now (Taylor's Version)
+322,active,Speak Now (Taylor's Version),SNTV,Long Live (TV),Long Live (Taylor's Version),4hqJ4bSlYJOXb6Z4SRmzxs,Speak Now (Taylor's Version)
+323,active,Speak Now (Taylor's Version),SNTV,Ours (TV),Ours (Taylor’s Version),3yNJkriPzWjkkDAWHIAVUq,Speak Now (Taylor's Version)
+324,active,Speak Now (Taylor's Version),SNTV,Superman (TV),Superman (Taylor’s Version),4evLyY5Ue1Wesc61t2KXAU,Speak Now (Taylor's Version)
+325,active,Speak Now (Taylor's Version),SNTV,Electric Touch (TV) (FTV),Electric Touch (feat. Fall Out Boy) (Taylor’s Version) (From The Vault),4e3ZNTAV6PCrdYMUrUlMpQ,Speak Now (Taylor's Version)
+326,active,Speak Now (Taylor's Version),SNTV,When Emma Falls in Love (TV) (FTV),When Emma Falls in Love (Taylor’s Version) (From The Vault),0zo975x58DlXbZllWvfYhg,Speak Now (Taylor's Version)
+327,active,Speak Now (Taylor's Version),SNTV,I Can See You (TV) (FTV),I Can See You (Taylor’s Version) (From The Vault),5kHMfzgLZP95O9NBy0ku4v,Speak Now (Taylor's Version)
+328,active,Speak Now (Taylor's Version),SNTV,Castles Crumbling (TV) (FTV),Castles Crumbling (feat. Hayley Williams) (Taylor’s Version) (From The Vault),4ABYxlb92WBIjHu7TIKmml,Speak Now (Taylor's Version)
+329,active,Speak Now (Taylor's Version),SNTV,Foolish One (TV) (FTV),Foolish One (Taylor’s Version) (From The Vault),4s8BIKx4Zh6ryAEz8RTlaU,Speak Now (Taylor's Version)
+330,active,Speak Now (Taylor's Version),SNTV,Timeless (TV) (FTV),Timeless (Taylor’s Version) (From The Vault),1HCdems7PQZRj42QDWLA0A,Speak Now (Taylor's Version)
+331,active,1989 (Taylor's Version),1989TV,Welcome To New York (TV),Welcome To New York (Taylor's Version),4WUepByoeqcedHoYhSNHRt,1989 (Taylor's Version) [Deluxe]
+332,active,1989 (Taylor's Version),1989TV,Blank Space (TV),Blank Space (Taylor's Version),0108kcWLnn2HlH2kedi1gn,1989 (Taylor's Version) [Deluxe]
+333,active,1989 (Taylor's Version),1989TV,Style (TV),Style (Taylor's Version),3Vpk1hfMAQme8VJ0SNRSkd,1989 (Taylor's Version) [Deluxe]
+334,active,1989 (Taylor's Version),1989TV,Out Of The Woods (TV),Out Of The Woods (Taylor's Version),1OcSfkeCg9hRC2sFKB4IMJ,1989 (Taylor's Version) [Deluxe]
+335,active,1989 (Taylor's Version),1989TV,All You Had To Do Was Stay (TV),All You Had To Do Was Stay (Taylor's Version),2k0ZEeAqzvYMcx9Qt5aClQ,1989 (Taylor's Version) [Deluxe]
+336,active,1989 (Taylor's Version),1989TV,Shake It Off (TV),Shake It Off (Taylor's Version),50yNTF0Od55qnHLxYsA5Pw,1989 (Taylor's Version) [Deluxe]
+337,active,1989 (Taylor's Version),1989TV,I Wish You Would (TV),I Wish You Would (Taylor's Version),3FxJDucHWdw6caWTKO5b23,1989 (Taylor's Version) [Deluxe]
+338,active,1989 (Taylor's Version),1989TV,Bad Blood (TV),Bad Blood (Taylor's Version),7oZONwFiFIErZcXAtTu7FY,1989 (Taylor's Version) [Deluxe]
+339,active,1989 (Taylor's Version),1989TV,Wildest Dreams (TV),Wildest Dreams (Taylor's Version),27exgla7YBw9DUNNcTIpjy,1989 (Taylor's Version) [Deluxe]
+340,active,1989 (Taylor's Version),1989TV,How You Get The Girl (TV),How You Get The Girl (Taylor's Version),733OhaXQIHY7BKtY3vnSkn,1989 (Taylor's Version) [Deluxe]
+341,active,1989 (Taylor's Version),1989TV,This Love (TV),This Love (Taylor’s Version),4WBEj8TeGtRPNJdOmT3WJW,1989 (Taylor's Version) [Deluxe]
+342,active,1989 (Taylor's Version),1989TV,I Know Places (TV),I Know Places (Taylor's Version),1ULabO0PEsdJekqVH6G10G,1989 (Taylor's Version) [Deluxe]
+343,active,1989 (Taylor's Version),1989TV,Clean (TV),Clean (Taylor's Version),0lKUBmEyQfzsQHozyeXzES,1989 (Taylor's Version) [Deluxe]
+344,active,1989 (Taylor's Version),1989TV,Wonderland (TV),Wonderland (Taylor's Version),6HRsJu8vcnzYDN4t0570FY,1989 (Taylor's Version) [Deluxe]
+345,active,1989 (Taylor's Version),1989TV,You Are In Love (TV),You Are In Love (Taylor's Version),0TyGh27YQ5LknmiDhCzJiT,1989 (Taylor's Version) [Deluxe]
+346,active,1989 (Taylor's Version),1989TV,New Romantics (TV),New Romantics (Taylor's Version),5M787RexsAiVYjQusM98CV,1989 (Taylor's Version) [Deluxe]
+347,active,1989 (Taylor's Version),1989TV,"""Slut!"" (TV) (FTV)","""Slut!"" (Taylor's Version) (From The Vault)",0CD7DzeCsuPJygddqlUVYa,1989 (Taylor's Version) [Deluxe]
+348,active,1989 (Taylor's Version),1989TV,Say Don't Go (TV) (FTV),Say Don't Go (Taylor's Version) (From The Vault),3CCRVu4F91Qp2mnGjmWBrf,1989 (Taylor's Version) [Deluxe]
+349,active,1989 (Taylor's Version),1989TV,Now That We Don't Talk (TV) (FTV),Now That We Don't Talk (Taylor's Version) (From The Vault),5QUIK7ZtziW8kGWo8RqopF,1989 (Taylor's Version) [Deluxe]
+350,active,1989 (Taylor's Version),1989TV,Suburban Legends (TV) (FTV),Suburban Legends (Taylor's Version) (From The Vault),6M9ppdfFjR1AbpUl3Y8DcV,1989 (Taylor's Version) [Deluxe]
+351,active,1989 (Taylor's Version),1989TV,Is It Over Now? (TV) (FTV),Is It Over Now? (Taylor's Version) (From The Vault),6IG3sQ8s9nfk6TUlVzRhbN,1989 (Taylor's Version) [Deluxe]
+352,active,1989 (Taylor's Version),1989TV,Bad Blood (feat. Kendrick Lamar) (TV),Bad Blood (feat. Kendrick Lamar) (Taylor's Version),6qAcApH8obo8eqatCKUHd9,1989 (Taylor's Version) [Deluxe]
+353,active,The Tortured Poets Department,ttpd,Fortnight,Fortnight (feat. Post Malone),6dODwocEuGzHAavXqTbwHv,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+354,active,The Tortured Poets Department,ttpd,The Tortured Poets Department,The Tortured Poets Department,4PdLaGZubp4lghChqp8erB,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+355,active,The Tortured Poets Department,ttpd,My Boy Only Breaks His Favorite Toys,My Boy Only Breaks His Favorite Toys,7uGYWMwRy24dm7RUDDhUlD,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+356,active,The Tortured Poets Department,ttpd,Down Bad,Down Bad,1kbEbBdEgQdQeLXCJh28pJ,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+357,active,The Tortured Poets Department,ttpd,"So Long, London","So Long, London",7wAkQFShJ27V8362MqevQr,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+358,active,The Tortured Poets Department,ttpd,But Daddy I Love Him,But Daddy I Love Him,4QMgEffJQuKtjCNvqfRZ0m,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+359,active,The Tortured Poets Department,ttpd,Fresh Out the Slammer,Fresh Out the Slammer,7IWcDWOfiooH5hRs9XOVYz,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+360,active,The Tortured Poets Department,ttpd,Florida!!!,Florida!!! (feat. Florence + The Machine),5ExOm0dh4NyRyAdSAO9hyM,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+361,active,The Tortured Poets Department,ttpd,Guilty as Sin?,Guilty as Sin?,799KrpEbhZp0MHeiA8YK9P,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+362,active,The Tortured Poets Department,ttpd,Who's Afraid of Little Old Me?,Who’s Afraid of Little Old Me?,2d8UxVNhJinc8uat9PoM9y,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+363,active,The Tortured Poets Department,ttpd,I Can Fix Him (No Really I Can),I Can Fix Him (No Really I Can),5chnRTB9qMK3W1M41SnU9s,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+364,active,The Tortured Poets Department,ttpd,loml,loml,3YkNIrAvbKNrrwwEd7NVLl,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+365,active,The Tortured Poets Department,ttpd,I Can Do It With a Broken Heart,I Can Do It With a Broken Heart,2fPvQfGQEZOKtJ9qXeL4x8,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+366,active,The Tortured Poets Department,ttpd,The Smallest Man Who Ever Lived,The Smallest Man Who Ever Lived,1xtw1krCR6Dw2KwkXw5z63,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+367,active,The Tortured Poets Department,ttpd,The Alchemy,The Alchemy,1tuNqJOtRQVHvONR8Lg3MZ,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+368,active,The Tortured Poets Department,ttpd,Clara Bow,Clara Bow,4d9PtIEVij9jW5OaLinH66,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+369,active,The Tortured Poets Department,ttpdAnth,The Black Dog,The Black Dog,62E2nR0od0M5HYxuYLaDz7,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+370,active,The Tortured Poets Department,ttpdAnth,imgonnagetyouback,imgonnagetyouback,1kcwpPDQnqEqmezzXdJTCP,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+371,active,The Tortured Poets Department,ttpdAnth,The Albatross,The Albatross,4EF6IyONolQy0bIQXm2EmX,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+372,active,The Tortured Poets Department,ttpdAnth,Chloe or Sam or Sophia or Marcus,Chloe or Sam or Sophia or Marcus,1rmEsOezwf2lmIZTMAO5Ag,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+373,active,The Tortured Poets Department,ttpdAnth,How Did It End?,How Did It End?,5Bedn0svl0ZD7RGmJkmKKw,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+374,active,The Tortured Poets Department,ttpdAnth,So High School,So High School,7Mts0OfPorF4iwOomvfqn1,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+375,active,The Tortured Poets Department,ttpdAnth,I Hate It Here,I Hate It Here,3hlGuz3loYoLfI3bpwieWq,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+376,active,The Tortured Poets Department,ttpdAnth,thanK you alMee,thanK you aIMee,7ogK4lJDVDMU6A6vYR5rvD,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+377,active,The Tortured Poets Department,ttpdAnth,I Look in Peoples Windows,I Look in People's Windows,1Zai5UJ2di3qEuR2HeT2s8,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+378,active,The Tortured Poets Department,ttpdAnth,The Prophecy,The Prophecy,18WFFUIsewmA8g31KAeo3e,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+379,active,The Tortured Poets Department,ttpdAnth,Cassandra,Cassandra,0g4fMVo4JjwnIpTfFfLdxS,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+380,active,The Tortured Poets Department,ttpdAnth,Peter,Peter,3zMDGj4D8ogaYgAIZPeU7S,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+381,active,The Tortured Poets Department,ttpdAnth,The Bolter,The Bolter,2913xXOVAIDAqxzV2g4VcU,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+382,active,The Tortured Poets Department,ttpdAnth,Robin,Robin,2CnjDMdpRjlWv04Xk3s6MW,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+383,active,The Tortured Poets Department,ttpdAnth,The Manuscript,The Manuscript,1DTRUYVd8rYpla9hhVVwjo,THE TORTURED POETS DEPARTMENT: THE ANTHOLOGY
+384,active,The Life of a Showgirl,tloas,The Fate of Ophelia,The Fate of Ophelia,5UQ3JrA9kEh7rfwhUS1h0z,The Life of a Showgirl + Acoustic Collection
+385,active,The Life of a Showgirl,tloas,Elizabeth Taylor,Elizabeth Taylor,6virCtlwc98cKYVyeZYXqq,The Life of a Showgirl + Acoustic Collection
+386,active,The Life of a Showgirl,tloas,Opalite,Opalite,0WUwHkIXQY55MLOrw8EM6m,The Life of a Showgirl + Acoustic Collection
+387,active,The Life of a Showgirl,tloas,Father Figure,Father Figure,6H0nEKqkTRxa30Pru1h7SD,The Life of a Showgirl + Acoustic Collection
+388,active,The Life of a Showgirl,tloas,Eldest Daughter,Eldest Daughter,6nhsv9Jeluz5gXt592KN3m,The Life of a Showgirl + Acoustic Collection
+389,active,The Life of a Showgirl,tloas,Ruin The Friendship,Ruin The Friendship,05VwM318oU6aNc1GS4MtLV,The Life of a Showgirl + Acoustic Collection
+390,active,The Life of a Showgirl,tloas,Actually Romantic,Actually Romantic,6G3dUZrsaOYhe2gRyNukwA,The Life of a Showgirl + Acoustic Collection
+391,active,The Life of a Showgirl,tloas,Wi$h Li$t,Wi$h Li$t,6udRZQi3g501XNOcRnE9fo,The Life of a Showgirl + Acoustic Collection
+392,active,The Life of a Showgirl,tloas,Wood,Wood,4Ox858TeUXjy7WEKOcxaFI,The Life of a Showgirl + Acoustic Collection
+393,active,The Life of a Showgirl,tloas,CANCELLED!,CANCELLED!,67SmofYg9enUWfcPqUuoVm,The Life of a Showgirl + Acoustic Collection
+394,active,The Life of a Showgirl,tloas,Honey,Honey,7jHzBmxAGVVPvLiq4Y45pD,The Life of a Showgirl + Acoustic Collection
+395,active,The Life of a Showgirl,tloas,The Life of a Showgirl,The Life of a Showgirl (feat. Sabrina Carpenter),6EqHzZp61G5uQ12QEiibpT,The Life of a Showgirl + Acoustic Collection
+396,active,The Life of a Showgirl,tloasacoustic,The Fate of Ophelia (Acoustic Version),The Fate of Ophelia - Alone In My Tower Acoustic Version,3lcWDG62OH0cH5GHLdT5X4,The Life of a Showgirl + Acoustic Collection
+397,active,The Life of a Showgirl,tloasacoustic,Elizabeth Taylor (Acoustic Version),Elizabeth Taylor - So Glamorous Cabaret Version,4UBWugj5D20ZveyzdGpqvD,The Life of a Showgirl + Acoustic Collection
+398,active,The Life of a Showgirl,tloasacoustic,Opalite (Acoustic Version),Opalite - Life Is A Song Acoustic Version,0Ny2HkSrLtvmBVwCQywyip,The Life of a Showgirl + Acoustic Collection
+399,active,The Life of a Showgirl,tloasacoustic,Eldest Daughter (Acoustic Version),Eldest Daughter - Now You’re Home Acoustic Version,2JHzTARFUispsjZHKhrxxO,The Life of a Showgirl + Acoustic Collection
+400,active,The Life of a Showgirl,tloasacoustic,Ruin The Friendship (Acoustic Version),Ruin The Friendship - My Advice Version,6hKfPNnVlA2cgTgKj6Vgcw,The Life of a Showgirl + Acoustic Collection
+401,active,The Life of a Showgirl,tloasacoustic,Wi$h Li$t (Acoustic Version),Wi$h Li$t - Settled Down Acoustic Version,1qwClaxDb5fCrLjXaAmB35,The Life of a Showgirl + Acoustic Collection
+402,active,The Life of a Showgirl,tloasacoustic,The Life of a Showgirl (Acoustic Version),The Life of a Showgirl (feat. Sabrina Carpenter) - Dressing Room Rehearsal Version,2DF2sUvgHFKJ5TQGjm6n3T,The Life of a Showgirl + Acoustic Collection
+403,active,Live From Clear Channel Stripped 2008,stripped2008,Love Story (Clear Channel Live),Love Story - Live From Clear Channel Stripped 2008,4RBKAqJ3qyvvriDG0s9IJ3,Live From Clear Channel Stripped 2008
+404,active,Live From Clear Channel Stripped 2008,stripped2008,Fearless (Clear Channel Live),Fearless - Live From Clear Channel Stripped 2008,5g7RMU3cV7zXWH244BLe7G,Live From Clear Channel Stripped 2008
+405,active,Live From Clear Channel Stripped 2008,stripped2008,Beautiful Eyes (Clear Channel Live),Beautiful Eyes - Live From Clear Channel Stripped 2008,4aBW31cmkA7BLColUsMEeZ,Live From Clear Channel Stripped 2008
+406,active,Live From Clear Channel Stripped 2008,stripped2008,Untouchable (Clear Channel Live),Untouchable - Live From Clear Channel Stripped 2008,4MbHDiHQjhmoVAV75G04Ql,Live From Clear Channel Stripped 2008
+407,active,Live From Clear Channel Stripped 2008,stripped2008,Teardrops On My Guitar (Clear Channel Live),Teardrops On My Guitar - Live From Clear Channel Stripped 2008,4DjevQhsPWULcondN4mRh5,Live From Clear Channel Stripped 2008
+408,active,Live From Clear Channel Stripped 2008,stripped2008,Picture To Burn (Clear Channel Live),Picture To Burn - Live From Clear Channel Stripped 2008,7EvU9pRoJ9Xs7anx0P7tEc,Live From Clear Channel Stripped 2008
+409,active,Live From Clear Channel Stripped 2008,stripped2008,Shouldve Said No (Clear Channel Live),Should've Said No - Live From Clear Channel Stripped 2008,5a9hUL6ZuiagZhazwrtwHF,Live From Clear Channel Stripped 2008
+410,active,Live From Clear Channel Stripped 2008,stripped2008,Change (Clear Channel Live),Change - Live From Clear Channel Stripped 2008,69o9kr9UexjzeZDE8yD8dQ,Live From Clear Channel Stripped 2008
+411,active,The Taylor Swift Holiday Collection,holidayCollection,Christmas Must Be Something More,Christmas Must Be Something More,31JVjy3XWnh6C2zf4kLCXN,The Taylor Swift Holiday Collection
+412,active,The Taylor Swift Holiday Collection,holidayCollection,Christmases When You Were Mine,Christmases When You Were Mine,1g09DZjQ7yBommCT6POY2n,The Taylor Swift Holiday Collection
+413,active,The Taylor Swift Holiday Collection,holidayCollection,Last Christmas,Last Christmas,2IprIjGNRlj3TfqUWCAo0C,The Taylor Swift Holiday Collection
+414,active,The Taylor Swift Holiday Collection,holidayCollection,Santa Baby,Santa Baby,71IScwIe7bcIlpnlkbKVQw,The Taylor Swift Holiday Collection
+415,active,The Taylor Swift Holiday Collection,holidayCollection,Silent Night,Silent Night,1cJkUN5LAotktryx2nPCr7,The Taylor Swift Holiday Collection
+416,active,The Taylor Swift Holiday Collection,holidayCollection,White Christmas,White Christmas,7GZ3KDorsc1yWndEtzGTjf,The Taylor Swift Holiday Collection
+417,active,Live From Paris,loverParis,ME! (Live From Paris),ME! - Live From Paris,5fOV54t6mMYv3H9CsnvU81,ME! (Live From Paris)
+418,active,Live From Paris,loverParis,Cornelia Street (Live From Paris),Cornelia Street - Live From Paris,3fGnrtrtL1IHSX9t4DKOYf,Cornelia Street (Live From Paris)
+419,active,Live From Paris,loverParis,Death By A Thousand Cuts (Live From Paris),Death By A Thousand Cuts - Live From Paris,3oF7Or7T35yhQbGxbCGvRX,Death By A Thousand Cuts (Live From Paris)
+420,active,Live From Paris,loverParis,The Archer (Live From Paris),The Archer - Live From Paris,2fgiBCtbWo8pijF6M7pN1i,The Archer (Live From Paris)
+421,active,Live From Paris,loverParis,The Man (Live From Paris),The Man - Live From Paris,7FKbTRXXIWVFQmPH8zGfU0,The Man (Live From Paris)
+422,active,Live From Paris,loverParis,Daylight (Live From Paris),Daylight - Live From Paris,7ryS0xBZNYjQqql34GCkDp,Daylight (Live From Paris)
+423,active,Live From Paris,loverParis,You Need To Calm Down (Live From Paris),You Need To Calm Down - Live From Paris,36a08nLG1xazGaaVKK0vv7,You Need To Calm Down (Live From Paris)
+424,active,Live From Paris,loverParis,Lover (Live From Paris),Lover - Live From Paris,4lD3RXyvHpJsM3BhIEC4aA,Lover (Live From Paris)
+425,active,Speak Now World Tour Live,SNLive,Sparks Fly (Live),Sparks Fly - Live/2011,1aBJNc2thaKyh5THWzIqHX,Speak Now World Tour Live
+426,active,Speak Now World Tour Live,SNLive,Mine (Live),Mine - Live/2011,7yndkPYP6YQQLBpPsizDfh,Speak Now World Tour Live
+427,active,Speak Now World Tour Live,SNLive,The Story Of Us (Live),The Story Of Us - Live,72GIZuUXo14oyrS0si3Rgc,Speak Now World Tour Live
+428,active,Speak Now World Tour Live,SNLive,Mean (Live),Mean - Live/2011,7mFiEij8AXPUZB7aKLbUlQ,Speak Now World Tour Live
+429,active,Speak Now World Tour Live,SNLive,Ours (Live),Ours - Live/2011,68QyrSzpnoU04AAhE5z8lj,Speak Now World Tour Live
+430,active,Speak Now World Tour Live,SNLive,BTD/ Apologize/YNS (Live),Back To December/Apologize/You're Not Sorry - Live/2011/Medley,1IsquhJFJ0qcFZI7FeAEuN,Speak Now World Tour Live
+431,active,Speak Now World Tour Live,SNLive,Better Than Revenge (Live),Better Than Revenge - Live/2011,6505MLhnqTDDg4tjoUz2Wp,Speak Now World Tour Live
+432,active,Speak Now World Tour Live,SNLive,Speak Now (Live),Speak Now - Live/2011,3QFB14MOUf3imlyISNmrbT,Speak Now World Tour Live
+433,active,Speak Now World Tour Live,SNLive,Last Kiss (Live),Last Kiss - Live/2011,6hH37tyeRdyan1mAppmVor,Speak Now World Tour Live
+434,active,Speak Now World Tour Live,SNLive,Drops Of Jupiter (Live),Drops Of Jupiter - Live/2011,0BSmbCIY36iw04azzJ3S0S,Speak Now World Tour Live
+435,active,Speak Now World Tour Live,SNLive,Bette Davis Eyes (Live),Bette Davis Eyes - Live/2011,6KF9xd2hBLuexrmBX4vUWD,Speak Now World Tour Live
+436,active,Speak Now World Tour Live,SNLive,I Want You Back (Live),I Want You Back - Live/2011,4KB3zBArZ1rHRExilzycaV,Speak Now World Tour Live
+437,active,Speak Now World Tour Live,SNLive,Dear John (Live),Dear John - Live/2011,4DbI1rr4IQ2bc8nejy9ttd,Speak Now World Tour Live
+438,active,Speak Now World Tour Live,SNLive,Enchanted (Live),Enchanted - Live/2011,3lm4L3pPL32PFy74dR17OR,Speak Now World Tour Live
+439,active,Speak Now World Tour Live,SNLive,Haunted (Live),Haunted - Live/2011,6znB7YZhMJT2B83zfbiyLq,Speak Now World Tour Live
+440,active,Speak Now World Tour Live,SNLive,Long Live (Live),Long Live - Live/2011,5QkzyLUb4ggojNDp8G2OxX,Speak Now World Tour Live
+441,active,,tloastbt,The Fate of Ophelia - Track by Track,The Fate of Ophelia - Track by Track,5k9RjjuYyOMCLL81U8FaHT,The Life of a Showgirl (Track by Track Version)
+442,active,,tloastbt,Elizabeth Taylor - Track by Track,Elizabeth Taylor - Track by Track,3r9fAceWmaDFvbNiTnFiLr,The Life of a Showgirl (Track by Track Version)
+443,active,,tloastbt,Opalite - Track by Track,Opalite - Track by Track,5SkuikJwvwfEvNyCepGkq3,The Life of a Showgirl (Track by Track Version)
+444,active,,tloastbt,Father Figure - Track by Track,Father Figure - Track by Track,2NGGvVcfb2m2NbVaXHC3gb,The Life of a Showgirl (Track by Track Version)
+445,active,,tloastbt,Eldest Daughter - Track by Track,Eldest Daughter - Track by Track,0wAvTNz81YTUhLFWuWJSAV,The Life of a Showgirl (Track by Track Version)
+446,active,,tloastbt,Ruin The Friendship - Track by Track,Ruin The Friendship - Track by Track,6NUy8xajng5zMSGJRKniAG,The Life of a Showgirl (Track by Track Version)
+447,active,,tloastbt,Actually Romantic - Track by Track,Actually Romantic - Track by Track,6FJemhBlVTGTCgrrrLam3D,The Life of a Showgirl (Track by Track Version)
+448,active,,tloastbt,Wi$h Li$t - Track by Track,Wi$h Li$t - Track by Track,5yrrh7VYFMCNjUOIMzGNp5,The Life of a Showgirl (Track by Track Version)
+449,active,,tloastbt,Wood - Track by Track,Wood - Track by Track,20QSU9vg05qYSDVgOTAwPp,The Life of a Showgirl (Track by Track Version)
+450,active,,tloastbt,CANCELLED! - Track by Track,CANCELLED! - Track by Track,6JNM6pLKbXMGG2opeExCb2,The Life of a Showgirl (Track by Track Version)
+451,active,,tloastbt,Honey - Track by Track,Honey - Track by Track,5EwypOO9NEI7MvjPOYZtWk,The Life of a Showgirl (Track by Track Version)
+452,active,,tloastbt,The Life of a Showgirl - Track by Track,The Life of a Showgirl - Track by Track,42TAweWJJ9YlQ47T5nesu5,The Life of a Showgirl (Track by Track Version)
+453,active,Soundtracks,fairytale,Today Was A Fairytale,Today Was A Fairytale,4pFvEWbjBpPUdYRQly0THs,Today Was A Fairytale
+454,active,Soundtracks,crazier,Crazier,Crazier,5vyxXfD5gLlyPxGZMEjtmd,Hannah Montana The Movie
+455,active,Soundtracks,HG,Eyes Open,Eyes Open,7wjbSn8QHsxqKXU5M0jXGM,The Hunger Games: Songs From District 12 And Beyond
+456,active,Soundtracks,HG,Safe & Sound,Safe & Sound - from The Hunger Games Soundtrack,0z9UVN8VBHJ9HdfYsOuuNf,The Hunger Games: Songs From District 12 And Beyond
+457,active,Soundtracks,STF,Sweeter Than Fiction,"Sweeter Than Fiction - From ""One Chance"" Soundtrack",0RFCHlNuTeUHIB36VuVbOL,Sweeter Than Fiction
+458,active,Soundtracks,IDWLF,I Don't Wanna Live Forever,I Don’t Wanna Live Forever (Fifty Shades Darker),2y5aJvzXhHPA94U5GFAcXe,Fifty Shades Darker (Original Motion Picture Soundtrack)
+459,active,Soundtracks,cats,Macavity,"Macavity - From The Motion Picture Soundtrack ""Cats""",5zOKuItOTZhRCGtPrDYmlj,Cats: Highlights From The Motion Picture Soundtrack
+460,active,Soundtracks,cats,Beautiful Ghosts,"Beautiful Ghosts - From The Motion Picture Soundtrack ""Cats""",2evEoQAhIMaa9PfjTT5skG,Cats: Highlights From The Motion Picture Soundtrack
+461,active,Soundtracks,onlyTheYoung,Only The Young,Only The Young - Featured in Miss Americana,2slqvGLwzZZYsT4K4Y1GBC,Only The Young (Featured in Miss Americana)
+462,active,Soundtracks,carolina,Carolina,Carolina - From The Motion Picture “Where The Crawdads Sing”,4axSuOg3BqsowKjRpj59RU,Carolina (From The Motion Picture “Where The Crawdads Sing”)
+463,active,Soundtracks,carolina,Carolina (Video Edition),"Carolina - ""Where The Crawdads Sing"" - Video Edition",12xIjI9A9UlB6zEc7kyZ06,Carolina (From The Motion Picture “Where The Crawdads Sing”)
+464,active,Soundtracks,IKIKY,"I Knew It, I Knew You","I Knew It, I Knew You - From ""Toy Story 5""",1jN9NsOkcQz2WWOj3kT1FC,"I Knew It, I Knew You (From ""Toy Story 5"")"
+465,active,Features,tibto,Two Is Better Than One,Two Is Better Than One (feat. Taylor Swift),1MaqkdFNIKPdpQGDzme5ss,Love Drunk
+466,active,Features,bou,Both of Us,Both of Us (feat. Taylor Swift),3r9bgSJlJz2zlevcBRYXko,Strange Clouds
+467,active,Features,hdc,Highway Don't Care,Highway Don't Care,60hGQrn24APqEFSLObLeDc,Two Lanes Of Freedom
+468,active,Features,babe,Babe,Babe,7fRruZ12gXGwBs0zXQ6e5V,Bigger
+469,active,Features,hldytigl,Renegade,Renegade,73W5aXorr5vxrySFcoZqIN,How Long Do You Think It's Gonna Last?
+470,active,Features,hldytigl,Birch,Birch,7wo2UNeQBowm28hfAJsEMz,How Long Do You Think It's Gonna Last?
+471,active,Features,hldytigl,Renegade (Pop Version),Renegade - Pop Version,06zIBqLC9ZRm5i0iMf0kHI,Renegade (Pop Version)
+472,active,Features,gasoline,Gasoline,Gasoline (feat. Taylor Swift),2bzUVEvpZ7At5cYz1kOLI9,Women In Music Pt III (Expanded Edition)
+473,active,Features,equals,The Joker And The Queen,The Joker And The Queen (feat. Taylor Swift),6N1K5OVVCopBjGViHs2IvP,The Joker And The Queen (feat. Taylor Swift)
+474,active,Features,bigStar,Big Star,Big Star (with Taylor Swift) - Live,7JKwboSAWRHJI5U1XGTqS3,Live in No Shoes Nation
+475,active,Features,alcott,The Alcott,The Alcott (feat. Taylor Swift),6INztpNwOTlfSKTuPo0HOP,First Two Pages of Frankenstein
+476,active,Features,us,us.,us. (feat. Taylor Swift),0hhzNPE68LWLfgZwdpxVdR,The Secret of Us
+477,active,Droplets,ronan,Ronan,Ronan,0Nw8hv79MLJa1yjtsEgz08,Ronan
+478,active,Droplets,CTF,Christmas Tree Farm,Christmas Tree Farm,4mKye6Z1kXuKolzMkJoKFA,Christmas Tree Farm
+479,active,Droplets,loverChapter,All Of The Girls You Loved Before,All Of The Girls You Loved Before,4P9Q0GojKVXpRTJCaL3kyy,All Of The Girls You Loved Before
+480,active,Droplets,fearlessTV,If This Was A Movie (TV),If This Was A Movie (Taylor’s Version),0kAZ3H6G9Zac4PMpmobMkj,If This Was A Movie (Taylor’s Version)
+481,active,Droplets,redTV,Eyes Open (TV),Eyes Open (Taylor's Version),2NIBaWXdjaTDmytjjwbEfP,Eyes Open (Taylor's Version)
+482,active,Droplets,redTV,Safe & Sound (TV),Safe & Sound (feat. Joy Williams and John Paul White) (Taylor’s Version),2RJnNdu4pb3MypbBroHU0T,Safe & Sound (Taylor's Version)
+483,active,Droplets,YLM,You're Losing Me (FTV),You’re Losing Me (From The Vault),3CWq0pAKKTWb0K4yiglDc4,You're Losing Me (From The Vault)
+485,active,Remixes and etc.,debutOG,Teardrops On My Guitar (International Mix),Teardrops On My Guitar - International Mix,2RM02ladxD5mgdrlAwh3h9,Fearless (International Version)
+486,retired,Remixes and etc.,debutOG,Our Song (International Mix),Our Song - International Mix,,
+487,active,Remixes and etc.,fearlessINT,Love Story (Digital Dog Remix),Love Story - Digital Dog Remix,3RNDw7yywLNyawDKV99hTx,Love Story (Digital Dog Remix)
+488,retired,Remixes and etc.,fearlessINT,Love Story (Pop Mix),Love Story - Pop Mix,,
+489,active,Remixes and etc.,fearlessINT,You're Not Sorry (CSI Remix),You're Not Sorry - CSI Remix,4VbErhGDMTnvPAnt5z70DL,You're Not Sorry (CSI Remix)
+490,active,Remixes and etc.,badblood,Bad Blood (feat. Kendrick Lamar),Bad Blood,6xsEAm6w9oMQYYg3jkEkMT,Bad Blood
+491,active,Remixes and etc.,1989OG,Wildest Dreams (R3hab Remix),Wildest Dreams - R3hab Remix,5VDHMi7own9vDZjiwDES1e,Wildest Dreams (R3hab Remix)
+492,active,Remixes and etc.,delicateRemix,Ready For It (BloodPop® Remix),...Ready For It? - BloodPop® Remix,1Ygm9KdH3wbzDekO8JgxcW,...Ready For It? (BloodPop® Remix)
+493,active,Remixes and etc.,spotifySingles,Delicate (Recorded at The Tracking Room Nashville),Delicate - Recorded at The Tracking Room Nashville,1Fj0T1XKuhRu7EZzJ7NJIK,Spotify Singles
+494,active,Remixes and etc.,delicateRemix,Delicate (Sawyr And Ryan Tedder Mix),Delicate - Sawyr And Ryan Tedder Mix,6SYwJcqaltK2WFRmD1unUV,Delicate (Sawyr And Ryan Tedder Mix)
+495,active,Remixes and etc.,delicateRemix,Delicate (Seeb Remix),Delicate - Seeb Remix,2Sy2oGjP5RYB4cLVoDU0Gz,Delicate (Seeb Remix)
+496,active,Remixes and etc.,spotifySingles,September (Recorded at The Tracking Room Nashville),September - Recorded at The Tracking Room Nashville,5eGX87IiKsGuzS3iw4CfCX,Spotify Singles
+497,active,Remixes and etc.,lover,You Need To Calm Down (Clean Bandit Remix),You Need To Calm Down - Clean Bandit Remix,7Bjf96uNizpvXLvNyOJpst,You Need To Calm Down (Clean Bandit Remix)
+498,active,Remixes and etc.,lover,Lover (First Dance Remix),Lover - First Dance Remix,2msvOEbkK50foYf9BMXr2X,Lover (First Dance Remix)
+499,active,Remixes and etc.,loverShawn,Lover Remix (feat. Shawn Mendes),Lover (Remix) [feat. Shawn Mendes],3i9UVldZOE0aD0JnyfAZZ0,Lover (Remix) [feat. Shawn Mendes]
+500,active,Remixes and etc.,CTF,Christmas Tree Farm (Recorded Live),Christmas Tree Farm - Recorded Live at the 2019 iHeartRadio Jingle Ball,1alAo6dYalSx8yZUn17JxF,Christmas Tree Farm
+501,active,Remixes and etc.,CTF,Christmas Tree Farm (Old Timey Version),Christmas Tree Farm - Old Timey Version,50ho0AOvkm8E5l8zf7OfJI,Christmas Tree Farm
+502,active,Remixes and etc.,folkloreAdd,cardigan (cabin in candlelight version),cardigan - cabin in candlelight version,2hmafYGj1CXYKIYcMnX4lj,cardigan (cabin in candlelight version)
+503,active,Remixes and etc.,folkloreAdd,betty (Live from the 2020 Academy of Country Music Awards),betty - Live from the 2020 Academy of Country Music Awards,4GS68CE8nKLIKjjapiSm2I,betty (Live from the 2020 Academy of Country Music Awards)
+504,active,Remixes and etc.,folkloreAdd,the lakes (original version),the lakes - original version,0UAdDYrkCvVQftaKpL6q5f,the lakes (original version)
+505,active,Remixes and etc.,willowRemix,willow (90s trend remix),willow - 90's trend remix,77p4fRpoeiZMtUy3P9kN21,willow (90's trend remix)
+506,active,Remixes and etc.,willowRemix,willow (dancing witch version Elvira remix),willow - dancing witch version (Elvira remix),2Ta5c5Z6DvM8GX0U1polSo,willow (the witch collection)
+507,active,Remixes and etc.,willowRemix,willow (lonely witch version),willow - lonely witch version,77d7q9TNbsIDmRTDPkPv3L,willow (the witch collection)
+508,active,Remixes and etc.,willowRemix,willow (moonlit witch version),willow - moonlit witch version,5F7hpFKLmWgMHGxQuwssuv,willow (the witch collection)
+509,active,Remixes and etc.,fearlessTV,Love Story (TV) Elvira Remix,Love Story (Taylor's Version) - Elvira Remix,5RaBeejGtdPEszYEKYECs2,Love Story (Taylor's Version) [Elvira Remix]
+510,active,Remixes and etc.,redTVadd,All Too Well (10 Minute Version) (The Short Film),All Too Well (10 Minute Version) (The Short Film),1u4HUiREUR6vX1W1RYG2Tm,All Too Well (10 Minute Version) (The Short Film)
+511,active,Remixes and etc.,redTVadd,All Too Well (Sad Girl Autumn Version) (Long Pond Studios),All Too Well (Sad Girl Autumn Version) - Recorded at Long Pond Studios,1n3b9Eekoy3S9ZSZ5DmTW1,All Too Well (Sad Girl Autumn Version) - Recorded at Long Pond Studios
+512,active,Remixes and etc.,redTVadd,Message In A Bottle (Fat Max G Remix) (TV),Message In A Bottle (Fat Max G Remix) (Taylor’s Version),3tGq7hWDCtrnL83y5OGual,Message In A Bottle (Fat Max G Remix) (Taylor’s Version)
+513,active,Remixes and etc.,AHremix,AntiHero (Acoustic Version),Anti-Hero - Acoustic Version,2d3d9xZutJjmUpntiyHt3F,Anti-Hero (Acoustic Version)
+514,active,Remixes and etc.,AHremix,Anti-Hero (ILLENIUM Remix),Anti-Hero - ILLENIUM Remix,6C0H8ts9M6deezz0yYR6LK,Anti-Hero (ILLENIUM Remix)
+515,active,Remixes and etc.,AHremix,Anti-Hero (Jayda G Remix),Anti-Hero - Jayda G Remix,4YrpqEBNuz7IMsZtUP6bNQ,Anti-Hero (Remixes)
+516,active,Remixes and etc.,AHremix,Anti-Hero (Kungs Remix),Anti-Hero - Kungs Remix,2oWpe2L8ypC080BxpDVuTY,Anti-Hero (Remixes)
+517,active,Remixes and etc.,AHremix,Anti-Hero (Roosevelt Remix),Anti-Hero - Roosevelt Remix,4XiypEn8iKbeP1TbTqdfk5,Anti-Hero (Remixes)
+518,active,Remixes and etc.,AHremix,Anti-Hero (feat. Bleachers),Anti-Hero (feat. Bleachers),16M9Rxid0nXhVmme7lzVwN,Anti-Hero (Remixes)
+519,active,Remixes and etc.,LHremix,Lavender Haze (Acoustic Version),Lavender Haze - Acoustic Version,05kJkr80XEaZeN8kxyQoFp,Lavender Haze (Acoustic Version)
+520,active,Remixes and etc.,LHremix,Lavender Haze (Felix Jaehn Remix),Lavender Haze - Felix Jaehn Remix,5KxZfCXXmVvKhPo8hQz2pS,Lavender Haze (Remixes)
+521,active,Remixes and etc.,LHremix,Lavender Haze (Jungle Remix),Lavender Haze - Jungle Remix,0ThxqUZ9PwS6n0UT5i1XH6,Lavender Haze (Remixes)
+522,active,Remixes and etc.,LHremix,Lavender Haze (Snakehips Remix),Lavender Haze - Snakehips Remix,6F67FNdOBNMFzxdj1CQ5pL,Lavender Haze (Remixes)
+523,active,Remixes and etc.,LHremix,Lavender Haze (Tensnake Remix),Lavender Haze - Tensnake Remix,7kjSmkSo15pHlkb0mOQtfj,Lavender Haze (Remixes)
+524,active,Remixes and etc.,CSremix,Cruel Summer - Live from TS | The Eras Tour,Cruel Summer - Live from TS | The Eras Tour,6EXHGKZ79AUTzCe9BMZjhT,The Cruelest Summer
+525,active,Remixes and etc.,CSremix,Cruel Summer - LP Giobbi Remix,Cruel Summer - LP Giobbi Remix,37jfioVu3Bd2Du9bteXNDU,The Cruelest Summer
+526,active,Remixes and etc.,fnremix,Fortnight - BLOND:ISH Remix,Fortnight (feat. Post Malone) - BLOND:ISH Remix,1gejz5ROvJBUb6WJzkMAcc,Fortnight (feat. Post Malone) [BLOND:ISH Remix]
+527,active,Remixes and etc.,fnremix,Fortnight - Acoustic Version,Fortnight (feat. Post Malone) - Acoustic Version,2BUTSRKPGRsyc9FnsC5Udd,Fortnight (Acoustic Version)
+528,active,Remixes and etc.,fnremix,Fortnight - Cults Remix,Fortnight (feat. Post Malone) - Cults Remix,7pM01Cfj8vt7z3qI2TveNT,Fortnight (Acoustic Version)
+529,active,Remixes and etc.,brokenheart,I Can Do It With a Broken Heart - Instrumental,I Can Do It With a Broken Heart - Instrumental,2PGIFYRG1XWsPqNG14hgD1,I Can Do It With a Broken Heart (Dombresky Remix)
+530,active,Remixes and etc.,brokenheart,I Can Do It With a Broken Heart - Dombresky Remix,I Can Do It With a Broken Heart - Dombresky Remix,0hFF0aqyjDwDh6SQwRbTyx,I Can Do It With a Broken Heart (Dombresky Remix)
+531,active,Remixes and etc.,TFOOLL,The Fate of Ophelia - Loud Luxury Remix,The Fate of Ophelia - Loud Luxury Remix,6PlBKImSl4AZoxBU7F649D,The Fate of Ophelia (Loud Luxury Remix)
+532,active,Remixes and etc.,TFOOCM,The Fate of Ophelia - The Chainsmokers Remix,The Fate of Ophelia - The Chainsmokers Remix,3JNaLxAymiSUMrmjOarjeo,The Fate of Ophelia (The Chainsmokers Remix)
+533,active,Remixes and etc.,opaliteEXT,Opalite (MV Extended Version Part 1),Opalite - Official Music Video Extended Version Part 1,7vf4GBEJmv0uXojpr5qPMX,Opalite [Official Music Video (Extended Versions)]
+534,active,Remixes and etc.,opaliteEXT,Opalite (MV Extended Version Part 2),Opalite - Official Music Video Extended Version Part 2,7EWLNUpx0QWUCYfmBJS9qb,Opalite [Official Music Video (Extended Versions)]
+535,active,Remixes and etc.,opaliteRemix,Opalite - BUNT. Remix,Opalite - BUNT. Remix,0E3Vtmgzk067KASoo0HwzV,Opalite (BUNT. Remix)
+536,active,Remixes and etc.,opaliteRemix,Opalite - Ely Oaks Remix,Opalite - Ely Oaks Remix,5t1wMjV9ldVDdYs4l7mG2g,Opalite (Ely Oaks Remix)
+537,active,Remixes and etc.,opaliteRemix,Opalite - Skream Remix,Opalite - Skream Remix,1VCcPLfDiR1S9PJaSp5qm5,Opalite (Skream Remix)
+538,active,Remixes and etc.,opaliteRemix,Opalite - Chris Lake Remix,Opalite - Chris Lake Remix,0ttGLmxI0mAkMblE6iRm2S,Opalite (Chris Lake Remix)
+539,active,Remixes and etc.,ikikyAlt,"I Knew It, I Knew You - Piano Version","I Knew It, I Knew You - Piano Version (From ""Toy Story 5"")",6ZwVl8oPsraGB177TNEzaX,"I Knew It, I Knew You (From ""Toy Story 5"")"
+540,active,Remixes and etc.,ikikyAlt,"I Knew It, I Knew You - Acoustic Version","I Knew It, I Knew You - Acoustic Version (From ""Toy Story 5"")",23NnOJGyMrD7k3NaGDX0bb,"I Knew It, I Knew You (From ""Toy Story 5"")"
+484,upcoming,Droplets,zero,Patient Zero,,,

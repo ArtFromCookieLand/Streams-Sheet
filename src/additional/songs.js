@@ -3,8 +3,8 @@
  * SONGS REGISTRY
  * -------------------------------------------------------------------
  * The `Tracklist` sheet is the master list of tracked songs: a list, not
- * a grid. Each song's "row" column says which row it lives on in Latest,
- * Tools and every archive (CONFIG.LAYOUT.FIRST_SONG_ROW onwards), so the
+ * a grid. Each song's "row" column says which row it lives on in Latest
+ * and every archive (CONFIG.LAYOUT.FIRST_SONG_ROW onwards), so the
  * Tracklist's own order doesn't matter and it can be sorted freely.
  *
  * Columns are found by their header (CONFIG.SONGS_SHEET.HEADERS),
@@ -59,6 +59,7 @@ function readTracklist() {
     return { songs: [], problems: [error.message] };
   }
 
+  const historyCol = findOptionalColumn(values[0], CONFIG.SONGS_SHEET.HISTORY_CATEGORY);
   const firstSongRow = CONFIG.LAYOUT.FIRST_SONG_ROW;
   const statuses = Object.values(SONG_STATUS);
   const name = CONFIG.SHEETS.SONGS;
@@ -105,7 +106,9 @@ function readTracklist() {
       category: String(r[col.category]).trim(),
       coverKey: String(r[col.coverKey]).trim(),
       title: title,
-      trackId: trackId
+      trackId: trackId,
+      // null when the Tracklist has no historyCategory column yet
+      historyCategory: historyCol === -1 ? null : String(r[historyCol]).trim()
     });
   }
 
@@ -136,6 +139,14 @@ function getSongRowCount() {
  */
 function findSongColumns(headerRow) {
   return findHeaderColumns(headerRow, CONFIG.SONGS_SHEET.HEADERS, CONFIG.SHEETS.SONGS);
+}
+
+/**
+ * @return {number} The index of an optional column (header matched ignoring case and spaces), or -1.
+ */
+function findOptionalColumn(headerRow, header) {
+  const normalize = h => String(h).toLowerCase().replace(/\s+/g, '');
+  return headerRow.map(normalize).indexOf(normalize(header));
 }
 
 /**

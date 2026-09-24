@@ -1,6 +1,6 @@
 /**
  * ===================================================================
- * SETUP: THE CATEGORIES, PENDING AND IGNORED SHEETS
+ * SETUP: THE CATEGORIES, PENDING, IGNORED, SOURCES AND IMPORT SHEETS
  * -------------------------------------------------------------------
  * One-off helpers, under Update → Setup, shown only while the sheet is
  * missing. Each refuses to touch a sheet that already exists.
@@ -155,7 +155,7 @@ function createIgnoredSheet() {
   }
   const raw = readRawImport();
   if (!raw.length) {
-    ui.alert('Import first', 'The raw import in Tools has no track IDs, so there is nothing to start the Ignored sheet from.', ui.ButtonSet.OK);
+    ui.alert('Import first', `The raw import in ${CONFIG.SHEETS.IMPORT} has no track IDs, so there is nothing to start the Ignored sheet from.`, ui.ButtonSet.OK);
     return;
   }
 
@@ -176,4 +176,49 @@ function createIgnoredSheet() {
   }
   sheet.autoResizeColumns(1, header.length);
   ui.alert('Ignored sheet created' + envTag(), `${untracked.length} track(s) marked as ignored.`, ui.ButtonSet.OK);
+}
+
+
+/**
+ * [MENU] 2.1: renames Tools to Import and clears its old per-song block in J:M (separator, Spotify
+ * name, total, daily). Since 2.1 the update works each song's total and daily out from the raw
+ * import itself, so nothing reads that block, and the sheet no longer has to line up with the
+ * others. The raw import in E:I and whatever is in A:D stay as they are.
+ */
+function tidyImportSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ui = SpreadsheetApp.getUi();
+  const name = CONFIG.SHEETS.IMPORT, oldName = CONFIG.SHEETS.IMPORT_OLD_NAME;
+  if (ss.getSheetByName(name)) {
+    ui.alert('Nothing changed', `The "${name}" sheet already exists.`, ui.ButtonSet.OK);
+    return;
+  }
+  const sheet = ss.getSheetByName(oldName);
+  if (!sheet) {
+    ui.alert('Nothing changed', `There is no "${oldName}" sheet to tidy up.`, ui.ButtonSet.OK);
+    return;
+  }
+
+  const b = CONFIG.IMPORT.OLD_BLOCK;
+  const block = columnToLetter(b.COLUMN) + ':' + columnToLetter(b.COLUMN + b.WIDTH - 1);
+  const response = ui.alert('Tidy up the Import sheet' + envTag(),
+    `This renames "${oldName}" to "${name}" and clears columns ${block} (the old separator, Spotify name, total and daily per song). ` +
+    `Nothing reads them any more: the update now works each song's total and daily out from the raw import by track ID.\n\n` +
+    `The raw import (${CONFIG.IMPORT.RAW_DATA}) and columns A:D stay as they are. Go ahead?`,
+    ui.ButtonSet.YES_NO);
+  if (response !== ui.Button.YES) return;
+
+  const range = sheet.getRange(1, b.COLUMN, sheet.getMaxRows(), b.WIDTH);
+  range.breakApart();
+  range.clear();
+  sheet.setName(name);
+
+  let sumText = '';
+  try {
+    const today = matchTotalsById();   // C1 held a formula over the old block; it becomes a plain figure
+    sumText = '\n\n' + describeMatchResult(today);
+  } catch (error) {
+    sumText = '\n\nChecking the import failed: ' + error.message;
+  }
+  ui.alert('Import sheet tidied up' + envTag(), `"${oldName}" is now "${name}", and ${block} is empty.` + sumText, ui.ButtonSet.OK);
 }

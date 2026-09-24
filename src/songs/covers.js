@@ -8,7 +8,7 @@
  * in with a key that isn't in Covers yet, a row is added for it:
  *
  *   1. the cover of the album the track was scraped from - the import
- *      keeps it in Tools!I - or, failing that,
+ *      keeps it in Import!I - or, failing that,
  *   2. the track's cover from Spotify's embed lookup
  *      (open.spotify.com/oembed: no login, no Apify credits).
  *

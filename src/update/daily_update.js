@@ -1,4 +1,8 @@
-function transferStats() {
+/**
+ * Archives today and moves it into Latest.
+ * @param {Object} today - From readTodayFromImport(), worked out (and checked) before this runs.
+ */
+function transferStats(today) {
   // --- 0. Build the album formulas first ---
   // Reads the Tracklist sheet, so any problem with it throws here, before the date is advanced
   // or a column is inserted - never halfway through.
@@ -22,10 +26,9 @@ function transferStats() {
     .setNumberFormat("yyyy/mm/dd")
     .setFontWeight("bold");
 
-  // --- 3. Copy Tools -> Daily Archive (New Song Streams) ---
-  var toolsDailyData = toolsSheet.getRange(firstSongRow, CONFIG.TOOLS.DAILY_COLUMN, songRows, 1).getValues();
+  // --- 3. Today's dailies -> Daily Archive (New Song Streams) ---
   dailyArchiveSheet.getRange(firstSongRow, 2, songRows, 1)
-    .setValues(toolsDailyData)
+    .setValues(today.dailies.map(function (d) { return [d]; }))
     .setNumberFormat("#,##0")
     .setFontColor("black")
     .setFontWeight("normal");
@@ -34,10 +37,10 @@ function transferStats() {
   // Calculates SUMs for albums in the new Col B
   setAlbumFormulas(dailyArchiveSheet, albumFormulas);
 
-  // --- 5. Copy Tools -> Latest (Today's Data) ---
-  // Tools L:M (total, daily) -> Latest F:G, song rows only. The album rows in Latest are formulas.
-  var toolsData = toolsSheet.getRange(firstSongRow, CONFIG.TOOLS.TOTALS_COLUMN, songRows, 2).getValues();
-  latestSheet.getRange(firstSongRow, CONFIG.LATEST.COLS.TOTAL, songRows, 2).setValues(toolsData);
+  // --- 5. Today's totals and dailies -> Latest F:G ---
+  // Song rows only. The album rows in Latest are formulas.
+  var latestData = today.totals.map(function (t, i) { return [t, today.dailies[i]]; });
+  latestSheet.getRange(firstSongRow, CONFIG.LATEST.COLS.TOTAL, songRows, 2).setValues(latestData);
 
   // --- 6. Album totals in Latest, from the Tracklist ---
   setLatestAggregateFormulas(latestSheet);

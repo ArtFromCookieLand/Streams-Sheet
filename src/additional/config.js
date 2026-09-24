@@ -26,7 +26,8 @@ const CONFIG = {
     // The current active sheet for writing daily stats
     ARCHIVE: 'Daily Archive 2026', 
     
-    TOOLS: 'Tools',
+    IMPORT: 'Import',               // The raw Apify dump (src/apify/match_totals.js)
+    IMPORT_OLD_NAME: 'Tools',       // Its name before 2.1, still accepted until the tab is renamed
     LATEST: 'Latest',
     TRACKS: 'Tracks',
     MILESTONE_LOG: 'Milestone Log',
@@ -58,7 +59,11 @@ const CONFIG = {
       coverKey: 'coverKey',
       title: 'title',
       trackId: 'trackId'
-    }
+    },
+    // Optional: the category the archive history currently counts the song under. When it differs
+    // from "category", Rebuild Album History moves the song's past streams across and updates it.
+    // Created by the first rebuild if it is missing.
+    HISTORY_CATEGORY: 'historyCategory'
   },
 
   // --- Categories sheet (see src/additional/categories.js) ---
@@ -112,7 +117,7 @@ const CONFIG = {
   },
 
   // --- Row layout ---
-  // A row means the same thing in Latest, Tools (J:M), every Daily Archive and the Total Archive:
+  // A row means the same thing in Latest, every Daily Archive and the Total Archive:
   //   1       headers / dates
   //   2       Total Artist Streams
   //   3       Total Artist Solo Streams (the total minus SOLO_EXCLUDES)
@@ -138,15 +143,11 @@ const CONFIG = {
   },
 
   // --- Range Definitions ---
-  TOOLS: {
+  IMPORT: {
     RAW_DATA: 'E2:I1000',       // Raw import: E album, F Spotify name, G stream count, H track ID, I album cover URL
-    SPOTIFY_TITLE_COLUMN: 11,   // Col K - Spotify's own name for the song, for humans
-    TOTALS_COLUMN: 12,          // Col L - each song's total, written by matchTotalsById()
-    DAILY_COLUMN: 13,           // Col M - each song's daily (sheet formula)
-    // Written into Col L for a song whose track ID is missing from the import. It breaks the
-    // daily formula in Col M, so C1 becomes an error and main() refuses to run.
-    MISSING_MARKER: '#MISSING',
-    SUM_OF_DAILYS: 'C1'
+    SUM_OF_DAILYS: 'C1',        // Today's dailies added up, written for reference (the update works it out itself)
+    // J:M held a per-song block (separator, Spotify name, total, daily) before 2.1; the tidy-up clears it
+    OLD_BLOCK: { COLUMN: 10, WIDTH: 4 }
   },
   LATEST: {
     DATE_CELL: 'Q1',            // Cell to increment date
@@ -164,7 +165,9 @@ const CONFIG = {
     },
     // Columns copied from the neighbouring row when a row is inserted: A:O. P is left out on
     // purpose - it held a second cover lookup that is not used any more (the cover comes from D).
-    COPIED_COLUMNS: 15
+    COPIED_COLUMNS: 15,
+    // A:P - the block that moves when a song is moved, so the side table in T:AB stays put
+    SHIFTED_COLUMNS: 16
   },
   ARCHIVE: {
     YESTERDAY_COLUMN: 3,        // Col C - newest first, so C is yesterday

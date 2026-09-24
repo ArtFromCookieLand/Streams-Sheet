@@ -8,12 +8,12 @@ function importSpotifyData() {
   // --- 0. ENVIRONMENT GUARD ---
   // Apify credits are shared and limited (~17 runs per token), so the dev copy
   // does not spend them. The raw data that came across with the spreadsheet copy
-  // in Tools!E2:I1000 is the fixture to develop against instead.
+  // in Import!E2:I1000 is the fixture to develop against instead.
   if (isDev() && !CONFIG.ENV.ALLOW_APIFY_IN_DEV) {
     ui.alert(
       'Blocked in DEV',
       'This is a DEV copy, and an Apify run would spend credits from the shared token budget.\n\n' +
-      'The raw data already sitting in Tools!E2:I1000 was copied from production — use "Match Totals by ID" and "Update Daily Stats" against that instead.\n\n' +
+      `The raw data already sitting in ${CONFIG.SHEETS.IMPORT}!${CONFIG.IMPORT.RAW_DATA} was copied from production — use "Check Import" and "Update Daily Stats" against that instead.\n\n` +
       'To override, set CONFIG.ENV.ALLOW_APIFY_IN_DEV to true.',
       ui.ButtonSet.OK
     );
@@ -72,8 +72,8 @@ function importSpotifyData() {
     
     let flatTrackList = [];
 
-    // [album, name, stream count, track ID, album cover] - the ID is what matchTotalsById() matches
-    // on; the album and name are for a human reading Tools; the cover seeds new Covers rows.
+    // [album, name, stream count, track ID, album cover] - the ID is what readTodayFromImport()
+    // matches on; the album and name are for a human reading the sheet; the cover seeds new Covers rows.
     rawData.forEach(album => {
       if (album.tracks && Array.isArray(album.tracks)) {
         const cover = pickCoverArt(album.coverArt);
@@ -85,8 +85,8 @@ function importSpotifyData() {
 
     // --- 4. WRITE TO SHEET ---
     
-    const toolsSheet = ss.getSheetByName(CONFIG.SHEETS.TOOLS);
-    const range = toolsSheet.getRange(CONFIG.TOOLS.RAW_DATA);
+    const importSheet = getImportSheet();
+    const range = importSheet.getRange(CONFIG.IMPORT.RAW_DATA);
     
     range.clearContent();
     
@@ -98,14 +98,14 @@ function importSpotifyData() {
       
       // Slice and Write
       const safeData = flatTrackList.slice(0, range.getNumRows());
-      toolsSheet.getRange(range.getRow(), range.getColumn(), safeData.length, safeData[0].length)
+      importSheet.getRange(range.getRow(), range.getColumn(), safeData.length, safeData[0].length)
         .setValues(safeData);
     }
 
     // The run has already spent its credits, so count it before anything else can fail.
     logRunAndCheckLimits();
 
-    // --- 5. MATCH TOTALS INTO TOOLS!L ---
+    // --- 5. MATCH BY TRACK ID: what's missing, and today's sum of dailies ---
     const matchResult = matchTotalsById();
 
     // --- 6. LOOK FOR NEW TRACKS ---
@@ -114,7 +114,7 @@ function importSpotifyData() {
     try {
       const found = findNewTracks();
       newTracksText = describeNewTracks(found);
-      // A linked upcoming song has just got its ID, so its total needs matching.
+      // A linked upcoming song has just got its ID, so it now counts towards the sum.
       if (found.linked.length) matchTotalsById();
     } catch (error) {
       newTracksText = 'Looking for new tracks was skipped: ' + error.message;

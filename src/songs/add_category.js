@@ -76,6 +76,7 @@ function addCategoriesMenu() {
     formulaText = '\n\n⚠️ Rebuilding the total formulas failed: ' + error.message;
   }
   SpreadsheetApp.flush();
+  ss.toast('Finished - see the report.', 'Add New Categories', 3);   // replaces the one with no timeout
 
   if (failed) {
     ui.alert('Stopped partway' + envTag(),

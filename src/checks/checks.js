@@ -27,15 +27,17 @@ const HEALTH_CHECKS = [
   { name: 'New tracks',         run: checkNewTracks },
   { name: 'Sources',            run: checkSources },
   { name: 'Merged cells',       run: checkMerges },
-  { name: 'Latest vs Tools',    run: checkLatestVsTools },
+  { name: 'Latest vs Import',   run: checkLatestVsImport },
   { name: 'Date sequence',      run: checkDateSequence },
   { name: 'Covers',             run: checkCovers },
   { name: 'Spare category rows', run: checkSpareRows },
-  { name: 'Categories',         run: checkCategories }
+  { name: 'Categories',         run: checkCategories },
+  { name: 'Category blocks',    run: checkCategoryBlocks },
+  { name: 'Category history',   run: checkCategoryHistory }
 ];
 
 // Cheap, and each one catches damage a daily update could do. Run after every update.
-const AFTER_UPDATE_CHECKS = ['Row alignment', 'Totals add up', 'Latest vs Tools', 'Date sequence'];
+const AFTER_UPDATE_CHECKS = ['Row alignment', 'Totals add up', 'Latest vs Import', 'Date sequence', 'Category history'];
 
 
 // --- MENU ENTRY POINTS ---
@@ -132,7 +134,7 @@ function loadCheckData() {
       return songs.length ? songs[songs.length - 1].row : CONFIG.LAYOUT.FIRST_SONG_ROW - 1;
     }),
     categories: once('categories', readCategories),
-    rawImport: once('rawImport', () => ss.getSheetByName(CONFIG.SHEETS.TOOLS).getRange(CONFIG.TOOLS.RAW_DATA).getValues())
+    rawImport: once('rawImport', () => getImportSheet().getRange(CONFIG.IMPORT.RAW_DATA).getValues())
   };
   // Last aggregate row in use: the highest category row (the solo row if none can be read).
   data.lastAggregateRow = once('lastAggregateRow', () => {
@@ -147,7 +149,10 @@ function loadCheckData() {
   // Latest E:G (title, total, daily) for the aggregate rows, from the artist total down
   data.latestAggregates = once('latestAggregates', () => ss.getSheetByName(CONFIG.SHEETS.LATEST)
     .getRange(CONFIG.LAYOUT.TOTAL_ROW, CONFIG.LATEST.COLS.TITLE, data.lastAggregateRow() - CONFIG.LAYOUT.TOTAL_ROW + 1, 3).getValues());
-  data.toolsTotals = once('toolsTotals', () => songRange(ss.getSheetByName(CONFIG.SHEETS.TOOLS), CONFIG.TOOLS.TOTALS_COLUMN, 1).map(r => r[0]));
+  // Today's figures from the import, or { error } when they can't be worked out.
+  data.today = once('today', () => {
+    try { return readTodayFromImport(); } catch (error) { return { error: error.message }; }
+  });
   data.songsByRow = once('songsByRow', () => {
     const byRow = {};
     data.tracklist().songs.forEach(s => { byRow[s.row] = s; });
@@ -247,21 +252,30 @@ function checkTotals(data) {
   const inLatest = (row, index) => Number(aggregates[row - layout.TOTAL_ROW][index]);
   const fmt = n => Math.round(n).toLocaleString('en-US');
   const details = [];
-  const compare = (label, row, expectedTotal, expectedDaily, what) => {
+  const exact = n => String(Math.round(n * 1e6) / 1e6);
+  const compare = (label, row, expectedTotal, expectedDaily, what, rows) => {
     [[1, expectedTotal, 'total'], [2, expectedDaily, 'daily']].forEach(([index, expected, figure]) => {
       const actual = inLatest(row, index);
-      if (actual !== expected) {
-        details.push(`${label} (Latest row ${row}) ${figure}: Latest says ${fmt(actual)}, ${what} add up to ${fmt(expected)}.`);
+      // Stream counts are whole numbers, so a real mismatch is at least 1. Anything smaller is
+      // rounding noise from adding fractions in a different order than SUM does.
+      if (!(Math.abs(actual - expected) < 1)) {
+        let line = `${label} (Latest row ${row}) ${figure}: Latest says ${fmt(actual)}, ${what} add up to ${fmt(expected)}.`;
+        // What a SUM treats differently from this check: text (SUM skips it) and fractions.
+        const odd = (rows || []).map(r => ({ row: r, v: songs[r - data.firstSongRow][index + 4] }))
+          .filter(x => x.v !== '' && (typeof x.v !== 'number' || !Number.isInteger(x.v)))
+          .map(x => `row ${x.row} is ${typeof x.v === 'number' ? exact(x.v) : typeof x.v + ' "' + x.v + '"'}`);
+        if (odd.length) line += ` Songs whose Latest ${index === 1 ? 'F' : 'G'} isn't a whole number: ${odd.slice(0, 5).join('; ')}.`;
+        details.push(line);
       }
     });
   };
 
   categories.forEach(c => {
     const rows = rowsByCategory[c.name] || [];
-    compare(c.name, c.row, songSum(rows, 5), songSum(rows, 6), 'its songs');
+    compare(c.name, c.row, songSum(rows, 5), songSum(rows, 6), 'its songs', rows);
   });
   const allRows = data.tracklist().songs.map(s => s.row);
-  compare('Total Artist Streams', layout.TOTAL_ROW, songSum(allRows, 5), songSum(allRows, 6), 'all songs');
+  compare('Total Artist Streams', layout.TOTAL_ROW, songSum(allRows, 5), songSum(allRows, 6), 'all songs', allRows);
 
   const excluded = categories.filter(c => c.name === layout.SOLO_EXCLUDES)[0];
   if (excluded) {
@@ -314,7 +328,7 @@ function checkImport(data) {
   raw.forEach(r => { const id = String(r[3]).trim(); if (id) ids[id] = true; });
   const idCount = Object.keys(ids).length;
 
-  if (rows === 0) return { status: CHECK_STATUS.WARN, summary: 'The raw import in Tools is empty.' };
+  if (rows === 0) return { status: CHECK_STATUS.WARN, summary: `The raw import in ${CONFIG.SHEETS.IMPORT} is empty.` };
   if (idCount === 0) return { status: CHECK_STATUS.FAIL, summary: 'The raw import has no track IDs - it was written by the old importer.' };
 
   const details = [];
@@ -323,44 +337,43 @@ function checkImport(data) {
     if (s.trackId && !ids[s.trackId]) details.push(`Row ${s.row} ("${s.title}"): track ID ${s.trackId} is not in the import.`);
   });
 
-  data.toolsTotals().forEach((v, i) => {
-    if (v === CONFIG.TOOLS.MISSING_MARKER) details.push(`Tools row ${data.firstSongRow + i} is marked ${CONFIG.TOOLS.MISSING_MARKER}.`);
-  });
-
-  const c1 = data.sheet(CONFIG.SHEETS.TOOLS).getRange(CONFIG.TOOLS.SUM_OF_DAILYS).getValue();
-  if (typeof c1 !== 'number') details.push(`Tools!${CONFIG.TOOLS.SUM_OF_DAILYS} (sum of dailies) is "${c1}", not a number.`);
-
   if (details.length) {
     return { status: CHECK_STATUS.FAIL, summary: `${details.length} problem(s) with the import.`, details: details };
   }
   if (rows >= CONFIG.CHECKS.RAW_ROWS_WARN) {
-    return { status: CHECK_STATUS.WARN, summary: `${rows} tracks imported - close to the ${raw.length}-row limit of Tools!${CONFIG.TOOLS.RAW_DATA}.` };
+    return { status: CHECK_STATUS.WARN, summary: `${rows} tracks imported - close to the ${raw.length}-row limit of ${CONFIG.SHEETS.IMPORT}!${CONFIG.IMPORT.RAW_DATA}.` };
   }
   return { status: CHECK_STATUS.OK, summary: `${rows} tracks imported; all ${active.length} active track IDs are present.` };
 }
 
 
-function checkLatestVsTools(data) {
-  if (data.tracklist().songs.length === 0) return tracklistUnreadable();
+/**
+ * Right after an update, every song's total in Latest is its total in the import. Between an import
+ * and the update they differ, which is normal (a warning, not a failure).
+ */
+function checkLatestVsImport(data) {
+  if (data.tracklist().problems.length) return tracklistUnreadable();
+  const today = data.today();
+  if (today.error) return { status: CHECK_STATUS.FAIL, summary: today.error };
   const latest = data.latestSongs();
-  const tools = data.toolsTotals();
   const byRow = data.songsByRow();
   const details = [];
 
+  today.missing.forEach(m => details.push(`Row ${m.row} ("${m.title}"): its track ID is not in the import.`));
   latest.forEach((r, i) => {
     const row = data.firstSongRow + i;
-    if (!byRow[row]) return;
-    if (r[5] !== tools[i]) details.push(`Row ${row} ("${byRow[row].title}"): Latest total ${r[5]}, Tools total ${tools[i]}.`);
+    if (!byRow[row] || today.totals[i] === '') return;
+    if (r[5] !== today.totals[i]) details.push(`Row ${row} ("${byRow[row].title}"): Latest total ${r[5]}, import total ${today.totals[i]}.`);
   });
 
   if (details.length) {
     return {
       status: CHECK_STATUS.WARN,
-      summary: `${details.length} song total(s) in Latest differ from Tools. That's normal between Import Data and Update Daily Stats; right after an update they must match.`,
+      summary: `${details.length} song total(s) in Latest differ from the import. That's normal between Import Data and Update Daily Stats; right after an update they must match.`,
       details: details
     };
   }
-  return { status: CHECK_STATUS.OK, summary: 'Every song total in Latest matches Tools.' };
+  return { status: CHECK_STATUS.OK, summary: 'Every song total in Latest matches the import.' };
 }
 
 
@@ -524,6 +537,61 @@ function checkCategories(data) {
   if (details.length) return { status: CHECK_STATUS.FAIL, summary: `${details.length} problem(s) with the categories.`, details: details };
   const n = t => cats.filter(c => c.type === t).length;
   return { status: CHECK_STATUS.OK, summary: `${cats.length} categories (${n('studio')} studio, ${n('other')} other, ${n('fixed')} fixed); rows and summary cells are consistent.` };
+}
+
+
+/**
+ * Each category's songs should sit on consecutive rows: new songs are added after a category's last
+ * row, and summaryLimit counts from its first. A split category still sums correctly, so this only
+ * warns. Songs with no category (Track by Track) are not a category and are ignored.
+ */
+function checkCategoryBlocks(data) {
+  if (data.tracklist().songs.length === 0) return tracklistUnreadable();
+  const rowsByCategory = {};
+  data.tracklist().songs.forEach(s => {
+    if (s.category) (rowsByCategory[s.category] = rowsByCategory[s.category] || []).push(s.row);
+  });
+  const details = [];
+  Object.keys(rowsByCategory).forEach(name => {
+    const rows = rowsByCategory[name];
+    const spans = [];
+    rows.forEach((r, i) => {
+      if (i && r === rows[i - 1] + 1) spans[spans.length - 1][1] = r;
+      else spans.push([r, r]);
+    });
+    if (spans.length > 1) details.push(`${name}: rows ${spans.map(([a, b]) => a === b ? a : a + '-' + b).join(', ')}.`);
+  });
+  if (details.length) {
+    return {
+      status: CHECK_STATUS.WARN,
+      summary: `${details.length} categor${details.length === 1 ? 'y is' : 'ies are'} split over separate blocks of rows. They still add up; Update → Move a Song can bring them together.`,
+      details: details
+    };
+  }
+  return { status: CHECK_STATUS.OK, summary: `Every category's songs are on consecutive rows.` };
+}
+
+
+/**
+ * A song whose category was changed by hand still has its past streams in the old category's
+ * history until Rebuild Album History moves them.
+ */
+function checkCategoryHistory(data) {
+  const songs = data.tracklist().songs;
+  if (songs.length === 0) return tracklistUnreadable();
+  const header = CONFIG.SONGS_SHEET.HISTORY_CATEGORY;
+  if (songs[0].historyCategory === null) {
+    return { status: CHECK_STATUS.WARN, summary: `The ${CONFIG.SHEETS.SONGS} sheet has no "${header}" column yet. Update → Rebuild Album History creates it.` };
+  }
+  const changed = songs.filter(s => s.historyCategory !== s.category);
+  if (changed.length) {
+    return {
+      status: CHECK_STATUS.WARN,
+      summary: `${changed.length} song(s) changed category, but their past streams still count in the old one. Run Update → Rebuild Album History.`,
+      details: changed.map(s => `Row ${s.row} ("${s.title}"): ${s.historyCategory || 'no category'} → ${s.category || 'no category'}.`)
+    };
+  }
+  return { status: CHECK_STATUS.OK, summary: 'Every song\'s history is counted in its current category.' };
 }
 
 

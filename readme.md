@@ -33,8 +33,8 @@ npm run open:dev      npm run open:prod
 
 The script detects at runtime which spreadsheet it is attached to. In the dev copy the menu is
 titled **Update [DEV]**, and the Apify import is blocked so that testing never spends scraper
-credits — the last raw import copied over in `Tools!E2:I1000` is used as the test data instead,
-via **Match Totals by ID**. It must be one that includes track IDs, i.e. made with 2.0 or later.
+credits — the last raw import copied over in `Import!E2:I1000` is used as the test data instead,
+via **Check Import**. It must be one that includes track IDs, i.e. made with 2.0 or later.
 The **Checks** menu runs read-only health checks on either copy at any time.
 
 ### Setting up the dev copy
@@ -47,12 +47,29 @@ The **Checks** menu runs read-only health checks on either copy at any time.
 
 Refresh the dev copy by repeating step 1 whenever it has drifted too far from production.
 
+### Tests
+
+```
+npm test
+```
+
+runs the code offline against a copy of the spreadsheet built from `tests/fixtures` (Latest,
+the raw import, the Tracklist and Covers as of 22/9/26), using a small stand-in for the Sheets API
+in `tests/lib`. It needs only Node 22 or later, no Google account, and catches most mistakes
+before a push. It can't show how the real Sheets behaves (formatting, charts, the dialog's
+looks), so a change still gets tried in the dev copy.
+
 ## Authors
 
 Haunted_Spotify (also known as Haunted_Jade or Jade) [Jade is not the actual name]
 
 ## Version History
 
+* 2.1.0 (unreleased)
+    * **Move a Song**: a dialog that moves a song to another row, and optionally another category. It moves in Latest and every archive, history included, and anything pointing at the song follows it. When the category changes, the song's past streams move from the old category's history to the new one's on every day, and no other figure changes (the history stays plain numbers). **Rebuild Album History** does just that last step, after categories are changed by hand; a new **historyCategory** column in the Tracklist keeps track of what the history counts each song under.
+    * **Tools is now Import**, and holds only the raw scrape. The daily update works out each song's total (by track ID) and daily itself, so the sheet no longer has to line up row by row with the others. **Match Totals by ID** is now **Check Import**. A one-off **Setup → Tidy up the Import sheet** renames the tab and clears the old columns J:M.
+    * A **Category blocks** check warns when a category's songs aren't on consecutive rows.
+    * **Offline tests** (`npm test`).
 * 2.0.0 (22/9/26)
     * **Songs, albums and categories are now data, not code.** Five new sheets do the work: **Tracklist** (every song with its row, status, category, cover key and Spotify track ID), **Categories**, **Pending**, **Ignored** and **Sources**. Adding a song, an album or an album URL no longer needs a code change. See ADDING-SONGS.md for what to do in each case.
     * **Stream totals are matched by Spotify track ID** instead of by title, so a renamed track no longer loses its streams. A missing ID stops the daily update and names the song, rather than failing quietly.

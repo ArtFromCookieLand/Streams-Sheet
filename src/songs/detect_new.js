@@ -15,8 +15,8 @@
  *                     suggested from tracked songs on the same album
  *
  * Runs after every import, and from Update → Find New Tracks against the
- * import already in Tools (no Apify cost). It never touches Latest, the
- * archives or Tools - adding songs is still Add Pending Songs' job.
+ * import already in the Import sheet (no Apify cost). It never touches
+ * Latest or the archives - adding songs is still Add Pending Songs' job.
  * ===================================================================
  */
 
@@ -27,7 +27,7 @@ function findNewTracksMenu() {
   const ui = SpreadsheetApp.getUi();
   try {
     const found = findNewTracks();
-    if (found.linked.length) matchTotalsById();  // the linked songs' totals, from the same import
+    if (found.linked.length) matchTotalsById();  // the sum of dailies now includes the linked songs
     ui.alert('Find New Tracks' + envTag(), describeNewTracks(found), ui.ButtonSet.OK);
   } catch (error) {
     console.error(error);
@@ -45,7 +45,7 @@ function findNewTracks() {
     throw new Error(`The "${CONFIG.SHEETS.IGNORED}" sheet is missing - run Update → Setup → Create Ignored sheet first, or every untracked track would land in Pending.`);
   }
   const raw = readRawImport();
-  if (!raw.length) throw new Error('The raw import in Tools has no track IDs - import first.');
+  if (!raw.length) throw new Error(`The raw import in ${CONFIG.SHEETS.IMPORT} has no track IDs - import first.`);
 
   const songs = getSongs();
   const known = knownTrackIds(songs);
@@ -148,14 +148,6 @@ function describeNewTracks(r) {
 
 
 // --- helpers ---
-
-/** @return {Array<{album: string, name: string, count: number, id: string, cover: string}>} Rows that have an ID. */
-function readRawImport() {
-  return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.TOOLS)
-    .getRange(CONFIG.TOOLS.RAW_DATA).getValues()
-    .map(r => ({ album: String(r[0]), name: String(r[1]), count: Number(r[2]) || 0, id: String(r[3]).trim(), cover: String(r[4] || '').trim() }))
-    .filter(t => t.id);
-}
 
 /** Every track ID already accounted for: in the Tracklist, Pending (any row) or Ignored. */
 function knownTrackIds(songs) {

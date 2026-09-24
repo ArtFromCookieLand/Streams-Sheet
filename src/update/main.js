@@ -1,5 +1,4 @@
 var ss = SpreadsheetApp.getActiveSpreadsheet();
-var toolsSheet = ss.getSheetByName(CONFIG.SHEETS.TOOLS);;
 var dailyArchiveSheet = ss.getSheetByName(CONFIG.SHEETS.ARCHIVE);
 var latestSheet = ss.getSheetByName(CONFIG.SHEETS.LATEST);
 
@@ -13,11 +12,13 @@ function onOpen() {
       .addItem('⬇️ Import Data', 'importSpotifyData')
       .addItem('🔃 Update Daily Stats', 'main')
       .addItem('🔄 Switch Token', 'switchApifyToken')
-      .addItem('🔗 Match Totals by ID', 'matchTotalsMenu')
+      .addItem('🔗 Check Import', 'matchTotalsMenu')
       .addItem('🔍 Find New Tracks', 'findNewTracksMenu')
       .addItem('➕ Add Pending Songs', 'addPendingSongsMenu')
       .addItem('🖼️ Fill Missing Covers', 'fillMissingCoversMenu')
       .addItem('🗂️ Add New Categories', 'addCategoriesMenu')
+      .addItem('↕️ Move a Song', 'moveSongMenu')
+      .addItem('🧮 Rebuild Album History', 'rebuildAlbumHistoryMenu')
       .addSeparator()
       .addItem('Update Auxiliary Stats', 'updateStats')
       .addItem('Update Best-Since-Days', 'transferBestSinceRows')
@@ -33,6 +34,7 @@ function onOpen() {
   if (!ss.getSheetByName(CONFIG.SHEETS.PENDING)) { setup.addItem('Create Pending sheet', 'createPendingSheet'); setupNeeded = true; }
   if (!ss.getSheetByName(CONFIG.SHEETS.IGNORED)) { setup.addItem('Create Ignored sheet', 'createIgnoredSheet'); setupNeeded = true; }
   if (!ss.getSheetByName(CONFIG.SHEETS.SOURCES)) { setup.addItem('Create Sources sheet', 'createSourcesSheet'); setupNeeded = true; }
+  if (!ss.getSheetByName(CONFIG.SHEETS.IMPORT)) { setup.addItem('Tidy up the Import sheet (2.1)', 'tidyImportSheet'); setupNeeded = true; }
   if (setupNeeded) updateMenu.addSeparator().addSubMenu(setup);
   updateMenu.addToUi();
 
@@ -46,9 +48,7 @@ function onOpen() {
 function main() {
   const ui = SpreadsheetApp.getUi();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  const checkSheet = ss.getSheetByName(CONFIG.SHEETS.TOOLS); 
-  
+
   // --- 0a. TRACKLIST AND CATEGORIES CHECK ---
   // Everything below reads them, and transferStats() is destructive, so a broken Tracklist or
   // Categories sheet has to be caught first.
@@ -59,31 +59,41 @@ function main() {
     return;
   }
 
-  // --- 0b. MISSING TRACK IDS ---
-  // matchTotalsById() marks songs whose ID was not in the import. They would otherwise surface
-  // only as an unexplained error in C1.
-  const totals = checkSheet.getRange(CONFIG.LAYOUT.FIRST_SONG_ROW, CONFIG.TOOLS.TOTALS_COLUMN, getSongRowCount(), 1).getValues();
-  const missingRows = [];
-  totals.forEach((r, i) => {
-    if (r[0] === CONFIG.TOOLS.MISSING_MARKER) missingRows.push(CONFIG.LAYOUT.FIRST_SONG_ROW + i);
-  });
-  if (missingRows.length) {
+  // --- 0b. TODAY'S FIGURES, FROM THE IMPORT ---
+  // Each song's total by its track ID, and its daily against Latest!F. Worked out in full before
+  // anything is written.
+  let today;
+  try {
+    today = readTodayFromImport();
+  } catch (error) {
+    ui.alert('Update Aborted', error.message, ui.ButtonSet.OK);
+    return;
+  }
+
+  // --- 0c. MISSING TRACK IDS ---
+  // A song with no total would otherwise be archived as minus its whole total.
+  if (today.missing.length) {
     ui.alert(
       'Update Aborted',
-      `${missingRows.length} song(s) have no total because their track ID was not in the import (rows ${missingRows.join(', ')}).\n\n` +
-      `Correct their track IDs in the ${CONFIG.SHEETS.SONGS} sheet, then run "Match Totals by ID" and try again.`,
+      `${today.missing.length} song(s) have no total because their track ID was not in the import:\n` +
+      today.missing.map(m => `• row ${m.row}: ${m.title}`).join('\n') + '\n\n' +
+      `Correct their track IDs in the ${CONFIG.SHEETS.SONGS} sheet, then run "Check Import" and try again.`,
       ui.ButtonSet.OK
     );
     return;
   }
 
-  // --- 0c. AUTOMATED SPOTIFY UPDATE CHECK ---
-  const sumValue = checkSheet.getRange(CONFIG.TOOLS.SUM_OF_DAILYS).getValue();
-  
-  if (sumValue <= 0 || isNaN(sumValue)) {
+  // --- 0d. HAS SPOTIFY REFRESHED? ---
+  // The dailies add up to 0 or less when the import is no newer than Latest: Spotify hasn't
+  // refreshed yet, or this import has already been used for an update. Running anyway would
+  // archive a day of zeros, so this is also what stops a double run.
+  const sum = today.sumOfDailies;
+  writeSumOfDailies(sum);
+  if (!(sum > 0)) {
     ui.alert(
       'Update Aborted',
-      `The sum of daily streams in cell C1 is ${sumValue}.\n\nThis indicates that Spotify has not updated yet today, or there was an error importing the data. Please try again later.`,
+      `The sum of today's daily streams is ${Math.round(sum).toLocaleString('en-US')}.\n\n` +
+      'Spotify has not refreshed since the last update, or this import has already been used for one. Import again later.',
       ui.ButtonSet.OK
     );
     return;
@@ -93,7 +103,7 @@ function main() {
   // This pop-up prevents accidental clicks.
   const response = ui.alert(
     'Confirm Update' + envTag(),
-    'Spotify data has been updated (C1 is positive). Are you sure you want to proceed with updating the sheets and generating summaries?',
+    `Today's dailies add up to ${Math.round(sum).toLocaleString('en-US')}. Are you sure you want to proceed with updating the sheets and generating summaries?`,
     ui.ButtonSet.YES_NO
   );
 
@@ -106,7 +116,8 @@ function main() {
   // --- 2. EXECUTE UPDATES ---
   // Transfering stats
   ss.toast('Transferring stats...', 'Status');
-  transferStats();
+  transferStats(today);
+  writeSumOfDailies(0);   // Latest now holds these totals, so nothing is left to add up
 
   // Updating data needed for further calculations in spreadsheets
   ss.toast('Updating data...', 'Status');

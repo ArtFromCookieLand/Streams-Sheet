@@ -1,4 +1,4 @@
-# How to add songs, albums and categories
+# How to add, move and change songs, albums and categories
 
 Plain-text playbook, meant to be pasted into the spreadsheet. Menu items are under **Update**
 and **Checks**. Every scenario ends the same way: run **Checks → Run All Checks**.
@@ -8,7 +8,7 @@ and **Checks**. Every scenario ends the same way: run **Checks → Run All Check
 ## THE SHEETS
 
 - **Tracklist** — every tracked song: its row, status, category, cover key, title and Spotify
-  track ID. The row column says where the song lives in Latest, Tools and the archives. It can
+  track ID. The row column says where the song lives in Latest and the archives. It can
   be sorted freely.
 - **Categories** — one row per album/category: row, type (studio / other / fixed), summary cell,
   summary limit.
@@ -16,6 +16,8 @@ and **Checks**. Every scenario ends the same way: run **Checks → Run All Check
 - **Ignored** — track IDs that are deliberately not tracked.
 - **Sources** — the Spotify album links the import scrapes.
 - **Covers** — cover key (A), image (B), URL (C).
+- **Import** — the raw scrape (E:I), rewritten by every import. C1 shows today's dailies added up.
+  Nothing in it has to line up with the other sheets.
 
 ## STATUS OF A SONG
 
@@ -93,19 +95,41 @@ In **Pending**, set the row's status to `ignore` and run **Add Pending Songs**. 
 Set the song's status in **Tracklist** to `retired`. It keeps its row and its history, is held
 at 0, and is left out of milestones and summaries. Never delete a song's row.
 
-## 7. A TRACK ID CHANGED, OR THE UPDATE SAYS "#MISSING"
+## 7. A TRACK ID CHANGED, OR THE UPDATE SAYS AN ID "WAS NOT IN THE IMPORT"
 
 1. Find the song's new ID: **Update → Find New Tracks** usually puts the new track in Pending,
    or take it from the Spotify link (the part after /track/).
 2. Put it in the song's **Tracklist** row.
-3. **Update → Match Totals by ID** — no new import needed, so no Apify credits.
+3. **Update → Check Import** — no new import needed, so no Apify credits.
 4. Run **Update Daily Stats** again.
+
+## 8. MOVE A SONG, OR CHANGE ITS CATEGORY
+
+1. **Update → Move a Song**. In the dialog:
+   - **Move row**: the song's row now (the Find box looks it up by title).
+   - **To row**: the row it should end up on. The dialog shows which songs it lands between and
+     which rows shift by one.
+   - **Category afterwards**: filled in from where it lands; change it if needed. Keep the same
+     row and pick another category to change only the category.
+2. **Move**. It moves in Latest and every archive with its whole history and renumbers the
+   Tracklist. If the category changed, the song's past streams move from the old category's
+   figures to the new one's on every day, so the new category's history includes it (and the old
+   one's no longer does). No other figure changes. Anything pointing at the song, such as an Albums
+   breakdown cell, follows it.
+3. The Albums breakdowns themselves don't change: if the song belongs in another breakdown now,
+   edit that by hand.
+
+Changed a category by hand in the Tracklist instead? Run **Update → Rebuild Album History**,
+which does the history part on its own. Until you do, the **Category history** check (also run
+after every update) lists the songs waiting. Several songs can be changed by hand and then
+rebuilt in one go. The Tracklist's **historyCategory** column is filled in by the code; leave
+it alone.
 
 ---
 
 ## THE DAILY ROUTINE
 
-1. **Update → Import Data** (also matches totals and looks for new tracks).
+1. **Update → Import Data** (also checks every track ID and looks for new tracks).
 2. **Update → Update Daily Stats**. A dialog appears at the end only if a check fails.
 
 Adding songs is fine at any time, including between the import and the update. Just do not leave
@@ -116,9 +140,9 @@ it half-done in the middle of a daily update.
 - Nothing is changed unless the whole batch is valid: if one Pending row has a problem, nothing
   is added and the reason is written next to that row.
 - Rows marked ✅ in Pending are done and are skipped from then on. Delete them whenever you like.
-- **Do not insert or delete song rows by hand** — Add Pending Songs keeps all the sheets in step.
+- **Do not insert, delete or move song rows by hand** — Add Pending Songs and Move a Song keep
+  all the sheets in step.
 - **Do not merge cells across the edge of A:P in Latest** below the albums. That block shifts on
   its own when a row is inserted. A merge inside A:P is fine.
-- **Never write into Tools column J** — it is the merged separator.
 - If anything ever looks out of step, **Checks → Check Row Alignment** tells you the first row
   that disagrees, and Version history is the safety net.
